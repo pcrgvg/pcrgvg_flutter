@@ -4,12 +4,13 @@
 // **************************************************************************
 
 import 'package:flutter/material.dart';
-import 'package:pcrgvg_flutter/model/test_model.dart';
+import 'package:pcrgvg_flutter/providers/home_provider.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/widgets.dart';
-import 'pages/ff_arg_page.dart';
-import 'pages/home_page.dart';
+import 'pages/home/home_filter_page.dart';
+import 'pages/home/home_page.dart';
 import 'pages/main_page.dart';
+import 'pages/mine_page.dart';
 import 'pages/spalsh_page.dart';
 
 // ignore_for_file: prefer_const_literals_to_create_immutables,unused_local_variable,unused_import
@@ -20,15 +21,15 @@ FFRouteSettings getRouteSettings({
   final Map<String, dynamic> safeArguments =
       arguments ?? const <String, dynamic>{};
   switch (name) {
-    case 'ffArgPage':
+    case 'homeFilterPage':
       return FFRouteSettings(
         name: name,
         arguments: arguments,
-        widget: FfArgPage(
+        widget: HomeFilterPage(
           key: asT<Key?>(safeArguments['key']),
-          testMode1: asT<TestMode1>(safeArguments['testMode1'])!,
+          homeProvider: asT<HomeProvider>(safeArguments['homeProvider'])!,
         ),
-        routeName: 'ffArgPage',
+        routeName: 'homeFilterPage',
       );
     case 'homePage':
       return FFRouteSettings(
@@ -47,6 +48,15 @@ FFRouteSettings getRouteSettings({
           key: asT<Key?>(safeArguments['key']),
         ),
         routeName: 'mainPage',
+      );
+    case 'minePage':
+      return FFRouteSettings(
+        name: name,
+        arguments: arguments,
+        widget: MinePage(
+          key: asT<Key?>(safeArguments['key']),
+        ),
+        routeName: 'minePage',
       );
     case 'spalshPage':
       return FFRouteSettings(

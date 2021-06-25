@@ -1,24 +1,23 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pcrgvg_flutter/providers/base_provider.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 
 class ThemeProvider extends BaseProvider {
-  ThemeProvider() {}
   final Color _themeColor = HexColor.fromHex("#39c7a5");
   Color get themeColor => _themeColor;
-  Brightness _brightness = Brightness.light;
-  Brightness get brightness => _brightness;
 
-  bool _darkMode = false;
-  bool get darkMode => _darkMode;
 
-  set darkMode(bool value) {
-    if (_darkMode == value) {
-      return;
-    }
-    _darkMode = value;
-    notifyListeners();
-    // TODO(kurumi): store mode
+  SystemUiOverlayStyle systemUiOverlayStyle({bool isDark = false}) {
+    return  SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      statusBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.light,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      statusBarBrightness:  isDark ? Brightness.dark : Brightness.light,
+    );
   }
 
   ThemeData theme({bool isDark = false}) {
@@ -29,6 +28,10 @@ class ThemeProvider extends BaseProvider {
     const Color lightBackgroundColor = Colors.white;
     final Color darkBackgroundColor = HexColor.fromHex("#132149");
     final Color darkScaffoldBackgroundColor = HexColor.fromHex("#000000");
+    final Color scaffoldBackgroundColor =
+        isDark ? darkScaffoldBackgroundColor : lightScaffoldBackgroundColor;
+    final Color backgroundColor =
+        isDark ? darkBackgroundColor : lightBackgroundColor;
     return ThemeData(
       primaryColor: primaryColor,
       brightness: brightness, // 影响TextStyle, when dark, is white
@@ -39,9 +42,31 @@ class ThemeProvider extends BaseProvider {
       primaryColorBrightness: primaryColor.computeLuminance() > 0.5
           ? Brightness.light
           : Brightness.dark,
-      scaffoldBackgroundColor:
-          isDark ? darkScaffoldBackgroundColor : lightScaffoldBackgroundColor,
-        backgroundColor: isDark ? darkBackgroundColor: lightBackgroundColor,
+      scaffoldBackgroundColor: scaffoldBackgroundColor,
+      backgroundColor: backgroundColor,
+      cupertinoOverrideTheme: CupertinoThemeData(
+        primaryColor: primaryColor,
+        scaffoldBackgroundColor: scaffoldBackgroundColor,
+        brightness: brightness,
+      ),
+      splashColor: accentColor.withOpacity(0.27),
+      colorScheme: isDark
+          ? ColorScheme.dark(
+              primary: primaryColor,
+              primaryVariant: primaryColor.darken(0.24),
+              secondary: accentColor,
+              secondaryVariant: accentColor.darken(0.36),
+              background: backgroundColor,
+              surface: backgroundColor,
+            )
+          : ColorScheme.light(
+              primary: primaryColor,
+              primaryVariant: primaryColor.darken(0.2),
+              secondary: accentColor,
+              secondaryVariant: accentColor.darken(0.36),
+              background: backgroundColor,
+              surface: backgroundColor,
+            ),
     );
   }
 }

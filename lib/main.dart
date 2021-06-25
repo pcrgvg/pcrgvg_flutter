@@ -6,6 +6,7 @@ import 'package:pcrgvg_flutter/db/hive_db.dart';
 import 'package:pcrgvg_flutter/db/pcr_db.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_route.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
+import 'package:pcrgvg_flutter/providers/home_provider.dart';
 import 'package:pcrgvg_flutter/providers/theme_provider.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:pcrgvg_flutter/utils/store_util.dart';
@@ -51,7 +52,11 @@ class MyApp extends StatelessWidget {
             child: MultiProvider(
               providers: <SingleChildWidget>[
                 ChangeNotifierProvider<ThemeProvider>(
-                    create: (_) => ThemeProvider())
+                  create: (_) => ThemeProvider(),
+                ),
+                ChangeNotifierProvider<HomeProvider>(
+                  create: (_) => HomeProvider(),
+                ),
               ],
               child: Consumer<ThemeProvider>(
                   builder: (_, ThemeProvider themeProvider, __) {
@@ -69,13 +74,15 @@ class MyApp extends StatelessWidget {
                   },
                   builder: (BuildContext context, Widget? w) {
                     final MediaQueryData data = MediaQuery.of(context);
+                    final bool isDark = Theme.of(context)
+                            .scaffoldBackgroundColor
+                            .computeLuminance() <
+                        0.5;
                     return MediaQuery(
                         data: data,
                         child: AnnotatedRegion<SystemUiOverlayStyle>(
-                          value: SystemUiOverlayStyle(
-                            statusBarColor: Colors.transparent,
-                            statusBarBrightness: themeProvider.brightness,
-                          ),
+                          value: themeProvider.systemUiOverlayStyle(
+                              isDark: isDark),
                           child: w!,
                         ));
                   },

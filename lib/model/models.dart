@@ -5,6 +5,9 @@ import 'package:pcrgvg_flutter/model/ff_safe.dart';
 
 part  'models.g.dart';
 
-part 'pcr_db_version.dart';
+part 'pcr_db_version_hive.dart';
+part  'pcrs.dart';
+part 'gvg_task_hive.dart';
+part 'gvg_task_filter_hive.dart';
 
 

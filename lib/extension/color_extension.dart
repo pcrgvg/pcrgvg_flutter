@@ -18,3 +18,29 @@ extension HexColor on Color {
       '${green.toRadixString(16).padLeft(2, '0')}'
       '${blue.toRadixString(16).padLeft(2, '0')}';
 }
+
+extension BrightnessColor on Color {
+  static Color lightRandom() {
+    return HSLColor.fromAHSL(
+      1,
+      math.Random().nextDouble() * 360,
+      0.5,
+      0.75,
+    ).toColor();
+  }
+
+  Color darken([double amount = .1]) {
+    assert(amount >= 0 && amount <= 1);
+    final HSLColor hsl = HSLColor.fromColor(this);
+    final HSLColor hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
+    return hslDark.toColor();
+  }
+
+  Color lighten([double amount = .1]) {
+    assert(amount >= 0 && amount <= 1);
+    final HSLColor hsl = HSLColor.fromColor(this);
+    final HSLColor hslLight =
+        hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
+    return hslLight.toColor();
+  }
+}

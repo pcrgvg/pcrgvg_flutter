@@ -4,28 +4,29 @@
 // **************************************************************************
 
 import 'package:flutter/material.dart';
-import 'package:pcrgvg_flutter/model/test_model.dart';
+import 'package:pcrgvg_flutter/providers/home_provider.dart';
 
 const List<String> routeNames = <String>[
-  'ffArgPage',
+  'homeFilterPage',
   'homePage',
   'mainPage',
+  'minePage',
   'spalshPage',
 ];
 
 class Routes {
   const Routes._();
 
-  /// 'ffArgPage'
+  /// 'homeFilterPage'
   ///
-  /// [name] : 'ffArgPage'
+  /// [name] : 'homeFilterPage'
   ///
-  /// [routeName] : 'ffArgPage'
+  /// [routeName] : 'homeFilterPage'
   ///
   /// [constructors] :
   ///
-  /// FfArgPage : [Key? key, TestMode1(required) testMode1]
-  static const _FfArgPage ffArgPage = _FfArgPage();
+  /// HomeFilterPage : [Key? key, HomeProvider(required) homeProvider]
+  static const _HomeFilterPage homeFilterPage = _HomeFilterPage();
 
   /// 'homePage'
   ///
@@ -49,6 +50,17 @@ class Routes {
   /// MainPage : [Key? key]
   static const _MainPage mainPage = _MainPage();
 
+  /// 'minePage'
+  ///
+  /// [name] : 'minePage'
+  ///
+  /// [routeName] : 'minePage'
+  ///
+  /// [constructors] :
+  ///
+  /// MinePage : [Key? key]
+  static const _MinePage minePage = _MinePage();
+
   /// 'spalshPage'
   ///
   /// [name] : 'spalshPage'
@@ -61,15 +73,15 @@ class Routes {
   static const _SpalshPage spalshPage = _SpalshPage();
 }
 
-class _FfArgPage {
-  const _FfArgPage();
+class _HomeFilterPage {
+  const _HomeFilterPage();
 
-  String get name => 'ffArgPage';
+  String get name => 'homeFilterPage';
 
-  Map<String, dynamic> d({Key? key, required TestMode1 testMode1}) =>
+  Map<String, dynamic> d({Key? key, required HomeProvider homeProvider}) =>
       <String, dynamic>{
         'key': key,
-        'testMode1': testMode1,
+        'homeProvider': homeProvider,
       };
 
   @override
@@ -93,6 +105,19 @@ class _MainPage {
   const _MainPage();
 
   String get name => 'mainPage';
+
+  Map<String, dynamic> d({Key? key}) => <String, dynamic>{
+        'key': key,
+      };
+
+  @override
+  String toString() => name;
+}
+
+class _MinePage {
+  const _MinePage();
+
+  String get name => 'minePage';
 
   Map<String, dynamic> d({Key? key}) => <String, dynamic>{
         'key': key,

@@ -22,9 +22,9 @@ class Screens {
 
   static double get width => mediaQueryData.size.width;
   static double get height => mediaQueryData.size.height;
-  static double get statusHeight => mediaQueryData.padding.top;
+  static double get statusBarHeight => mediaQueryData.padding.top;
   static double get keyBoardHeight => mediaQueryData.viewInsets.bottom;
   static double get navigationBarHeight =>
-      mediaQueryData.padding.top + kToolbarHeight;
+      statusBarHeight + kToolbarHeight;
   static double get bottomSafeHeight => mediaQueryData.padding.bottom;
 }

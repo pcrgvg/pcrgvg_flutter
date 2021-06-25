@@ -23,7 +23,7 @@ class BaseProvider extends ChangeNotifier {
 
 
 class CancelableBaseModel extends BaseProvider {
-  final ListQueue<CancelableCompleter<dynamic>> _jobs = ListQueue();
+  final ListQueue<CancelableCompleter<dynamic>> _jobs = ListQueue<CancelableCompleter<dynamic>>();
 
   @mustCallSuper
   @override

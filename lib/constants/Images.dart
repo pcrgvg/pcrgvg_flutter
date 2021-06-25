@@ -5,13 +5,12 @@
 // **************************************************************************
 
 class Images {
-  const Images._();
-  static String bg = 'assets/images/bg.png';
-	static String loading = 'assets/images/loading.gif';
-	static String star = 'assets/images/star.png';
-	static String starDisabled = 'assets/images/star_disabled.png';
-	static String tabSwords = 'assets/images/tab/swords.png';
-	static String tabSwordsActive = 'assets/images/tab/swords_active.png';
-	static String unitIcon = 'assets/images/unit_icon.webp';
+  static const String bg = 'assets/images/bg.png';
+	static const String loading = 'assets/images/loading.gif';
+	static const String star = 'assets/images/star.png';
+	static const String starDisabled = 'assets/images/star_disabled.png';
+	static const String tabSwords = 'assets/images/tab/swords.png';
+	static const String tabSwordsActive = 'assets/images/tab/swords_active.png';
+	static const String unitIcon = 'assets/images/unit_icon.webp';
 	
 }

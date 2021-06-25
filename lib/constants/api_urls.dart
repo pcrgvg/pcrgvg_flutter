@@ -1,16 +1,17 @@
 class PcrDbUrl {
   const PcrDbUrl._();
-  static String host = 'https://redive.estertion.win';
+  static const String host = 'https://redive.estertion.win';
 
-  static String lastVersionJp = '$host/last_version_jp.json';
-  static String rediveDbJp = '$host/db/redive_jp.db.br';
-  static String lastVersionCn = '$host/last_version_cn.json';
-  static String rediveDbCn = '$host/db/redive_cn.db.br';
+  static const String lastVersionJp = '$host/last_version_jp.json';
+  static const String rediveDbJp = '$host/db/redive_jp.db.br';
+  static const String lastVersionCn = '$host/last_version_cn.json';
+  static const String rediveDbCn = '$host/db/redive_cn.db.br';
+  static const String unitImg = '$host/icon/unit/{0}.webp';
 }
 
 class PcrGvgUrl {
   const PcrGvgUrl._();
-  static String host = 'https://www.aikurumi.cn';
+  static const String host = 'https://www.aikurumi.cn';
 
-  static String gvgTaskList = '$host/api/pcr/gvgTask';
+  static const String gvgTaskList = '$host/api/pcr/gvgTask';
 }
