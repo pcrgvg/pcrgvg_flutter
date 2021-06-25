@@ -40,13 +40,13 @@ class PcrDb {
   }
 
   static Future<bool> checkUpdatedbCn() async {
-    final PcrDbVersion? pcrDbVersion = MyHive.pcrDbBox.get(HiveDbKey.Cn);
+    final PcrDbVersion? pcrDbVersion = MyHive.pcrDbVersionBox.get(HiveDbKey.Cn);
     final PcrDbVersion lastPcrDbVersion = await PcrDbApi.dbVersionCn();
     return pcrDbVersion?.truthVersion != lastPcrDbVersion.truthVersion;
   }
 
   static Future<bool> checkUpdatedbJp() async {
-    final PcrDbVersion? pcrDbVersion = MyHive.pcrDbBox.get(HiveDbKey.Jp);
+    final PcrDbVersion? pcrDbVersion = MyHive.pcrDbVersionBox.get(HiveDbKey.Jp);
     final PcrDbVersion lastPcrDbVersion = await PcrDbApi.dbVersionJp();
     return pcrDbVersion?.truthVersion != lastPcrDbVersion.truthVersion;
   }

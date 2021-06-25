@@ -4,10 +4,14 @@ import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:like_button/like_button.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
+import 'package:pcrgvg_flutter/db/hive_db.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
 import 'package:pcrgvg_flutter/widgets/animate_header.dart';
@@ -184,7 +188,7 @@ class _TaskItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    for (final Chara chara in task.charas)
+                    for (Chara chara in task.charas)
                       Padding(
                         padding: const EdgeInsets.only(right: 4),
                         child: IconChara(
@@ -203,21 +207,54 @@ class _TaskItem extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        IconButton(
-                          iconSize: 24,
-                          onPressed: () {},
-                          color: theme.accentColor,
-                          icon:
-                              // Icon(FluentIcons.add_square_multiple_16_regular),
-                              Icon(FluentIcons
-                                  .dismiss_square_multiple_16_regular),
-                        ), // add_square_multiple_16_filled
-                        IconButton(
-                          iconSize: 24,
-                          onPressed: () {},
-                          color: theme.accentColor,
-                          icon: const Icon(
-                              FluentIcons.heart_16_regular), // heart_16_filled
+                        ValueListenableBuilder<Box<int>>(
+                          valueListenable:
+                              Hive.box<int>(HiveBoxKey.removedBox).listenable(),
+                          builder: (_, Box<int> box, __) {
+                            final bool removed = box.values.contains(task.id);
+                            // box.keys.debug();
+                            final int index =
+                                box.values.toList().indexOf(task.id);
+                            return AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 300),
+                                child: IconButton(
+                                  iconSize: 24,
+                                  key: ValueKey<String>('${task.id}$removed'),
+                                  onPressed: () {
+                                    if (removed) {
+                                      index.debug();
+                                      box.deleteAt(index);
+                                    } else {
+                                      box.add(task.id);
+                                    }
+                                  },
+                                  color: removed
+                                      ? Colors.green
+                                      : theme.accentColor,
+                                  icon: removed
+                                      ? const Icon(
+                                          FluentIcons
+                                              .add_square_multiple_16_regular,
+                                        )
+                                      : const Icon(
+                                          FluentIcons
+                                              .dismiss_square_multiple_16_regular,
+                                        ),
+                                ));
+                          },
+                        ),
+                        LikeButton(
+                          onTap: (bool isLiked) async {
+                            return !isLiked;
+                          },
+                          likeBuilder: (bool isLiked) {
+                            return Icon(
+                              isLiked
+                                  ? FluentIcons.heart_16_filled
+                                  : FluentIcons.heart_16_regular,
+                              color: theme.accentColor,
+                            );
+                          },
                         ),
                       ],
                     )

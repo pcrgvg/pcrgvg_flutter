@@ -14,11 +14,11 @@ class MyHive {
   static const int CharaId = TaskId + 1;
   static const int LinkId = CharaId + 1;
 
-  static late Box<PcrDbVersion> pcrDbBox;
+  static late Box<PcrDbVersion> pcrDbVersionBox;
   static late Box<GvgTask> gvgTaskBox;
   static late Box<dynamic> userConfBox;
   static late Box<GvgTask> collectionBox;
-  static late Box<int> removeBox;
+  static late Box<int> removedBox;
 
   static Future<void> init() async {
     Hive.init('${MyStore.appSurDir.path}${Platform.pathSeparator}hivedb');
@@ -29,10 +29,11 @@ class MyHive {
       ..registerAdapter(GvgTaskAdapter())
       ..registerAdapter(TaskAdapter())
       ..registerAdapter(LinkAdapter());
-    pcrDbBox = await Hive.openBox('PcrDbVersion');
+    pcrDbVersionBox = await Hive.openBox(HiveBoxKey.PcrDbVersion);
     gvgTaskBox = await Hive.openBox('gvgTaskBox');
     userConfBox = await Hive.openBox<dynamic>('userConfBox');
-    pcrDbBox.put(
+    removedBox = await Hive.openBox(HiveBoxKey.removedBox);
+    pcrDbVersionBox.put(
         HiveDbKey.Cn, PcrDbVersion(truthVersion: 'truthVersion', hash: 'hash'));
     userConfBox.put(
         HiveDbKey.GvgTaskFilter,
@@ -47,8 +48,13 @@ class MyHive {
   }
 }
 
-class HiveDbKey {
+abstract class HiveDbKey {
   static const String Cn = 'Cn';
   static const String Jp = 'Jp';
   static const String GvgTaskFilter = 'GvgTaskFilter';
+}
+
+abstract class HiveBoxKey {
+   static const String removedBox = 'removedBox';
+   static const String PcrDbVersion = 'PcrDbVersion';
 }

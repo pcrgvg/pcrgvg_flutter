@@ -35,8 +35,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_isolate: ^2.0.0
-  flutter_screenutil: 5.0.0+2
   fluentui_system_icons: ^1.1.133
+  flutter_screenutil: 5.0.0+2
   hive: ^2.0.4
   hive_flutter: ^1.1.0
   intl: ^0.17.0
@@ -44,6 +44,7 @@ dependencies:
   #   git:
   #     url: https://github.com/zafkielkurumi/isolate
   #     ref: master
+  like_button: ^2.0.2
   modal_bottom_sheet: ^2.0.0
   oktoast: ^3.0.0
   path_provider: ^2.0.2
