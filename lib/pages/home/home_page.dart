@@ -73,7 +73,7 @@ class _HomePage extends State<HomePage> {
             onRefresh: homeModel.refresh,
             child: CustomScrollView(
               slivers: <Widget>[
-                _header(theme),
+                _header(theme, homeModel),
                 ...List<MultiSliver>.generate(gvgTaskList.length, (int index) {
                   final GvgTask gvgTask = gvgTaskList[index];
                   return MultiSliver(pushPinnedChildren: true, children: [
@@ -105,7 +105,7 @@ class _HomePage extends State<HomePage> {
     ));
   }
 
-  SliverPinnedToBoxAdapter _header(ThemeData theme) {
+  SliverPinnedToBoxAdapter _header(ThemeData theme, HomeProvider homeModel) {
     return SliverPinnedToBoxAdapter(
       child: Selector<HomeProvider, bool>(
         selector: (_, HomeProvider model) => model.hasScrolled,
@@ -130,21 +130,15 @@ class _HomePage extends State<HomePage> {
                 MaterialButton(
                   minWidth: 36,
                   height: 36,
-                  child: Icon(Icons.expand_more),
+                  child: const Icon(Icons.expand_more),
                   shape: circleShape,
                   color: hasScrolled
                       ? theme.scaffoldBackgroundColor
                       : theme.backgroundColor,
                   onPressed: () {
-                    context.read<HomeProvider>().init();
-                    // showCupertinoModalBottomSheet<HomeFilterFragment>(
-                    //   context: context,
-                    //   // topRadius: radius16,
-                    //   builder: (_) {
-                    //     return const HomeFilterFragment();
-                    //   },
-                    // );
-                    // Navigator.of(context).pushNamed(Routes.homeFilterPage.name, arguments: Routes.homeFilterPage.d(homeProvider: model));
+                    Navigator.of(context).pushNamed(Routes.homeFilterPage.name,
+                        arguments:
+                            Routes.homeFilterPage.d(homeProvider: homeModel));
                   },
                 )
               ],

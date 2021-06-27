@@ -60,6 +60,18 @@ class GvgTask extends HiveObject {
 
   GvgTask clone() => GvgTask.fromJson(
       asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GvgTask &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          prefabId == other.prefabId &&
+          unitName == other.unitName &&
+          server == other.server &&
+          index == other.index &&
+          tasks == other.tasks;
 }
 
 @HiveType(typeId: MyHive.TaskId)
@@ -106,7 +118,7 @@ class Task extends HiveObject {
       links: links!,
     );
   }
- @HiveField(0)
+  @HiveField(0)
   int id;
   @HiveField(1)
   int canAuto;
@@ -138,6 +150,20 @@ class Task extends HiveObject {
 
   Task clone() =>
       Task.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Task &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          canAuto == other.canAuto &&
+          stage == other.stage &&
+          damage == other.damage &&
+          charas == other.charas &&
+          remarks == other.remarks &&
+          links == other.links &&
+          remarks == other.remarks;
 }
 
 @HiveType(typeId: MyHive.CharaId)
@@ -193,10 +219,23 @@ class Chara extends HiveObject {
 
   Chara clone() =>
       Chara.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
+  
+   @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Chara &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          prefabId == other.prefabId &&
+          unitName == other.unitName &&
+          rarity == other.rarity &&
+          searchAreaWidth == other.searchAreaWidth &&
+          rank == other.rank &&
+          currentRarity == other.currentRarity;
 }
 
 @HiveType(typeId: MyHive.LinkId)
-class Link  extends HiveObject {
+class Link extends HiveObject {
   Link({
     required this.name,
     required this.link,
@@ -223,4 +262,12 @@ class Link  extends HiveObject {
 
   Link clone() =>
       Link.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
+    
+    @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Link &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          link == other.link;
 }
