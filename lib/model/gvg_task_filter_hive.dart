@@ -22,4 +22,6 @@ class GvgTaskFilterHive extends HiveObject {
   int stage;
   @HiveField(5)
   String startTime;
+
+  
 }

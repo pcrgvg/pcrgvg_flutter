@@ -38,71 +38,83 @@ class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final HomeProvider homeModel =
-        Provider.of<HomeProvider>(context, listen: false);
-    return Scaffold(
-        body: NotificationListener<Notification>(
-      onNotification: (Notification notification) {
-        if (notification is ScrollUpdateNotification) {
-          if (notification.depth == 0) {
-            final double offset = notification.metrics.pixels;
-            homeModel.hasScrolled = offset > 0.0;
-          }
-        }
-        // 保持ios与安卓的一致性, ios不再滚动
-        if (notification is OverscrollIndicatorNotification) {
-          notification.disallowGlow();
-        }
-        return true;
-      },
-      child: Selector<HomeProvider, List<GvgTask>>(
-        selector: (_, HomeProvider homeModel) => homeModel.gvgTaskList,
-        shouldRebuild: (List<GvgTask> pre, List<GvgTask> next) => pre.ne(next),
-        builder: (_, List<GvgTask> gvgTaskList, __) {
-          return SmartRefresher(
-            controller: homeModel.controller,
-            enablePullDown: true,
-            enablePullUp: false,
-            header: WaterDropMaterialHeader(
-              backgroundColor: theme.accentColor,
-              color: theme.accentColor.computeLuminance() < 0.5
-                  ? Colors.white
-                  : Colors.black,
-              distance: 42.0,
-            ),
-            onRefresh: homeModel.refresh,
-            child: CustomScrollView(
-              slivers: <Widget>[
-                _header(theme, homeModel),
-                ...List<MultiSliver>.generate(gvgTaskList.length, (int index) {
-                  final GvgTask gvgTask = gvgTaskList[index];
-                  return MultiSliver(pushPinnedChildren: true, children: [
-                    _BossHeader(theme: theme, gvgTask: gvgTask),
-                    SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        sliver: SliverGrid(
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 1,
-                              crossAxisSpacing: 16.0,
-                              mainAxisSpacing: 8.0,
-                              mainAxisExtent: 120.0,
-                            ),
-                            delegate: SliverChildBuilderDelegate(
-                              (_, int index) {
-                                final Task task = gvgTask.tasks[index];
-                                return _TaskItem(theme: theme, task: task);
-                              },
-                              childCount: gvgTask.tasks.length,
-                            ))),
-                  ]);
-                })
-              ],
-            ),
-          );
-        },
-      ),
-    ));
+    return ChangeNotifierProvider<HomeProvider>(
+        create: (_) => HomeProvider(),
+        child: Selector<HomeProvider, HomeProvider>(
+          selector: (_, HomeProvider homeModel) => homeModel,
+          builder: (_, HomeProvider homeModel, __) {
+            return Scaffold(
+                body: NotificationListener<Notification>(
+              onNotification: (Notification notification) {
+                if (notification is ScrollUpdateNotification) {
+                  if (notification.depth == 0) {
+                    final double offset = notification.metrics.pixels;
+                    homeModel.hasScrolled = offset > 0.0;
+                  }
+                }
+                // 保持ios与安卓的一致性, ios不再滚动
+                if (notification is OverscrollIndicatorNotification) {
+                  notification.disallowGlow();
+                }
+                return true;
+              },
+              child: Selector<HomeProvider, List<GvgTask>>(
+                selector: (_, HomeProvider homeModel) => homeModel.gvgTaskList,
+                shouldRebuild: (List<GvgTask> pre, List<GvgTask> next) =>
+                    pre.ne(next),
+                builder: (_, List<GvgTask> gvgTaskList, __) {
+                  return SmartRefresher(
+                    controller: homeModel.controller,
+                    enablePullDown: true,
+                    enablePullUp: false,
+                    header: WaterDropMaterialHeader(
+                      backgroundColor: theme.accentColor,
+                      color: theme.accentColor.computeLuminance() < 0.5
+                          ? Colors.white
+                          : Colors.black,
+                      distance: 42.0,
+                    ),
+                    onRefresh: homeModel.refresh,
+                    child: CustomScrollView(
+                      slivers: <Widget>[
+                        _header(theme, homeModel),
+                        ...List<MultiSliver>.generate(gvgTaskList.length,
+                            (int index) {
+                          final GvgTask gvgTask = gvgTaskList[index];
+                          return MultiSliver(
+                              pushPinnedChildren: true,
+                              children: [
+                                _BossHeader(theme: theme, gvgTask: gvgTask),
+                                SliverPadding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    sliver: SliverGrid(
+                                        gridDelegate:
+                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 1,
+                                          crossAxisSpacing: 16.0,
+                                          mainAxisSpacing: 8.0,
+                                          mainAxisExtent: 120.0,
+                                        ),
+                                        delegate: SliverChildBuilderDelegate(
+                                          (_, int index) {
+                                            final Task task =
+                                                gvgTask.tasks[index];
+                                            return _TaskItem(
+                                                theme: theme, task: task);
+                                          },
+                                          childCount: gvgTask.tasks.length,
+                                        ))),
+                              ]);
+                        })
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ));
+          },
+        ));
   }
 
   SliverPinnedToBoxAdapter _header(ThemeData theme, HomeProvider homeModel) {
@@ -121,7 +133,7 @@ class _HomePage extends State<HomePage> {
                           'jp'
                       ? '日服'
                       : '国服',
-                  style: textStyleTile,
+                  style: textStyleH1,
                 ),
                 Text(context
                     .select<HomeProvider, String>(
@@ -216,7 +228,6 @@ class _TaskItem extends StatelessWidget {
                                   key: ValueKey<String>('${task.id}$removed'),
                                   onPressed: () {
                                     if (removed) {
-                                      index.debug();
                                       box.deleteAt(index);
                                     } else {
                                       box.add(task.id);
@@ -289,7 +300,10 @@ class _BossHeader extends StatelessWidget {
                 width: 40,
                 height: 40,
               ),
-              Text(gvgTask.unitName)
+              Container(
+                width: 10,
+              ),
+              Text(gvgTask.unitName, style: textStyleH2)
             ],
           )),
     );

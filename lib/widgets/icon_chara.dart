@@ -11,6 +11,15 @@ class IconChara extends StatelessWidget {
   final Chara chara;
   // 是否显示rank Rarity
   final bool showRR;
+
+  String getIconUrl(Chara chara) {
+    if (chara.prefabId >= 100000 && chara.prefabId < 199999) {
+      return PcrDbUrl.unitImg.replaceFirst('{0}',
+          (chara.prefabId + (chara.currentRarity! < 6 ? 30 : 60)).toString());
+    }
+    return PcrDbUrl.unitImg.replaceFirst('{0}', chara.prefabId.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(

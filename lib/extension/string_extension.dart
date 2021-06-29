@@ -46,14 +46,15 @@ extension StringExtension on String? {
     }));
   }
 
-  String dateFormate({String newPattern = 'YYYY/MM'}) {
+  String dateFormate({String newPattern = 'yyyy/MM'}) {
     if (isNullOrEmpty) {
       return '';
     }
-    final DateTime? time =  DateTime.tryParse(this ?? ''); 
+    final String timeStr = this!.replaceAll('/', '-');
+    final DateTime? time =  DateTime.tryParse(timeStr); // 2012-02-27 13:27:00
     if (time == null) {
       return '';
-    } 
+    }
     return DateFormat(newPattern).format(time).toString();
   }
 }

@@ -21,5 +21,5 @@ extension ListExt<T> on List<T>? {
     return true;
   }
 
-  bool ne(List<T>? other) => !this.eq(other);
+  bool ne(List<T>? other) => !eq(other);
 }

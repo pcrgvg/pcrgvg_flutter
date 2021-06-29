@@ -53,6 +53,7 @@ dependencies:
   shimmer: 2.0.0
   sliver_tools: ^0.2.5
   sqflite: 2.0.0+3
+  tuple: ^2.0.0
   
  
   
