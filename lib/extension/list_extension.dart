@@ -6,7 +6,9 @@ extension ListExt<T> on List<T>? {
   bool get isSafeNotEmpty => !isNullOrEmpty;
 
   T? getOrNull(final int index) {
-    if (isNullOrEmpty) return null;
+    if (isNullOrEmpty) {
+      return null;
+    }
     return this![index];
   }
 
@@ -14,9 +16,13 @@ extension ListExt<T> on List<T>? {
     if (this == null) {
       return other == null;
     }
-    if (other == null || this!.length != other.length) return false;
+    if (other == null || this!.length != other.length) {
+      return false;
+    }
     for (int index = 0; index < this!.length; index += 1) {
-      if (this![index] != other[index]) return false;
+      if (this![index] != other[index]) {
+        return false;
+      }
     }
     return true;
   }
