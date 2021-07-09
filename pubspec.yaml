@@ -34,6 +34,8 @@ dependencies:
   ff_annotation_route_library: ^2.0.1
   flutter:
     sdk: flutter
+  flutter_localizations: 
+    sdk: flutter         
   flutter_isolate: ^2.0.0
   fluentui_system_icons: ^1.1.133
   flutter_screenutil: 5.0.0+2

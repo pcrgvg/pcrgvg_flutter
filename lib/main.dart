@@ -14,6 +14,7 @@ import 'package:pcrgvg_flutter/utils/net_util.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

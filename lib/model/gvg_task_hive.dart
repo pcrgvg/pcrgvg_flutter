@@ -87,6 +87,17 @@ class Task extends HiveObject {
   });
 
   factory Task.fromJson(Map<String, dynamic> jsonRes) {
+    final List<int>? canAuto = jsonRes['canAuto'] is List ? <int>[] : null;
+    if (canAuto != null) {
+      for (final dynamic item in jsonRes['canAuto']!) {
+        if (item != null) {
+          tryCatch(() {
+            canAuto.add(asT<int>(item)!);
+          });
+        }
+      }
+    }
+
     final List<Chara>? charas = jsonRes['charas'] is List ? <Chara>[] : null;
     if (charas != null) {
       for (final dynamic item in jsonRes['charas']!) {
@@ -110,7 +121,7 @@ class Task extends HiveObject {
     }
     return Task(
       id: asT<int>(jsonRes['id'])!,
-      canAuto: asT<int>(jsonRes['canAuto'])!,
+      canAuto: canAuto!,
       stage: asT<int>(jsonRes['stage'])!,
       damage: asT<int>(jsonRes['damage'])!,
       charas: charas!,
@@ -121,7 +132,7 @@ class Task extends HiveObject {
   @HiveField(0)
   int id;
   @HiveField(1)
-  int canAuto;
+  List<int> canAuto;
   @HiveField(2)
   int stage;
   @HiveField(3)
@@ -150,20 +161,6 @@ class Task extends HiveObject {
 
   Task clone() =>
       Task.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Task &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          canAuto == other.canAuto &&
-          stage == other.stage &&
-          damage == other.damage &&
-          charas == other.charas &&
-          remarks == other.remarks &&
-          links == other.links &&
-          remarks == other.remarks;
 }
 
 @HiveType(typeId: MyHive.CharaId)

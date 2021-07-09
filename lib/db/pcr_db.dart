@@ -1,5 +1,9 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:pcrgvg_flutter/apis/pcr_db_api.dart';
+import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/db/hive_db.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/utils/store_util.dart';
@@ -26,7 +30,96 @@ class PcrDb {
     if (!dbDir.existsSync()) {
       dbDir.createSync();
     }
+
     // TODO(KURUMI): check db and update
+  }
+
+  static Future<void> checkUpdate() async {
+    final List<PcrDbVersion?> jpVersion = await checkUpdatedbJp();
+    final List<PcrDbVersion?> cnVersion = await checkUpdatedbCn();
+    final bool jp = jpVersion.first != jpVersion.last;
+    final bool cn = cnVersion.first != jpVersion.last;
+    if (jp || cn) {
+      final Map<String, PcrDbVersion?> serverDbversion = {
+        'jp': jp ? jpVersion.last : null,
+        "cn": cn ? cnVersion.last : null
+      };
+      updateModal(serverDbversion);
+    }
+  }
+
+  static void updateModal(Map<String, PcrDbVersion?> serverDbversion) {
+    showToastWidget(Builder(builder: (BuildContext context) {
+      final Color bgc = Theme.of(context).accentColor;
+      final TextStyle textStyle = TextStyle(
+        color: bgc.computeLuminance() < 0.5 ? Colors.white : Colors.black,
+      );
+      return Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: HexColor.fromHex('#f94800'),
+          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Colors.black.withOpacity(0.024),
+              offset: const Offset(0, 1),
+              blurRadius: 3.0,
+              spreadRadius: 3.0,
+            ),
+          ],
+        ),
+        width: Screens.width * 0.7,
+        height: Screens.width / 2,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              '数据库有更新,是否更新?',
+              style: textStyle,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    dismissAllToast();
+                  },
+                  child: Text(
+                    '取消',
+                    style: textStyle,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    dismissAllToast();
+                    final PcrDbVersion? jpVersion = serverDbversion['jp'];
+                    final PcrDbVersion? cnVersion = serverDbversion['cn'];
+                    '数据库更新中'.toast();
+                    if (jpVersion != null) {
+                      downloadDbJp(jpVersion);
+                    }
+                    if (cnVersion != null) {
+                      downloadDbJp(cnVersion);
+                    }
+                    
+                  },
+                  child: Text(
+                    '确定',
+                    style: textStyle,
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      );
+    }),
+        position: ToastPosition.center,
+        handleTouch: true,
+        duration: const Duration(hours: 24));
   }
 
   static Future<Database> getDb(String server) async {
@@ -34,24 +127,19 @@ class PcrDb {
     return await openDatabase('$dbDirPath${Platform.pathSeparator}$dbName');
   }
 
-  // TODO(KURUMI): 更新数据库
-  static Future<List<bool>> checkDb() async {
-    return Future.wait(<Future<bool>>[checkUpdatedbCn(), checkUpdatedbJp()]);
-  }
-
-  static Future<bool> checkUpdatedbCn() async {
+  static Future<List<PcrDbVersion?>> checkUpdatedbCn() async {
     final PcrDbVersion? pcrDbVersion = MyHive.pcrDbVersionBox.get(HiveDbKey.Cn);
     final PcrDbVersion lastPcrDbVersion = await PcrDbApi.dbVersionCn();
-    return pcrDbVersion?.truthVersion != lastPcrDbVersion.truthVersion;
+    return [pcrDbVersion, lastPcrDbVersion];
   }
 
-  static Future<bool> checkUpdatedbJp() async {
+  static Future<List<PcrDbVersion?>> checkUpdatedbJp() async {
     final PcrDbVersion? pcrDbVersion = MyHive.pcrDbVersionBox.get(HiveDbKey.Jp);
     final PcrDbVersion lastPcrDbVersion = await PcrDbApi.dbVersionJp();
-    return pcrDbVersion?.truthVersion != lastPcrDbVersion.truthVersion;
+    return [pcrDbVersion, lastPcrDbVersion];
   }
 
-  static Future<void> downloadDbJp() async {
+  static Future<void> downloadDbJp(PcrDbVersion dbVersion) async {
     final String dbPath = '$dbDirPath${Platform.pathSeparator}$jpDbName';
     '$dbPath dowload start'.debug();
     await PcrDbApi.downloadDbJp('$dbPath.br');
@@ -62,10 +150,11 @@ class PcrDb {
       db.createSync();
     }
     db.writeAsBytesSync(dbString);
-     '$dbPath dowload end'.debug();
+    MyHive.pcrDbVersionBox.put(HiveDbKey.Jp, dbVersion);
+    '$dbPath dowload end'.debug();
   }
 
-  static Future<void> downloadDbCn() async {
+  static Future<void> downloadDbCn(PcrDbVersion dbVersion) async {
     final String dbPath = '$dbDirPath${Platform.pathSeparator}$cnDbName';
     await PcrDbApi.downloadDbCn('$dbPath.br');
     final List<int> dbString =
@@ -75,6 +164,8 @@ class PcrDb {
       db.createSync();
     }
     db.writeAsBytesSync(dbString);
+    MyHive.pcrDbVersionBox.put(HiveDbKey.Cn, dbVersion);
+    '$dbPath dowload end'.debug();
   }
 
   // 获取rank列表
@@ -158,6 +249,8 @@ class PcrDb {
     ''');
     await db.close();
 
-    return queryRes.map<UnitBoss>((Map<String, Object?> query) => UnitBoss.fromJson(query)).toList();
+    return queryRes
+        .map<UnitBoss>((Map<String, Object?> query) => UnitBoss.fromJson(query))
+        .toList();
   }
 }

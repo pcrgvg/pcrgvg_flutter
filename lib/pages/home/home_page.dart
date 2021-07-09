@@ -183,9 +183,9 @@ class _TaskItem extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AutoTypeView(
-            type: task.canAuto,
-          ),
+          // AutoTypeView(
+          //   type: task.canAuto,
+          // ),
           Expanded(
               child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),

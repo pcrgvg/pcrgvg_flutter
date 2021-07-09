@@ -3,6 +3,7 @@ import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
 import 'package:pcrgvg_flutter/constants/Images.dart';
+import 'package:pcrgvg_flutter/db/pcr_db.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 
 @FFRoute(
@@ -20,7 +21,9 @@ class _SpalshPage extends State<SpalshPage> {
 
   @override
   void initState() {
+  
     Future<void>.delayed(const Duration(seconds: 3)).whenComplete((){
+      //  PcrDb.updateModal();
       Navigator.of(context).pushNamedAndRemoveUntil(Routes.mainPage.name, (_) => false);
     });
     super.initState();
@@ -28,6 +31,7 @@ class _SpalshPage extends State<SpalshPage> {
 
   @override
   Widget build(BuildContext context) {
+     
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
