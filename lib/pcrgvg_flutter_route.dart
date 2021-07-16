@@ -4,6 +4,7 @@
 // **************************************************************************
 
 import 'package:flutter/material.dart';
+import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/widgets.dart';
@@ -12,6 +13,7 @@ import 'pages/home/home_page.dart';
 import 'pages/main_page.dart';
 import 'pages/mine_page.dart';
 import 'pages/spalsh_page.dart';
+import 'pages/task_detail_page.dart';
 
 // ignore_for_file: prefer_const_literals_to_create_immutables,unused_local_variable,unused_import
 FFRouteSettings getRouteSettings({
@@ -66,6 +68,17 @@ FFRouteSettings getRouteSettings({
           key: asT<Key?>(safeArguments['key']),
         ),
         routeName: 'spalshPage',
+      );
+    case 'taskDetailPage':
+      return FFRouteSettings(
+        name: name,
+        arguments: arguments,
+        widget: TaskDetailPage(
+          key: asT<Key?>(safeArguments['key']),
+          bossPrefab: asT<int>(safeArguments['bossPrefab'])!,
+          task: asT<Task>(safeArguments['task'])!,
+        ),
+        routeName: 'taskDetailPage',
       );
     default:
       return const FFRouteSettings(name: '404', routeName: '404_page');

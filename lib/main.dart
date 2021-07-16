@@ -18,10 +18,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  NetUtil.init();
   await MyStore.init();
+  NetUtil.init();
+   await PcrDb.init();
   await MyHive.init();
-  await PcrDb.init();
+ 
   runApp(MyApp());
 }
 

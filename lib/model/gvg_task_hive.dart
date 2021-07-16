@@ -28,7 +28,7 @@ class GvgTask extends HiveObject {
       unitName: asT<String>(jsonRes['unitName'])!,
       server: asT<String>(jsonRes['server'])!,
       index: asT<int>(jsonRes['index'])!,
-      tasks: tasks!,
+      tasks:  tasks!,
     );
   }
   @HiveField(0)
@@ -43,6 +43,7 @@ class GvgTask extends HiveObject {
   int index;
   @HiveField(5)
   List<Task> tasks;
+  // HiveList<Task> tasks;
 
   @override
   String toString() {
@@ -71,7 +72,7 @@ class GvgTask extends HiveObject {
           unitName == other.unitName &&
           server == other.server &&
           index == other.index &&
-          tasks == other.tasks;
+          tasks.eq(other.tasks);
 }
 
 @HiveType(typeId: MyHive.TaskId)
@@ -161,6 +162,18 @@ class Task extends HiveObject {
 
   Task clone() =>
       Task.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Task &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          canAuto == other.canAuto &&
+          stage == other.stage &&
+          damage == other.damage &&
+          charas.eq(other.charas) &&
+          links.eq(other.links);
 }
 
 @HiveType(typeId: MyHive.CharaId)
@@ -216,8 +229,8 @@ class Chara extends HiveObject {
 
   Chara clone() =>
       Chara.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
-  
-   @override
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is Chara &&
@@ -259,8 +272,8 @@ class Link extends HiveObject {
 
   Link clone() =>
       Link.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
-    
-    @override
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is Link &&

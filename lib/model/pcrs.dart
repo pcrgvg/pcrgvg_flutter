@@ -1,7 +1,7 @@
 part of 'models.dart';
 
 abstract class AutoType {
-  static const int unAuto = 10;
+  static const int manual = 10;
   static const int auto = 20;
   static const int harfAuto = 40;
 }

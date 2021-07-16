@@ -248,22 +248,23 @@ class GvgTaskFilterHiveAdapter extends TypeAdapter<GvgTaskFilterHive> {
     };
     return GvgTaskFilterHive(
       server: fields[0] as String,
-      bossPrefabs: (fields[1] as List).cast<int>(),
+      bossNumber: (fields[1] as List).cast<int>(),
       methods: (fields[2] as List).cast<int>(),
       clanBattleId: fields[3] as int,
       startTime: fields[5] as String,
       stage: fields[4] as int,
+      usedOrRemoved: fields[6] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, GvgTaskFilterHive obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.server)
       ..writeByte(1)
-      ..write(obj.bossPrefabs)
+      ..write(obj.bossNumber)
       ..writeByte(2)
       ..write(obj.methods)
       ..writeByte(3)
@@ -271,7 +272,9 @@ class GvgTaskFilterHiveAdapter extends TypeAdapter<GvgTaskFilterHive> {
       ..writeByte(4)
       ..write(obj.stage)
       ..writeByte(5)
-      ..write(obj.startTime);
+      ..write(obj.startTime)
+      ..writeByte(6)
+      ..write(obj.usedOrRemoved);
   }
 
   @override

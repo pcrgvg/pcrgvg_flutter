@@ -12,7 +12,7 @@ class AutoTypeView extends StatelessWidget {
         return HexColor.fromHex('#68B9FF');
       case AutoType.harfAuto:
         return HexColor.fromHex('#1cbbb4');
-      case AutoType.unAuto:
+      case AutoType.manual:
       default:
         return HexColor.fromHex('#FF2277');
     }
@@ -24,7 +24,7 @@ class AutoTypeView extends StatelessWidget {
         return '自动';
       case AutoType.harfAuto:
         return '半自动';
-      case AutoType.unAuto:
+      case AutoType.manual:
       default:
         return '手动';
     }

@@ -30,15 +30,13 @@ class PcrDb {
     if (!dbDir.existsSync()) {
       dbDir.createSync();
     }
-
-    // TODO(KURUMI): check db and update
   }
 
   static Future<void> checkUpdate() async {
     final List<PcrDbVersion?> jpVersion = await checkUpdatedbJp();
     final List<PcrDbVersion?> cnVersion = await checkUpdatedbCn();
-    final bool jp = jpVersion.first != jpVersion.last;
-    final bool cn = cnVersion.first != jpVersion.last;
+    final bool jp = jpVersion.first?.truthVersion != jpVersion.last?.truthVersion;
+    final bool cn = cnVersion.first?.truthVersion != cnVersion.last?.truthVersion;
     if (jp || cn) {
       final Map<String, PcrDbVersion?> serverDbversion = {
         'jp': jp ? jpVersion.last : null,
@@ -93,18 +91,19 @@ class PcrDb {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
                     dismissAllToast();
                     final PcrDbVersion? jpVersion = serverDbversion['jp'];
                     final PcrDbVersion? cnVersion = serverDbversion['cn'];
                     '数据库更新中'.toast();
                     if (jpVersion != null) {
-                      downloadDbJp(jpVersion);
+                      await downloadDbJp(jpVersion);
                     }
                     if (cnVersion != null) {
-                      downloadDbJp(cnVersion);
+                      await downloadDbCn(cnVersion);
                     }
-                    
+                   
+                    '数据库更新完毕'.toast();
                   },
                   child: Text(
                     '确定',

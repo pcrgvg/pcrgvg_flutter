@@ -9,7 +9,7 @@ class IconChara extends StatelessWidget {
       : super(key: key);
 
   final Chara chara;
-  // 是否显示rank Rarity
+  /// 是否显示rank Rarity 
   final bool showRR;
 
   String getIconUrl(Chara chara) {
@@ -23,7 +23,7 @@ class IconChara extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children: <Widget>[
         ExtendedImage.network(
             PcrDbUrl.unitImg.replaceFirst(
                 '{0}',
@@ -33,7 +33,7 @@ class IconChara extends StatelessWidget {
             height: 40),
         if (showRR)
           Row(
-            children: [
+            children: <Widget>[
               Text(
                 '${chara.currentRarity}X',
                 style: TextStyle(

@@ -15,32 +15,31 @@ class HomeFilterProvider extends CancelableBaseModel {
   late GvgTaskFilterHive _gvgTaskFilter;
   GvgTaskFilterHive get gvgTaskFilter => _gvgTaskFilter;
 
-  List<UnitBoss> _bossList = [];
-  List<UnitBoss> get bossList => _bossList;
-
   List<ClanPeriod> _clanPeriodList = [];
   List<ClanPeriod> get clanPeriodList => _clanPeriodList;
 
-  Future<void> init() async { 
+  List<LvPair> _stageOption = [];
+  List<LvPair> get stageOption => _stageOption;
+
+  Future<void> init() async {
     await _initGvgTaskFilter();
-    refresh();
     notifyListeners();
   }
 
   Future<void> _initGvgTaskFilter() async {
     _gvgTaskFilter =
         MyHive.userConfBox.get(HiveDbKey.GvgTaskFilter) as GvgTaskFilterHive;
+    
     await getPeriods();
-    final ClanPeriod lastPeriod = clanPeriodList.last;
+    final ClanPeriod lastPeriod = clanPeriodList.first;
     if (_gvgTaskFilter.clanBattleId == 1 ||
         _gvgTaskFilter.clanBattleId != lastPeriod.clanBattleId) {
       // 1的时候为第一次默认值
       _gvgTaskFilter.clanBattleId = lastPeriod.clanBattleId;
-      await getBoss();
-      _gvgTaskFilter.bossPrefabs =
-          _bossList.map((UnitBoss boss) => boss.prefabId).toList();
+      _gvgTaskFilter.startTime = lastPeriod.startTime;
       MyHive.userConfBox.put(HiveDbKey.GvgTaskFilter, _gvgTaskFilter);
     }
+    setStageOption(_gvgTaskFilter.clanBattleId);
   }
 
   Future<void> getPeriods() async {
@@ -55,13 +54,12 @@ class HomeFilterProvider extends CancelableBaseModel {
     }).toList();
   }
 
-  Future<void> getBoss() async {
-    _bossList =
-        await PcrDb.getBoss(_gvgTaskFilter.server, _gvgTaskFilter.clanBattleId);
-  }
+
 
   Future<void> refresh() async {
-    _refreshController.refreshCompleted();
+    await _initGvgTaskFilter();
+    Future<void>.delayed(const Duration(seconds: 1))
+        .then((_) => _refreshController.refreshCompleted());
   }
 
   Future<void> setServer(String server) async {
@@ -76,18 +74,59 @@ class HomeFilterProvider extends CancelableBaseModel {
   Future<void> setClanPeriod(ClanPeriod clanPeriod) async {
     _gvgTaskFilter.clanBattleId = clanPeriod.clanBattleId;
     _gvgTaskFilter.startTime = clanPeriod.startTime;
-    await getBoss();
+    setStageOption(_gvgTaskFilter.clanBattleId);
     notifyListeners();
   }
 
-  Future<void> setBoss(int prefabId) async {
-    final List<int> bossPrefabs = List.from(_gvgTaskFilter.bossPrefabs);
-    if (bossPrefabs.contains(prefabId)) {
-      bossPrefabs.remove(prefabId);
+  Future<void> setBoss(int number) async {
+    final List<int> bossNumberList = List<int>.from(gvgTaskFilter.bossNumber);
+    if (bossNumberList.contains(number)) {
+      bossNumberList.remove(number);
     } else {
-      bossPrefabs.add(prefabId);
+      bossNumberList.add(number);
     }
-    _gvgTaskFilter.bossPrefabs = bossPrefabs;
+    _gvgTaskFilter.bossNumber = bossNumberList;
+    notifyListeners();
+  }
+
+  Future<void> setStage(int stage) async {
+    _gvgTaskFilter.stage = stage;
+    notifyListeners();
+  }
+
+  Future<void> setMethods(int type) async {
+    final List<int> methodList = List<int>.from(_gvgTaskFilter.methods);
+    if (methodList.contains(type)) {
+      methodList.remove(type);
+    } else {
+      methodList.add(type);
+    }
+    _gvgTaskFilter.methods = methodList;
+    notifyListeners();
+  }
+  //  日服在1037期后将4 5阶段合并
+  void setStageOption(int clanId) {
+    if (clanId > 1037) {
+      _stageOption = [
+        LvPair(label: "1", value: 1),
+        LvPair(label: "2", value: 2),
+        LvPair(label: "3", value: 3),
+        LvPair(label: "4+5", value: 6),
+      ];
+    } else {
+      _stageOption = [
+        LvPair(label: "1", value: 1),
+        LvPair(label: "2", value: 2),
+        LvPair(label: "3", value: 3),
+        LvPair(label: "4", value: 4),
+        LvPair(label: "5", value: 5),
+      ];
+    }
+  }
+
+  // 
+  void setUsedOrRemoved(String type) {
+    _gvgTaskFilter.usedOrRemoved = type;
     notifyListeners();
   }
 }

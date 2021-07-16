@@ -7,6 +7,7 @@ class PcrDbUrl {
   static const String lastVersionCn = '$host/last_version_cn.json';
   static const String rediveDbCn = '$host/db/redive_cn.db.br';
   static const String unitImg = '$host/icon/unit/{0}.webp';
+  static const String cardImg = '$host/card/full/{0}.webp';
 }
 
 class PcrGvgUrl {

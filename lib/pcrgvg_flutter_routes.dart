@@ -4,6 +4,7 @@
 // **************************************************************************
 
 import 'package:flutter/material.dart';
+import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
 
 const List<String> routeNames = <String>[
@@ -12,6 +13,7 @@ const List<String> routeNames = <String>[
   'mainPage',
   'minePage',
   'spalshPage',
+  'taskDetailPage',
 ];
 
 class Routes {
@@ -71,6 +73,17 @@ class Routes {
   ///
   /// SpalshPage : [Key? key]
   static const _SpalshPage spalshPage = _SpalshPage();
+
+  /// 'taskDetailPage'
+  ///
+  /// [name] : 'taskDetailPage'
+  ///
+  /// [routeName] : 'taskDetailPage'
+  ///
+  /// [constructors] :
+  ///
+  /// TaskDetailPage : [Key? key, int(required) bossPrefab, Task(required) task]
+  static const _TaskDetailPage taskDetailPage = _TaskDetailPage();
 }
 
 class _HomeFilterPage {
@@ -134,6 +147,23 @@ class _SpalshPage {
 
   Map<String, dynamic> d({Key? key}) => <String, dynamic>{
         'key': key,
+      };
+
+  @override
+  String toString() => name;
+}
+
+class _TaskDetailPage {
+  const _TaskDetailPage();
+
+  String get name => 'taskDetailPage';
+
+  Map<String, dynamic> d(
+          {Key? key, required int bossPrefab, required Task task}) =>
+      <String, dynamic>{
+        'key': key,
+        'bossPrefab': bossPrefab,
+        'task': task,
       };
 
   @override
