@@ -6,12 +6,10 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'base_provider.dart';
 
-class HomeFilterProvider extends CancelableBaseModel {
+class HomeFilterProvider extends BaseListProvider {
   HomeFilterProvider() {
     init();
   }
-  final RefreshController _refreshController = RefreshController();
-  RefreshController get refreshController => _refreshController;
   late GvgTaskFilterHive _gvgTaskFilter;
   GvgTaskFilterHive get gvgTaskFilter => _gvgTaskFilter;
 
@@ -25,6 +23,8 @@ class HomeFilterProvider extends CancelableBaseModel {
     await _initGvgTaskFilter();
     notifyListeners();
   }
+
+  
 
   Future<void> _initGvgTaskFilter() async {
     _gvgTaskFilter =
@@ -55,11 +55,11 @@ class HomeFilterProvider extends CancelableBaseModel {
   }
 
 
-
+  @override
   Future<void> refresh() async {
     await _initGvgTaskFilter();
     Future<void>.delayed(const Duration(seconds: 1))
-        .then((_) => _refreshController.refreshCompleted());
+        .then((_) => controller.refreshCompleted());
   }
 
   Future<void> setServer(String server) async {
@@ -128,5 +128,10 @@ class HomeFilterProvider extends CancelableBaseModel {
   void setUsedOrRemoved(String type) {
     _gvgTaskFilter.usedOrRemoved = type;
     notifyListeners();
+  }
+
+  @override
+  Future<void> loadMore() {
+    throw UnimplementedError();
   }
 }

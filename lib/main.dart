@@ -20,9 +20,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await MyStore.init();
   NetUtil.init();
-   await PcrDb.init();
+  await PcrDb.init();
   await MyHive.init();
- 
+
   runApp(MyApp());
 }
 
@@ -46,46 +46,56 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // _subscribeConnectivityChange();
-    return RefreshConfiguration(
-        child: OKToast(
-            position: ToastPosition.bottom,
-            child: MultiProvider(
-              providers: <SingleChildWidget>[
-                ChangeNotifierProvider<ThemeProvider>(
-                  create: (_) => ThemeProvider(),
-                ),
-              ],
-              child: Consumer<ThemeProvider>(
-                  builder: (_, ThemeProvider themeProvider, __) {
-                return MaterialApp(
-                  debugShowCheckedModeBanner: false,
-                  title: 'PCRGVG',
-                  theme: themeProvider.theme(),
-                  darkTheme: themeProvider.theme(isDark: true),
-                  initialRoute: Routes.spalshPage.name,
-                  onGenerateRoute: (RouteSettings settings) {
-                    return onGenerateRoute(
-                      settings: settings,
-                      getRouteSettings: getRouteSettings,
-                    );
-                  },
-                  builder: (BuildContext context, Widget? w) {
-                    final MediaQueryData data = MediaQuery.of(context);
-                    final bool isDark = Theme.of(context)
-                            .scaffoldBackgroundColor
-                            .computeLuminance() <
-                        0.5;
-                    return MediaQuery(
-                        data: data,
-                        child: AnnotatedRegion<SystemUiOverlayStyle>(
-                          value: themeProvider.systemUiOverlayStyle(
-                              isDark: isDark),
-                          child: w!,
-                        ));
-                  },
-                );
-              }),
-            )));
+    _subscribeConnectivityChange();
+    return MultiProvider(
+      providers: <SingleChildWidget>[
+        ChangeNotifierProvider<ThemeProvider>(
+          create: (_) => ThemeProvider(),
+        ),
+      ],
+      child: Consumer<ThemeProvider>(
+          builder: (_, ThemeProvider themeProvider, __) {
+        final ThemeData theme = themeProvider.theme();
+        return Theme(
+            data: theme,
+            child: RefreshConfiguration(
+                headerBuilder: () => WaterDropMaterialHeader(
+                      backgroundColor: theme.accentColor,
+                      color: theme.accentColor.computeLuminance() < 0.5
+                          ? Colors.white
+                          : Colors.black,
+                      distance: 42.0,
+                    ),
+                child: OKToast(
+                    position: ToastPosition.bottom,
+                    child: MaterialApp(
+                      debugShowCheckedModeBanner: false,
+                      title: 'PCRGVG',
+                      theme: themeProvider.theme(),
+                      darkTheme: themeProvider.theme(isDark: true),
+                      initialRoute: Routes.spalshPage.name,
+                      onGenerateRoute: (RouteSettings settings) {
+                        return onGenerateRoute(
+                          settings: settings,
+                          getRouteSettings: getRouteSettings,
+                        );
+                      },
+                      builder: (BuildContext context, Widget? w) {
+                        final MediaQueryData data = MediaQuery.of(context);
+                        final bool isDark = Theme.of(context)
+                                .scaffoldBackgroundColor
+                                .computeLuminance() <
+                            0.5;
+                        return MediaQuery(
+                            data: data,
+                            child: AnnotatedRegion<SystemUiOverlayStyle>(
+                              value: themeProvider.systemUiOverlayStyle(
+                                  isDark: isDark),
+                              child: w!,
+                            ));
+                      },
+                    ))));
+      }),
+    );
   }
 }

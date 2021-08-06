@@ -10,6 +10,7 @@ import 'package:pcrgvg_flutter/providers/home_filter_provider.dart';
 @FFArgumentImport()
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
 import 'package:pcrgvg_flutter/widgets/animate_header.dart';
+import 'package:pcrgvg_flutter/widgets/list_box.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
@@ -35,26 +36,7 @@ class HomeFilterPage extends StatelessWidget {
             selector: (_, HomeFilterProvider homeFiltermodel) =>
                 homeFiltermodel,
             builder: (_, HomeFilterProvider homeFiltermodel, Widget? c) {
-              return Scaffold(
-                body: NotificationListener<OverscrollIndicatorNotification>(
-                  onNotification:
-                      (OverscrollIndicatorNotification notification) {
-                    notification.disallowGlow();
-                    return true;
-                  },
-                  child: SmartRefresher(
-                    controller: homeFiltermodel.refreshController,
-                    enablePullDown: true,
-                    enablePullUp: false,
-                    header: WaterDropMaterialHeader(
-                      backgroundColor: theme.accentColor,
-                      color: theme.accentColor.computeLuminance() < 0.5
-                          ? Colors.white
-                          : Colors.black,
-                      distance: 42.0,
-                    ),
-                    onRefresh: homeFiltermodel.refresh,
-                    child: CustomScrollView(
+              return ListBox<HomeFilterProvider>(model: homeFiltermodel, child: CustomScrollView(
                       slivers: <Widget>[
                         _Header(theme: theme, homeFiltermodel: homeFiltermodel),
                         SliverPadding(
@@ -81,10 +63,8 @@ class HomeFilterPage extends StatelessWidget {
                           ]),
                         ),
                       ],
-                    ),
-                  ),
-                ),
-              );
+                    ));
+
             }));
   }
 }
@@ -107,9 +87,9 @@ class _UsedOrRemovedSelection extends StatelessWidget {
       child: Row(
         children: [
           const SizedBox(
-            width: 65,
+            width: 56,
             child: Text(
-              '使用/去除',
+              '类别',
               style: textStyleH2,
             ),
           ),
@@ -119,6 +99,7 @@ class _UsedOrRemovedSelection extends StatelessWidget {
               _buildButton(usedOrRemoved, 'all'),
               _buildButton(usedOrRemoved, 'used'),
               _buildButton(usedOrRemoved, 'removed'),
+              _buildButton(usedOrRemoved, 'tail'),
             ],
           ))
         ],
@@ -132,6 +113,8 @@ class _UsedOrRemovedSelection extends StatelessWidget {
         return '已使用';
       case 'removed':
         return '已去除';
+      case 'tail':
+        return '尾刀';
       case 'all':
       default:
         return '全部';

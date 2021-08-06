@@ -5,8 +5,6 @@ import 'package:pcrgvg_flutter/providers/base_provider.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 
 class ThemeProvider extends BaseProvider {
-  final Color _themeColor = HexColor.fromHex("#39c7a5");
-  Color get themeColor => _themeColor;
 
 
   SystemUiOverlayStyle systemUiOverlayStyle({bool isDark = false}) {
@@ -23,7 +21,7 @@ class ThemeProvider extends BaseProvider {
   ThemeData theme({bool isDark = false}) {
     final Brightness brightness = isDark ? Brightness.dark : Brightness.light;
     final Color accentColor = HexColor.fromHex("#f94800");
-    final Color primaryColor = HexColor.fromHex("#39c7a5");
+    final Color primaryColor = HexColor.fromHex("#64b8ff");
     final Color lightScaffoldBackgroundColor = HexColor.fromHex("#f1f2f7");
     const Color lightBackgroundColor = Colors.white;
     final Color darkBackgroundColor = HexColor.fromHex("#132149");

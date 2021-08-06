@@ -1,6 +1,8 @@
 # pcrgvg_flutter
 
 A new Flutter project.
+Google analytics
+bugly
 
 ## Getting Started
 

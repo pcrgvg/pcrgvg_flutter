@@ -113,13 +113,14 @@ class TaskAdapter extends TypeAdapter<Task> {
       charas: (fields[4] as List).cast<Chara>(),
       remarks: fields[5] as String,
       links: (fields[6] as List).cast<Link>(),
+      type: fields[7] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Task obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -133,7 +134,9 @@ class TaskAdapter extends TypeAdapter<Task> {
       ..writeByte(5)
       ..write(obj.remarks)
       ..writeByte(6)
-      ..write(obj.links);
+      ..write(obj.links)
+      ..writeByte(7)
+      ..write(obj.type);
   }
 
   @override

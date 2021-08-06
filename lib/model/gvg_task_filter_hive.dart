@@ -23,7 +23,7 @@ class GvgTaskFilterHive extends HiveObject {
   int stage;
   @HiveField(5)
   String startTime;
-  /// all used removed
+  /// all used removed tail
   @HiveField(6)
   String usedOrRemoved  = 'all';  
 }

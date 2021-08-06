@@ -34,19 +34,25 @@ class AutoTypeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color color = getColor(type);
     final String text = getText(type);
+
     return Container(
-      width: 20,
-      decoration: BoxDecoration(
-          color: color,
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(8), bottomLeft: Radius.circular(8))),
-      child: Center(
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 5),
+      child: Text(text, style: TextStyle(color: color),),
     );
+
+    // return Container(
+    //   width: 20,
+    //   decoration: BoxDecoration(
+    //       color: color,
+    //       borderRadius: const BorderRadius.only(
+    //           topLeft: Radius.circular(8), bottomLeft: Radius.circular(8))),
+    //   child: Center(
+    //     child: Text(
+    //       text,
+    //       textAlign: TextAlign.center,
+    //       style: const TextStyle(color: Colors.white),
+    //     ),
+    //   ),
+    // );
   }
 }

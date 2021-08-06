@@ -85,6 +85,7 @@ class Task extends HiveObject {
     required this.charas,
     required this.remarks,
     required this.links,
+    required this.type,
   });
 
   factory Task.fromJson(Map<String, dynamic> jsonRes) {
@@ -127,6 +128,7 @@ class Task extends HiveObject {
       damage: asT<int>(jsonRes['damage'])!,
       charas: charas!,
       remarks: asT<String>(jsonRes['remarks'])!,
+      type: asT<int>(jsonRes['type'])!,
       links: links!,
     );
   }
@@ -144,6 +146,9 @@ class Task extends HiveObject {
   String remarks;
   @HiveField(6)
   List<Link> links;
+  // 1尾刀,2正常
+  @HiveField(7)
+  int type;
 
   @override
   String toString() {
@@ -157,6 +162,7 @@ class Task extends HiveObject {
         'damage': damage,
         'charas': charas,
         'remarks': remarks,
+        'type': type,
         'links': links,
       };
 
@@ -172,6 +178,7 @@ class Task extends HiveObject {
           canAuto == other.canAuto &&
           stage == other.stage &&
           damage == other.damage &&
+          type == other.type &&
           charas.eq(other.charas) &&
           links.eq(other.links);
 }

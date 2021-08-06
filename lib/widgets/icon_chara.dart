@@ -1,5 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:pcrgvg_flutter/constants/Images.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
@@ -9,7 +10,8 @@ class IconChara extends StatelessWidget {
       : super(key: key);
 
   final Chara chara;
-  /// 是否显示rank Rarity 
+
+  /// 是否显示rank Rarity
   final bool showRR;
 
   String getIconUrl(Chara chara) {
@@ -25,12 +27,21 @@ class IconChara extends StatelessWidget {
     return Column(
       children: <Widget>[
         ExtendedImage.network(
-            PcrDbUrl.unitImg.replaceFirst(
-                '{0}',
-                (chara.prefabId + (chara.currentRarity! < 6 ? 30 : 60))
-                    .toString()),
-            width: 40,
-            height: 40),
+          PcrDbUrl.unitImg.replaceFirst(
+              '{0}',
+              (chara.prefabId + (chara.currentRarity! < 6 ? 30 : 60))
+                  .toString()),
+          width: 40,
+          cache: true,
+          height: 40,
+          loadStateChanged: (ExtendedImageState state) {
+            if (state.extendedImageLoadState == LoadState.loading) {
+              return Image.asset(Images.unitIcon, width: 40, height: 40,);
+            } else if (state.extendedImageLoadState == LoadState.failed) {
+               return Image.asset(Images.unitIcon, width: 40, height: 40,);
+            } else {}
+          },
+        ),
         if (showRR)
           Row(
             children: <Widget>[

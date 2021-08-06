@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class BaseProvider extends ChangeNotifier {
   bool _disposed = false;
@@ -51,6 +52,30 @@ class CancelableBaseModel extends BaseProvider {
     });
     return completer.operation.value;
   }
+}
+
+
+abstract class BaseListProvider extends CancelableBaseModel {
+
+  bool _hasScrolled = true;
+  bool get hasScrolled => _hasScrolled;
+
+  // ignore: prefer_final_fields
+  int _pageIndex = 1;
+  int get pageIndex => _pageIndex;
+
+  set hasScrolled(bool value) {
+    if (value != _hasScrolled) {
+      _hasScrolled = value;
+      notifyListeners();
+    }
+  }
+
+  final RefreshController _controller = RefreshController();
+  RefreshController get controller => _controller;
+
+  Future<void> refresh();
+  Future<void> loadMore();
 }
 
 

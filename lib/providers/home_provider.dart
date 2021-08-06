@@ -5,23 +5,14 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'base_provider.dart';
 
-class HomeProvider extends CancelableBaseModel {
+class HomeProvider extends BaseListProvider {
   HomeProvider() {
     init();
   }
   List<GvgTask> _gvgTaskListCache = [];
   List<GvgTask> _gvgTaskList = [];
   List<GvgTask> get gvgTaskList => _gvgTaskList;
-  final RefreshController _controller = RefreshController();
-  RefreshController get controller => _controller;
-  bool _hasScrolled = true;
-  bool get hasScrolled => _hasScrolled;
-  set hasScrolled(bool value) {
-    if (value != _hasScrolled) {
-      _hasScrolled = value;
-      notifyListeners();
-    }
-  }
+
 
   late GvgTaskFilterHive _gvgTaskFilter;
   GvgTaskFilterHive get gvgTaskFilter => _gvgTaskFilter;
@@ -37,6 +28,7 @@ class HomeProvider extends CancelableBaseModel {
     notifyListeners();
   }
 
+  @override
   Future<void> refresh() async {
     // controller.requestRefresh();
     await (this + init());
@@ -87,6 +79,9 @@ class HomeProvider extends CancelableBaseModel {
             case 'removed':
               b = MyHive.removedBox.values.any((int element) => element == task.id);
               break;
+            case 'tail':
+              b = task.type == 1;
+              break;
             case 'all':
             default:
               b = true;
@@ -107,5 +102,10 @@ class HomeProvider extends CancelableBaseModel {
     }
     _gvgTaskList = tempList;
     notifyListeners();
+  }
+
+  @override
+  Future<void> loadMore() async {
+
   }
 }

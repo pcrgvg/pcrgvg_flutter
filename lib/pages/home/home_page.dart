@@ -16,6 +16,7 @@ import 'package:pcrgvg_flutter/providers/home_provider.dart';
 import 'package:pcrgvg_flutter/widgets/animate_header.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
+import 'package:pcrgvg_flutter/widgets/list_box.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
@@ -50,40 +51,15 @@ class _HomePage extends State<HomePage> {
         child: Selector<HomeProvider, HomeProvider>(
           selector: (_, HomeProvider homeModel) => homeModel,
           builder: (_, HomeProvider homeModel, __) {
-            return Scaffold(
-                body: NotificationListener<Notification>(
-              onNotification: (Notification notification) {
-                if (notification is ScrollUpdateNotification) {
-                  if (notification.depth == 0) {
-                    final double offset = notification.metrics.pixels;
-                    homeModel.hasScrolled = offset > 0.0;
-                  }
-                }
-                // 保持ios与安卓的一致性, ios不再滚动
-                if (notification is OverscrollIndicatorNotification) {
-                  notification.disallowGlow();
-                }
-                return true;
-              },
-              child: Selector<HomeProvider, List<GvgTask>>(
-                selector: (_, HomeProvider homeModel) => homeModel.gvgTaskList,
-                shouldRebuild: (List<GvgTask> pre, List<GvgTask> next) =>
-                    pre.ne(next),
-                builder: (_, List<GvgTask> gvgTaskList, __) {
-                  // TODO(KURUMI): 处理判断
-                  'build'.debug();
-                  return SmartRefresher(
-                    controller: homeModel.controller,
-                    enablePullDown: true,
-                    enablePullUp: false,
-                    header: WaterDropMaterialHeader(
-                      backgroundColor: theme.accentColor,
-                      color: theme.accentColor.computeLuminance() < 0.5
-                          ? Colors.white
-                          : Colors.black,
-                      distance: 42.0,
-                    ),
-                    onRefresh: homeModel.refresh,
+            return Selector<HomeProvider, List<GvgTask>>(
+              selector: (_, HomeProvider homeModel) => homeModel.gvgTaskList,
+              shouldRebuild: (List<GvgTask> pre, List<GvgTask> next) =>
+                  pre.ne(next),
+              builder: (_, List<GvgTask> gvgTaskList, __) {
+                // TODO(KURUMI): 处理判断
+                'build'.debug();
+                return ListBox<HomeProvider>(
+                    model: homeModel,
                     child: CustomScrollView(
                       slivers: <Widget>[
                         _Header(theme: theme, homeModel: homeModel),
@@ -120,11 +96,9 @@ class _HomePage extends State<HomePage> {
                               ]);
                         })
                       ],
-                    ),
-                  );
-                },
-              ),
-            ));
+                    ));
+              },
+            );
           },
         ));
   }
@@ -161,66 +135,84 @@ class _Header extends StatelessWidget {
           return AnimateHeader(
             hasScrolled: hasScrolled,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Column(
+                const SizedBox(),
+                Row(
                   children: [
-                    Row(
+                    Column(
                       children: [
-                        Text(
-                          context.select<HomeProvider, String>(
+                        Row(
+                          children: [
+                            Text(
+                              context.select<HomeProvider, String>(
+                                          (HomeProvider value) =>
+                                              value.gvgTaskFilter.server) ==
+                                      'jp'
+                                  ? '日服'
+                                  : '国服',
+                              style: textStyleH1,
+                            ),
+                            Text(
+                              context
+                                  .select<HomeProvider, String>(
                                       (HomeProvider value) =>
-                                          value.gvgTaskFilter.server) ==
-                                  'jp'
-                              ? '日服'
-                              : '国服',
-                          style: textStyleH1,
+                                          value.gvgTaskFilter.startTime)
+                                  .dateFormate(),
+                              style: textStyleH1,
+                            ),
+                          ],
                         ),
-                        Text(
-                          context
-                              .select<HomeProvider, String>(
-                                  (HomeProvider value) =>
-                                      value.gvgTaskFilter.startTime)
-                              .dateFormate(),
-                          style: textStyleH1,
-                        ),
+                        Row(
+                          children: [
+                            for (int method
+                                in context.select<HomeProvider, List<int>>(
+                                    (HomeProvider model) =>
+                                        model.gvgTaskFilter.methods))
+                              Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 2),
+                                  child: Text(
+                                    getText(method),
+                                    style: textStyleH2,
+                                  ))
+                          ],
+                        )
                       ],
                     ),
-                    Row(
-                      children: [
-                        for (int method
-                            in context.select<HomeProvider, List<int>>(
-                                (HomeProvider model) =>
-                                    model.gvgTaskFilter.methods))
-                          Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 2),
-                              child: Text(
-                                getText(method),
-                                style: textStyleH2,
-                              ))
-                      ],
+                    MaterialButton(
+                      minWidth: 36,
+                      height: 36,
+                      child: const Icon(Icons.expand_more),
+                      shape: circleShape,
+                      color: hasScrolled
+                          ? theme.scaffoldBackgroundColor
+                          : theme.backgroundColor,
+                      onPressed: () async {
+                        final dynamic filter = await Navigator.of(context)
+                            .pushNamed(Routes.homeFilterPage.name,
+                                arguments: Routes.homeFilterPage
+                                    .d(homeProvider: homeModel));
+                        if (filter != null) {
+                          homeModel.changeFilter(filter as GvgTaskFilterHive);
+                        }
+                      },
                     )
                   ],
                 ),
                 MaterialButton(
-                  minWidth: 36,
-                  height: 36,
-                  child: const Icon(Icons.expand_more),
-                  shape: circleShape,
-                  color: hasScrolled
-                      ? theme.scaffoldBackgroundColor
-                      : theme.backgroundColor,
-                  onPressed: () async {
-                    final dynamic filter = await Navigator.of(context)
-                        .pushNamed(Routes.homeFilterPage.name,
-                            arguments: Routes.homeFilterPage
-                                .d(homeProvider: homeModel));
-                    if (filter != null) {
-                      homeModel.changeFilter(filter as GvgTaskFilterHive);
-                    }
-                  },
-                )
+                  minWidth: 0,
+                  elevation: 0,
+                  onPressed: () {},
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+                  color: theme.accentColor.withOpacity(0.2),
+                  child: Text(
+                    '分刀',
+                    style: TextStyle(color: theme.accentColor),
+                  ),
+                ),
               ],
             ),
           );
@@ -254,51 +246,53 @@ class _TaskItem extends StatelessWidget {
         decoration: BoxDecoration(
             color: theme.backgroundColor,
             borderRadius: const BorderRadius.all(Radius.circular(8))),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            for (int type in task.canAuto)
-              AutoTypeView(
-                type: type,
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  for (Chara chara in task.charas)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: IconChara(
+                        chara: chara,
+                      ),
+                    ),
+                  const Icon(FluentIcons.chevron_right_16_regular),
+                ],
               ),
-            Expanded(
-                child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              child: Column(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      for (Chara chara in task.charas)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: IconChara(
-                            chara: chara,
-                          ),
-                        ),
-                      const Icon(FluentIcons.chevron_right_16_regular),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         '${task.damage}w',
-                        style: TextStyle(color: HexColor.fromHex('#ff2277')),
+                        style: TextStyle(
+                            color: HexColor.fromHex('#ff2277'), fontSize: 18),
                       ),
-                      Row(
-                        children: [
-                          _buildRemoved(),
-                          _buildLike(),
-                        ],
-                      )
+                      if (task.type == 1)
+                        const Text(
+                          '(尾刀)',
+                          style: TextStyle(color: Colors.deepPurple),
+                        ),
+                      for (int type in task.canAuto)
+                        AutoTypeView(
+                          type: type,
+                        ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      _buildRemoved(),
+                      _buildLike(),
                     ],
                   )
                 ],
-              ),
-            )),
-          ],
-        ),
+              )
+            ],
+          ),
       ),
     );
   }
