@@ -4,6 +4,7 @@
 // **************************************************************************
 
 import 'package:flutter/material.dart';
+import 'package:pcrgvg_flutter/isolate/filter_task.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
 
@@ -12,6 +13,8 @@ const List<String> routeNames = <String>[
   'homePage',
   'mainPage',
   'minePage',
+  'resultDetailPage',
+  'resultPage',
   'spalshPage',
   'taskDetailPage',
 ];
@@ -62,6 +65,28 @@ class Routes {
   ///
   /// MinePage : [Key? key]
   static const _MinePage minePage = _MinePage();
+
+  /// 'resultDetailPage'
+  ///
+  /// [name] : 'resultDetailPage'
+  ///
+  /// [routeName] : 'resultDetailPage'
+  ///
+  /// [constructors] :
+  ///
+  /// ResultDetailPage : [Key? key, List<TaskFilterResult>(required) taskResult]
+  static const _ResultDetailPage resultDetailPage = _ResultDetailPage();
+
+  /// 'resultPage'
+  ///
+  /// [name] : 'resultPage'
+  ///
+  /// [routeName] : 'resultPage'
+  ///
+  /// [constructors] :
+  ///
+  /// ResultPage : [Key? key, List<List<TaskFilterResult>>(required) list]
+  static const _ResultPage resultPage = _ResultPage();
 
   /// 'spalshPage'
   ///
@@ -134,6 +159,38 @@ class _MinePage {
 
   Map<String, dynamic> d({Key? key}) => <String, dynamic>{
         'key': key,
+      };
+
+  @override
+  String toString() => name;
+}
+
+class _ResultDetailPage {
+  const _ResultDetailPage();
+
+  String get name => 'resultDetailPage';
+
+  Map<String, dynamic> d(
+          {Key? key, required List<TaskFilterResult> taskResult}) =>
+      <String, dynamic>{
+        'key': key,
+        'taskResult': taskResult,
+      };
+
+  @override
+  String toString() => name;
+}
+
+class _ResultPage {
+  const _ResultPage();
+
+  String get name => 'resultPage';
+
+  Map<String, dynamic> d(
+          {Key? key, required List<List<TaskFilterResult>> list}) =>
+      <String, dynamic>{
+        'key': key,
+        'list': list,
       };
 
   @override

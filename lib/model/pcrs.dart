@@ -6,6 +6,19 @@ abstract class AutoType {
   static const int harfAuto = 40;
 }
 
+String getTypeText(int type) {
+    switch (type) {
+      case AutoType.auto:
+        return '自动';
+      case AutoType.harfAuto:
+        return '半自动';
+      case AutoType.manual:
+      default:
+        return '手动';
+    }
+  }
+
+
 // 会战期次
 class ClanPeriod {
   ClanPeriod({

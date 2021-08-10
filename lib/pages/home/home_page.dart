@@ -13,6 +13,7 @@ import 'package:pcrgvg_flutter/db/hive_db.dart';
 import 'package:pcrgvg_flutter/db/pcr_db.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
+import 'package:pcrgvg_flutter/isolate/filter_task.dart';
 import 'package:pcrgvg_flutter/widgets/animate_header.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
@@ -114,18 +115,6 @@ class _Header extends StatelessWidget {
   final ThemeData theme;
   final HomeProvider homeModel;
 
-  String getText(int type) {
-    switch (type) {
-      case AutoType.auto:
-        return '自动';
-      case AutoType.harfAuto:
-        return '半自动';
-      case AutoType.manual:
-      default:
-        return '手动';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return SliverPinnedToBoxAdapter(
@@ -173,7 +162,7 @@ class _Header extends StatelessWidget {
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 2),
                                   child: Text(
-                                    getText(method),
+                                    getTypeText(method),
                                     style: textStyleH2,
                                   ))
                           ],
@@ -203,7 +192,21 @@ class _Header extends StatelessWidget {
                 MaterialButton(
                   minWidth: 0,
                   elevation: 0,
-                  onPressed: () {},
+                  onPressed: () async {
+                    final List<int> removedList =
+                        MyHive.removedBox.values.toList();
+                    final List<int> usedList = MyHive.usedBox.values.toList();
+
+                    /// TODO unhavechara
+                    final List<List<TaskFilterResult>> res =
+                        await isolateFilter(FilterIsolateConfig(
+                            removeList: removedList,
+                            usedList: usedList,
+                            taskList: homeModel.gvgTaskList,
+                            unHaveCharaList: []));
+                    Navigator.of(context).pushNamed(Routes.resultPage.name,
+                        arguments: Routes.resultPage.d(list: res));
+                  },
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
@@ -246,53 +249,53 @@ class _TaskItem extends StatelessWidget {
         decoration: BoxDecoration(
             color: theme.backgroundColor,
             borderRadius: const BorderRadius.all(Radius.circular(8))),
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  for (Chara chara in task.charas)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 4),
-                      child: IconChara(
-                        chara: chara,
-                      ),
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                for (Chara chara in task.charas)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: IconChara(
+                      chara: chara,
                     ),
-                  const Icon(FluentIcons.chevron_right_16_regular),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        '${task.damage}w',
-                        style: TextStyle(
-                            color: HexColor.fromHex('#ff2277'), fontSize: 18),
-                      ),
-                      if (task.type == 1)
-                        const Text(
-                          '(尾刀)',
-                          style: TextStyle(color: Colors.deepPurple),
-                        ),
-                      for (int type in task.canAuto)
-                        AutoTypeView(
-                          type: type,
-                        ),
-                    ],
                   ),
-                  Row(
-                    children: [
-                      _buildRemoved(),
-                      _buildLike(),
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
+                const Icon(FluentIcons.chevron_right_16_regular),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      '${task.damage}w',
+                      style: TextStyle(
+                          color: HexColor.fromHex('#ff2277'), fontSize: 18),
+                    ),
+                    if (task.type == 1)
+                      const Text(
+                        '(尾刀)',
+                        style: TextStyle(color: Colors.deepPurple),
+                      ),
+                    for (int type in task.canAuto)
+                      AutoTypeView(
+                        type: type,
+                      ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    _buildRemoved(),
+                    _buildLike(),
+                  ],
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

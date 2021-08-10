@@ -4,6 +4,7 @@
 // **************************************************************************
 
 import 'package:flutter/material.dart';
+import 'package:pcrgvg_flutter/isolate/filter_task.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
@@ -12,6 +13,8 @@ import 'pages/home/home_filter_page.dart';
 import 'pages/home/home_page.dart';
 import 'pages/main_page.dart';
 import 'pages/mine_page.dart';
+import 'pages/result_detail_page.dart';
+import 'pages/result_page.dart';
 import 'pages/spalsh_page.dart';
 import 'pages/task_detail_page.dart';
 
@@ -59,6 +62,26 @@ FFRouteSettings getRouteSettings({
           key: asT<Key?>(safeArguments['key']),
         ),
         routeName: 'minePage',
+      );
+    case 'resultDetailPage':
+      return FFRouteSettings(
+        name: name,
+        arguments: arguments,
+        widget: ResultDetailPage(
+          key: asT<Key?>(safeArguments['key']),
+          taskResult: asT<List<TaskFilterResult>>(safeArguments['taskResult'])!,
+        ),
+        routeName: 'resultDetailPage',
+      );
+    case 'resultPage':
+      return FFRouteSettings(
+        name: name,
+        arguments: arguments,
+        widget: ResultPage(
+          key: asT<Key?>(safeArguments['key']),
+          list: asT<List<List<TaskFilterResult>>>(safeArguments['list'])!,
+        ),
+        routeName: 'resultPage',
       );
     case 'spalshPage':
       return FFRouteSettings(
