@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pcrgvg_flutter/model/models.dart';
+import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 
 class AutoTypeView extends StatelessWidget {
@@ -18,22 +18,11 @@ class AutoTypeView extends StatelessWidget {
     }
   }
 
-  String getText(int type) {
-    switch (type) {
-      case AutoType.auto:
-        return '自动';
-      case AutoType.harfAuto:
-        return '半自动';
-      case AutoType.manual:
-      default:
-        return '手动';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final Color color = getColor(type);
-    final String text = getText(type);
+    final String text = AutoType.getName(type);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5),

@@ -57,7 +57,7 @@ class BottomBarItem {
   BottomBarItem({
     required this.iconPath,
     required this.activeIconPath,
-    this.size = 30,
+    this.size = 40,
   });
   String iconPath;
   String activeIconPath;
@@ -103,15 +103,20 @@ class _BottomBarItemViewState extends State<BottomBarItemView>
     _controller.dispose();
   }
 
-  ExtendedImage _buildIcon(BottomBarItem bottomBarItem) {
+  Image _buildIcon(BottomBarItem bottomBarItem) {
     return widget.isActive
-        ? ExtendedImage.asset(
+        ? Image.asset(
             bottomBarItem.activeIconPath,
+            key: ValueKey(bottomBarItem.activeIconPath + DateTime.now().microsecondsSinceEpoch.toString()),
             width: bottomBarItem.size,
             height: bottomBarItem.size,
           )
-        : ExtendedImage.asset(bottomBarItem.iconPath,
-            width: bottomBarItem.size, height: bottomBarItem.size);
+        : Image.asset(
+            bottomBarItem.iconPath,
+            width: bottomBarItem.size,
+            height: bottomBarItem.size,
+            key: ValueKey(bottomBarItem.iconPath),
+          );
   }
 
   @override
@@ -122,6 +127,9 @@ class _BottomBarItemViewState extends State<BottomBarItemView>
           _controller.forward();
         }
         widget.onItemClick();
+        setState(() {
+          
+        });
       },
       child: ScaleTransition(
         scale: Tween<double>(begin: 0.88, end: 1).animate(CurvedAnimation(
@@ -133,8 +141,8 @@ class _BottomBarItemViewState extends State<BottomBarItemView>
           ),
         )),
         alignment: Alignment.center,
-        child: _buildIcon(widget.bottomBarItem),
-      ),
+        child: _buildIcon(widget.bottomBarItem),)
+      
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:pcrgvg_flutter/extension/extensions.dart';
 
 Future<List<List<TaskFilterResult>>> isolateFilter(
     FilterIsolateConfig _isolateConfig) async {
+  'isolate filter start'.debug();
   return await compute<FilterIsolateConfig, List<List<TaskFilterResult>>>(
       filterTask, _isolateConfig);
 }
@@ -14,80 +15,61 @@ Future<List<List<TaskFilterResult>>> isolateFilter(
 /// 顶层函数在打包时候就初始化,此时main run里面的初始化均未执行
 FutureOr<List<List<TaskFilterResult>>> filterTask(
     FilterIsolateConfig _isolateConfig) async {
+  final int startTime = DateTime.now().millisecondsSinceEpoch;
   final List<TaskFilterResult> flatTaskList =
       flatTask(_isolateConfig.taskList, _isolateConfig.removeList);
-  final List<List<TaskFilterResult>> combineResult = combine(flatTaskList, 3);
-   List<List<TaskFilterResult>> result = filterResult(
-    taskList: combineResult,
-    unHaveCharas: _isolateConfig.unHaveCharaList,
-    usedList: _isolateConfig.usedList,
-  );
+   List<List<TaskFilterResult>> result = combineAndFilter(
+      flatTaskList, 3, _isolateConfig.unHaveCharaList, _isolateConfig.usedList);
+
   if (result.isEmpty) {
-    final List<List<TaskFilterResult>> combineResult = combine(flatTaskList, 2);
-    List<List<TaskFilterResult>> result = filterResult(
-      taskList: combineResult,
-      unHaveCharas: _isolateConfig.unHaveCharaList,
-      usedList: _isolateConfig.usedList,
-    );
+     result = combineAndFilter(
+      flatTaskList, 2, _isolateConfig.unHaveCharaList, _isolateConfig.usedList);
+
   }
   if (result.isEmpty) {
-    final List<List<TaskFilterResult>> combineResult = combine(flatTaskList, 1);
-    List<List<TaskFilterResult>> result = filterResult(
-      taskList: combineResult,
-      unHaveCharas: _isolateConfig.unHaveCharaList,
-      usedList: _isolateConfig.usedList,
-    );
+    result = combineAndFilter(
+      flatTaskList, 1, _isolateConfig.unHaveCharaList, _isolateConfig.usedList);
+
   }
+
+  final int endTime = DateTime.now().millisecondsSinceEpoch;
+  ((endTime - startTime) / 1000).debug();
+  'isolate filter end'.debug();
   return result;
 }
 
-List<List<TaskFilterResult>> filterResult(
-    {required List<List<TaskFilterResult>> taskList,
+void filterResult(
+    {required List<TaskFilterResult> taskList,
     required List<Chara> unHaveCharas,
-    required List<int> usedList}) {
-  // 依次为包含0/1/2/3个已使用作业组
-  final List<List<List<TaskFilterResult>>> tempArr = [[], [], [], []];
-  for (final List<TaskFilterResult> tasks in taskList) {
-    final Set<int> set = <int>{};
-    // 重复的角色
-    final List<int> repeartCharaIdList = [];
-    // 当前组合使用的角色
-    final List<Chara> charaList = [];
-    // 获取重复角色
-    for (final TaskFilterResult task in tasks) {
-      for (final Chara chara in task.task.charas) {
-        charaList.addAll(task.task.charas);
-        final int size = set.length;
-        set.add(chara.prefabId);
-        // 长度不变代表重复
-        if (size == set.length) {
-          repeartCharaIdList.add(chara.prefabId);
-        }
+    required List<int> usedList,
+    required List<List<List<TaskFilterResult>>> tempArr}) {
+  final Set<int> set = <int>{};
+  // 重复的角色
+  final List<int> repeartCharaIdList = [];
+  // 当前组合使用的角色
+  final List<Chara> charaList = [];
+  // 获取重复角色
+  for (final TaskFilterResult task in taskList) {
+    for (final Chara chara in task.task.charas) {
+      charaList.addAll(task.task.charas);
+      final int size = set.length;
+      set.add(chara.prefabId);
+      // 长度不变代表重复
+      if (size == set.length) {
+        repeartCharaIdList.add(chara.prefabId);
       }
     }
-    // 未拥有角色算作重复
-    final List<int> unHaveList = filterUnHaveCharas(charaList, unHaveCharas);
-    final List<TaskFilterResult> arr = repeatCondition(
-        repeatCharas: repeartCharaIdList,
-        unHaveCharas: unHaveList,
-        taskList: tasks);
-    if (arr.isNotEmpty) {
-      final int usedCount = countUsed(arr, usedList);
-      tempArr[usedCount].add(arr);
-    }
   }
-  // 感觉有问题
-  final List<List<TaskFilterResult>> result = tempArr
-      .map((e) => sortByScore(e))
-      .toList()  
-      .reversed
-      .fold([], (List<List<TaskFilterResult>> previousValue,
-          List<List<TaskFilterResult>> element) {
-    previousValue.addAll(element);
-    return previousValue;
-  });
-
-  return result;
+  // 未拥有角色算作重复
+  final List<int> unHaveList = filterUnHaveCharas(charaList, unHaveCharas);
+  final List<TaskFilterResult> arr = repeatCondition(
+      repeatCharas: repeartCharaIdList,
+      unHaveCharas: unHaveList,
+      taskList: taskList);
+  if (arr.isNotEmpty) {
+    final int usedCount = countUsed(arr, usedList);
+    tempArr[usedCount].add(arr);
+  }
 }
 
 // 排序
@@ -177,14 +159,15 @@ List<TaskFilterResult> repeatCondition(
     map[prefabId] = charaCount + 1;
   }
 
-  final List<TaskFilterResult> tempList = taskList.map((TaskFilterResult task) {
-    final dynamic json = jsonDecode(jsonEncode(task));
-    return TaskFilterResult(
-        bossId: json['bossId'] as int,
-        index: json['index'] as int,
-        prefabId: json['prefabId'] as int,
-        task: Task.fromJson(json['task'] as Map<String, dynamic>));
-  }).toList();
+  // final List<TaskFilterResult> tempList = taskList.map((TaskFilterResult task) {
+  // final dynamic json = jsonDecode(jsonEncode(task));
+  //   return TaskFilterResult(
+  //       bossId: json['bossId'] as int,
+  //       index: json['index'] as int,
+  //       prefabId: json['prefabId'] as int,
+  //       task: Task.fromJson(json['task'] as Map<String, dynamic>));
+  // }).toList();
+  final List<TaskFilterResult> tempList = List.from(taskList);
 
   for (final TaskFilterResult filterResult in tempList) {
     Chara? unHaveChara;
@@ -239,26 +222,57 @@ List<int> filterUnHaveCharas(List<Chara> charas, List<Chara> unHaveChras) {
   return result;
 }
 
-/// 将List<TaskFilterResult> 转为以k个为一组的List<List<TaskFilterResult>>
-List<List<TaskFilterResult>> combine(List<TaskFilterResult> taskList, int k) {
-  final List<List<TaskFilterResult>> result = [];
+/// 将List<TaskFilterResult> 转为以k个为一组的List<List<TaskFilterResult>>,同时过滤不符合条件的组合
+List<List<TaskFilterResult>> combineAndFilter(List<TaskFilterResult> taskList,
+    int k, List<Chara> unHaveCharas, List<int> usedList) {
   final List<TaskFilterResult> subResult = [];
+  final List<List<List<TaskFilterResult>>> tempArr = [[], [], [], []];
+  int count = 0;
+ 
+  int total = 0;
   void combineSub(int start, List<TaskFilterResult> subResult) {
     if (subResult.length == k) {
-      result.add(List<TaskFilterResult>.from(subResult));
+      // result.add(List<TaskFilterResult>.from(subResult));
+      // 长度符合时候,符合条件则放进tempArr
+
+      filterResult(
+          taskList: List<TaskFilterResult>.from(subResult),
+          unHaveCharas: unHaveCharas,
+          tempArr: tempArr,
+          usedList: usedList);
       return;
     }
     final int len = subResult.length;
     // 还需要多少个元素才能符合条件，若taskList剩余的长度不够，则不符合继续循环
     final int conditionLen = taskList.length - (k - len) + 1;
     for (int i = 0; i < conditionLen; i++) {
-      subResult.add(taskList[i]);
+      /// TODO
+      // final dynamic json = jsonDecode(jsonEncode(taskList[i]));
+      count++;
+    final int startTime = DateTime.now().millisecondsSinceEpoch;
+      subResult.add(TaskFilterResult(
+        bossId: taskList[i].bossId,
+        index: taskList[i].index,
+        prefabId: taskList[i].prefabId,
+        task: taskList[i].task,
+      ));
+      total += DateTime.now().millisecondsSinceEpoch - startTime;
       combineSub(i + 1, subResult);
       subResult.removeLast();
     }
   }
 
   combineSub(0, subResult);
+  '$count count'.debug();
+  final List<List<TaskFilterResult>> result = tempArr
+      .map((e) => sortByScore(e))
+      .toList()
+      .reversed
+      .fold([], (List<List<TaskFilterResult>> previousValue,
+          List<List<TaskFilterResult>> element) {
+    previousValue.addAll(element);
+    return previousValue;
+  });
   return result;
 }
 
@@ -293,13 +307,13 @@ class TaskFilterResult {
   Chara? borrowChara;
   int index;
   Task task;
-  Map<String, dynamic> toJson() => <String, dynamic>{ 
-    "bossId": bossId,
-    "prefabId": prefabId,
-    "borrowChara": borrowChara,
-    "index":index,
-    "task": task
-  };
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        "bossId": bossId,
+        "prefabId": prefabId,
+        "borrowChara": borrowChara,
+        "index": index,
+        "task": task
+      };
 }
 
 class FilterIsolateConfig {
@@ -313,4 +327,15 @@ class FilterIsolateConfig {
   List<int> removeList;
   List<int> usedList;
   List<Chara> unHaveCharaList;
+}
+
+class TestCopy {
+  TestCopy({required this.id, required this.name});
+
+  int id;
+  String name;
+
+  TestCopy copy() {
+    return TestCopy(id: id, name: name);
+  }
 }

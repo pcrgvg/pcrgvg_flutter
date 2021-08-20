@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_sliver/extended_sliver.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
@@ -7,15 +9,19 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:like_button/like_button.dart';
+import 'package:pcrgvg_flutter/constants/Images.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/db/hive_db.dart';
 import 'package:pcrgvg_flutter/db/pcr_db.dart';
+import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
 import 'package:pcrgvg_flutter/isolate/filter_task.dart';
+import 'package:pcrgvg_flutter/utils/store_util.dart';
 import 'package:pcrgvg_flutter/widgets/animate_header.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
+import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
 import 'package:pcrgvg_flutter/widgets/list_box.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +45,7 @@ class _HomePage extends State<HomePage> {
   @override
   void initState() {
     // TODO(KURUMI): CHECKUPDATE
-    // PcrDb.checkUpdate();
+    PcrDb.checkUpdate();
 
     super.initState();
   }
@@ -49,10 +55,7 @@ class _HomePage extends State<HomePage> {
     final ThemeData theme = Theme.of(context);
     return ChangeNotifierProvider<HomeProvider>(
         create: (_) => HomeProvider(),
-        child: Selector<HomeProvider, HomeProvider>(
-          selector: (_, HomeProvider homeModel) => homeModel,
-          builder: (_, HomeProvider homeModel, __) {
-            return Selector<HomeProvider, List<GvgTask>>(
+        child: Selector<HomeProvider, List<GvgTask>>(
               selector: (_, HomeProvider homeModel) => homeModel.gvgTaskList,
               shouldRebuild: (List<GvgTask> pre, List<GvgTask> next) =>
                   pre.ne(next),
@@ -60,10 +63,9 @@ class _HomePage extends State<HomePage> {
                 // TODO(KURUMI): 处理判断
                 'build'.debug();
                 return ListBox<HomeProvider>(
-                    model: homeModel,
                     child: CustomScrollView(
                       slivers: <Widget>[
-                        _Header(theme: theme, homeModel: homeModel),
+                        _Header(theme: theme),
                         ...List<MultiSliver>.generate(gvgTaskList.length,
                             (int index) {
                           final GvgTask gvgTask = gvgTaskList[index];
@@ -99,9 +101,7 @@ class _HomePage extends State<HomePage> {
                       ],
                     ));
               },
-            );
-          },
-        ));
+            ));
   }
 }
 
@@ -109,14 +109,14 @@ class _Header extends StatelessWidget {
   const _Header({
     Key? key,
     required this.theme,
-    required this.homeModel,
   }) : super(key: key);
 
   final ThemeData theme;
-  final HomeProvider homeModel;
+
 
   @override
   Widget build(BuildContext context) {
+      final HomeProvider homeModel = context.read<HomeProvider>();
     return SliverPinnedToBoxAdapter(
       child: Selector<HomeProvider, bool>(
         selector: (_, HomeProvider model) => model.hasScrolled,
@@ -133,13 +133,9 @@ class _Header extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Text(
-                              context.select<HomeProvider, String>(
+                            Text( ServerType.getName(context.select<HomeProvider, String>(
                                           (HomeProvider value) =>
-                                              value.gvgTaskFilter.server) ==
-                                      'jp'
-                                  ? '日服'
-                                  : '国服',
+                                              value.gvgTaskFilter.server)),
                               style: textStyleH1,
                             ),
                             Text(
@@ -204,8 +200,8 @@ class _Header extends StatelessWidget {
                             usedList: usedList,
                             taskList: homeModel.gvgTaskList,
                             unHaveCharaList: []));
-                    Navigator.of(context).pushNamed(Routes.resultPage.name,
-                        arguments: Routes.resultPage.d(list: res));
+                    MyStore.filterResList = res;
+                    Navigator.of(context).pushNamed(Routes.resultPage.name);
                   },
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -317,12 +313,20 @@ class _TaskItem extends StatelessWidget {
             return !isLiked;
           },
           likeBuilder: (bool isLiked) {
-            return Icon(
-              isLiked
-                  ? FluentIcons.heart_16_filled
-                  : FluentIcons.heart_16_regular,
-              color: theme.accentColor,
-            );
+            return isLiked
+                ? Image.asset(
+                    Images.kkr,
+                    width: 10,
+                    height: 10,
+                  )
+                : ColorFiltered(
+                    colorFilter:
+                         ColorFilter.mode(theme.primaryColor, BlendMode.color),
+                    child: Image.asset(
+                      Images.kkr,
+                      width: 10,
+                      height: 10,
+                    ));
           },
         );
       },
@@ -381,14 +385,8 @@ class _BossHeader extends StatelessWidget {
             children: [
               Hero(
                   tag: '${gvgTask.prefabId}',
-                  child: ExtendedImage.network(
-                    PcrDbUrl.unitImg.replaceFirst(
-                      '{0}',
-                      gvgTask.prefabId.toString(),
-                    ),
-                    width: 40,
-                    height: 40,
-                  )),
+                  child: BossIcon(
+                      width: 40, height: 40, prefabId: gvgTask.prefabId)),
               Container(
                 width: 10,
               ),

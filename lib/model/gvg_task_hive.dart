@@ -1,7 +1,6 @@
 part of 'models.dart';
 
-@HiveType(typeId: MyHive.GvgTaskId)
-class GvgTask extends HiveObject {
+class GvgTask {
   GvgTask({
     required this.id,
     required this.prefabId,
@@ -28,22 +27,21 @@ class GvgTask extends HiveObject {
       unitName: asT<String>(jsonRes['unitName'])!,
       server: asT<String>(jsonRes['server'])!,
       index: asT<int>(jsonRes['index'])!,
-      tasks:  tasks!,
+      tasks: tasks!,
     );
   }
-  @HiveField(0)
+
   int id;
-  @HiveField(1)
+
   int prefabId;
-  @HiveField(2)
+
   String unitName;
-  @HiveField(3)
+
   String server;
-  @HiveField(4)
+
   int index;
-  @HiveField(5)
+
   List<Task> tasks;
-  // HiveList<Task> tasks;
 
   @override
   String toString() {
@@ -75,8 +73,7 @@ class GvgTask extends HiveObject {
           tasks.eq(other.tasks);
 }
 
-@HiveType(typeId: MyHive.TaskId)
-class Task extends HiveObject {
+class Task {
   Task({
     required this.id,
     required this.canAuto,
@@ -132,22 +129,22 @@ class Task extends HiveObject {
       links: links!,
     );
   }
-  @HiveField(0)
+
   int id;
-  @HiveField(1)
+
   List<int> canAuto;
-  @HiveField(2)
+
   int stage;
-  @HiveField(3)
+
   int damage;
-  @HiveField(4)
+
   List<Chara> charas;
-  @HiveField(5)
+
   String remarks;
-  @HiveField(6)
+
   List<Link> links;
   // 1尾刀,2正常
-  @HiveField(7)
+
   int type;
 
   @override
@@ -168,6 +165,17 @@ class Task extends HiveObject {
 
   Task clone() =>
       Task.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
+  Task copy() {
+    return Task(
+        canAuto: List.from(canAuto),
+        id: id,
+        stage: stage,
+        damage: damage,
+        remarks: remarks,
+        type: type,
+        links: links.map((e) => e.copy()).toList(),
+        charas: charas.map((r) => r.cpoy()).toList());
+  }
 
   @override
   bool operator ==(Object other) =>
@@ -237,6 +245,9 @@ class Chara extends HiveObject {
   Chara clone() =>
       Chara.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
 
+  Chara cpoy() => Chara(
+      prefabId: prefabId, unitName: unitName, searchAreaWidth: searchAreaWidth);
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -249,10 +260,19 @@ class Chara extends HiveObject {
           searchAreaWidth == other.searchAreaWidth &&
           rank == other.rank &&
           currentRarity == other.currentRarity;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      prefabId.hashCode ^
+      unitName.hashCode ^
+      rarity.hashCode ^
+      rank.hashCode ^
+      currentRarity.hashCode ^
+      searchAreaWidth.hashCode;
 }
 
-@HiveType(typeId: MyHive.LinkId)
-class Link extends HiveObject {
+class Link {
   Link({
     required this.name,
     required this.link,
@@ -262,9 +282,9 @@ class Link extends HiveObject {
         name: asT<String>(jsonRes['name'])!,
         link: asT<String>(jsonRes['link'])!,
       );
-  @HiveField(0)
+
   String name;
-  @HiveField(1)
+
   String link;
 
   @override
@@ -279,7 +299,7 @@ class Link extends HiveObject {
 
   Link clone() =>
       Link.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
-
+  Link copy() => Link(name: name, link: link);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

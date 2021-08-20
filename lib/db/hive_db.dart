@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:hive/hive.dart';
 import 'package:pcrgvg_flutter/db/pcr_db.dart';
+import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/utils/store_util.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
@@ -9,35 +10,31 @@ import 'package:pcrgvg_flutter/extension/extensions.dart';
 class MyHive {
   const MyHive._();
   static const int PcrDbId = 1;
-  static const int GvgTaskId = PcrDbId + 1;
-  static const int GvgTaskFilterId = GvgTaskId + 1;
+  static const int GvgTaskFilterId = PcrDbId + 1;
   static const int TaskId = GvgTaskFilterId + 1;
   static const int CharaId = TaskId + 1;
-  static const int LinkId = CharaId + 1;
 
   static late Box<PcrDbVersion> pcrDbVersionBox;
-  static late Box<GvgTask> gvgTaskBox;
-  /// GvgTaskFilter: GvgTaskFilterHive 
   static late Box<dynamic> userConfBox; 
-  static late Box<GvgTask> collectionBox; // 用于
   static late Box<int> removedBox;
   static late Box<int> usedBox;
+  static late Box<Chara> jpCharaBox;
+  static late Box<Chara> twCharaBox;
+  static late Box<Chara> cnCharaBox;
 
   static Future<void> init() async {
     Hive.init('${MyStore.appSurDir.path}${Platform.pathSeparator}hivedb');
     Hive
       ..registerAdapter(PcrDbVersionAdapter())
       ..registerAdapter(GvgTaskFilterHiveAdapter())
-      ..registerAdapter(CharaAdapter())
-      ..registerAdapter(GvgTaskAdapter())
-      ..registerAdapter(TaskAdapter())
-      ..registerAdapter(LinkAdapter());
+      ..registerAdapter(CharaAdapter());
     pcrDbVersionBox = await Hive.openBox(HiveBoxKey.PcrDbVersion);
-    gvgTaskBox = await Hive.openBox('gvgTaskBox');
     userConfBox = await Hive.openBox<dynamic>('userConfBox');
     removedBox = await Hive.openBox(HiveBoxKey.removedBox);
     usedBox = await Hive.openBox(HiveBoxKey.usedBox);
-    collectionBox = await Hive.openBox(HiveBoxKey.collectionBox);
+    jpCharaBox = await Hive.openBox(HiveBoxKey.jpCharaBox);
+    twCharaBox = await Hive.openBox(HiveBoxKey.twCharaBox);
+    cnCharaBox = await Hive.openBox(HiveBoxKey.cnCharaBox);
     await initPcrDbversion();
   }
 
@@ -71,4 +68,7 @@ abstract class HiveBoxKey {
   static const String usedBox = 'usedBox';
   static const String PcrDbVersion = 'PcrDbVersion';
   static const String collectionBox = 'collectionBox';
+  static const String cnCharaBox = 'cnCharaBox';
+  static const String twCharaBox = 'twCharaBox';
+  static const String jpCharaBox = 'jpCharaBox';
 }

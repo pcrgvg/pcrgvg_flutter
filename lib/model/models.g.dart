@@ -46,113 +46,9 @@ class PcrDbVersionAdapter extends TypeAdapter<PcrDbVersion> {
           typeId == other.typeId;
 }
 
-class GvgTaskAdapter extends TypeAdapter<GvgTask> {
-  @override
-  final int typeId = 2;
-
-  @override
-  GvgTask read(BinaryReader reader) {
-    final numOfFields = reader.readByte();
-    final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
-    return GvgTask(
-      id: fields[0] as int,
-      prefabId: fields[1] as int,
-      unitName: fields[2] as String,
-      server: fields[3] as String,
-      index: fields[4] as int,
-      tasks: (fields[5] as List).cast<Task>(),
-    );
-  }
-
-  @override
-  void write(BinaryWriter writer, GvgTask obj) {
-    writer
-      ..writeByte(6)
-      ..writeByte(0)
-      ..write(obj.id)
-      ..writeByte(1)
-      ..write(obj.prefabId)
-      ..writeByte(2)
-      ..write(obj.unitName)
-      ..writeByte(3)
-      ..write(obj.server)
-      ..writeByte(4)
-      ..write(obj.index)
-      ..writeByte(5)
-      ..write(obj.tasks);
-  }
-
-  @override
-  int get hashCode => typeId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is GvgTaskAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
-}
-
-class TaskAdapter extends TypeAdapter<Task> {
-  @override
-  final int typeId = 4;
-
-  @override
-  Task read(BinaryReader reader) {
-    final numOfFields = reader.readByte();
-    final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
-    return Task(
-      id: fields[0] as int,
-      canAuto: (fields[1] as List).cast<int>(),
-      stage: fields[2] as int,
-      damage: fields[3] as int,
-      charas: (fields[4] as List).cast<Chara>(),
-      remarks: fields[5] as String,
-      links: (fields[6] as List).cast<Link>(),
-      type: fields[7] as int,
-    );
-  }
-
-  @override
-  void write(BinaryWriter writer, Task obj) {
-    writer
-      ..writeByte(8)
-      ..writeByte(0)
-      ..write(obj.id)
-      ..writeByte(1)
-      ..write(obj.canAuto)
-      ..writeByte(2)
-      ..write(obj.stage)
-      ..writeByte(3)
-      ..write(obj.damage)
-      ..writeByte(4)
-      ..write(obj.charas)
-      ..writeByte(5)
-      ..write(obj.remarks)
-      ..writeByte(6)
-      ..write(obj.links)
-      ..writeByte(7)
-      ..write(obj.type);
-  }
-
-  @override
-  int get hashCode => typeId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is TaskAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
-}
-
 class CharaAdapter extends TypeAdapter<Chara> {
   @override
-  final int typeId = 5;
+  final int typeId = 4;
 
   @override
   Chara read(BinaryReader reader) {
@@ -202,46 +98,9 @@ class CharaAdapter extends TypeAdapter<Chara> {
           typeId == other.typeId;
 }
 
-class LinkAdapter extends TypeAdapter<Link> {
-  @override
-  final int typeId = 6;
-
-  @override
-  Link read(BinaryReader reader) {
-    final numOfFields = reader.readByte();
-    final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
-    return Link(
-      name: fields[0] as String,
-      link: fields[1] as String,
-    );
-  }
-
-  @override
-  void write(BinaryWriter writer, Link obj) {
-    writer
-      ..writeByte(2)
-      ..writeByte(0)
-      ..write(obj.name)
-      ..writeByte(1)
-      ..write(obj.link);
-  }
-
-  @override
-  int get hashCode => typeId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is LinkAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
-}
-
 class GvgTaskFilterHiveAdapter extends TypeAdapter<GvgTaskFilterHive> {
   @override
-  final int typeId = 3;
+  final int typeId = 2;
 
   @override
   GvgTaskFilterHive read(BinaryReader reader) {

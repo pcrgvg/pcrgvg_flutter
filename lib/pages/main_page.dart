@@ -3,6 +3,7 @@ import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pcrgvg_flutter/constants/Images.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
+import 'package:pcrgvg_flutter/pages/collection_page.dart';
 import 'package:pcrgvg_flutter/pages/home/home_page.dart';
 import 'package:pcrgvg_flutter/pages/mine_page.dart';
 import 'package:pcrgvg_flutter/widgets/bottom_bar.dart';
@@ -20,8 +21,8 @@ class MainPage extends StatefulWidget {
 
 class _MainPage extends State<MainPage> {
   int currentBackPressTime = 0;
-  int currentPageIndex = 0;
-  final List<Widget> pages = <Widget>[const HomePage(), const MinePage()];
+  int currentPageIndex = 1;
+  final List<Widget> pages = <Widget>[const CollectionPage(),const HomePage(), const MinePage()];
 
   Future<bool> _onWillPop() async {
     final int now = DateTime.now().millisecondsSinceEpoch;
@@ -54,8 +55,9 @@ class _MainPage extends State<MainPage> {
           setState(() {});
         },
         items: <BottomBarItem>[
-          BottomBarItem(iconPath: Images.unitIcon, activeIconPath: Images.star),
-          BottomBarItem(iconPath: Images.tabSwords, activeIconPath: Images.tabSwordsActive),
+          BottomBarItem(iconPath: Images.tabMm, activeIconPath: Images.tabMmActive),
+          BottomBarItem(iconPath: Images.tabMmt, activeIconPath: Images.tabMmtActive),
+          BottomBarItem(iconPath: Images.tabNnk, activeIconPath: Images.tabNnkActive),
         ],
       ),
     );

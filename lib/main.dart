@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
                     position: ToastPosition.bottom,
                     child: MaterialApp(
                       debugShowCheckedModeBanner: false,
-                      title: 'PCRGVG',
+                      title: '公主链接公会战',
                       theme: themeProvider.theme(),
                       darkTheme: themeProvider.theme(isDark: true),
                       initialRoute: Routes.spalshPage.name,

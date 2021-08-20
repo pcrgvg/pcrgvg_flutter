@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:pcrgvg_flutter/isolate/filter_task.dart';
 
 class MyStore {
   const MyStore._();
@@ -16,4 +17,7 @@ class MyStore {
     appDocDir = await getApplicationDocumentsDirectory();
     appSurDir = await getApplicationSupportDirectory();
   }
+  // 分刀数据可能比较大,使用路由传参可能会出现卡顿
+  static  List<List<TaskFilterResult>> filterResList = [];
+
 }

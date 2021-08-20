@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
    <application
-        android:label="pcrgvg_flutter"
+        android:label="公主链接公会战"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

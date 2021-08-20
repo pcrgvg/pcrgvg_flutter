@@ -6,11 +6,16 @@
 
 class Images {
   static const String bg = 'assets/images/bg.png';
+	static const String kkr = 'assets/images/kkr.jpg';
 	static const String loading = 'assets/images/loading.gif';
 	static const String star = 'assets/images/star.png';
 	static const String starDisabled = 'assets/images/star_disabled.png';
-	static const String tabSwords = 'assets/images/tab/swords.png';
-	static const String tabSwordsActive = 'assets/images/tab/swords_active.png';
+	static const String tabMm = 'assets/images/tab/mm.png';
+	static const String tabMmt = 'assets/images/tab/mmt.png';
+	static const String tabMmtActive = 'assets/images/tab/mmt_active.png';
+	static const String tabMmActive = 'assets/images/tab/mm_active.png';
+	static const String tabNnk = 'assets/images/tab/nnk.png';
+	static const String tabNnkActive = 'assets/images/tab/nnk_active.png';
 	static const String unitIcon = 'assets/images/unit_icon.webp';
 	
 }

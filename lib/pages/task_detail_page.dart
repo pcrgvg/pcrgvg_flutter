@@ -11,6 +11,7 @@ import 'package:pcrgvg_flutter/extension/extensions.dart';
 @FFArgumentImport()
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
+import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
 import 'dart:math' as math;
 
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
@@ -253,14 +254,7 @@ class _Head extends StatelessWidget {
             top: -30,
             child: Hero(
                 tag: '$bossPrefab',
-                child: ExtendedImage.network(
-                  PcrDbUrl.unitImg.replaceFirst(
-                    '{0}',
-                    bossPrefab.toString(),
-                  ),
-                  width: 60,
-                  height: 60,
-                ))),
+                child:  BossIcon(prefabId: bossPrefab, width: 60, height: 60,),)),
       ],
     );
   }

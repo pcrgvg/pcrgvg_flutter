@@ -9,9 +9,11 @@ import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
 
 const List<String> routeNames = <String>[
+  'collectionPage',
   'homeFilterPage',
   'homePage',
   'mainPage',
+  'manageCharaPage',
   'minePage',
   'resultDetailPage',
   'resultPage',
@@ -21,6 +23,17 @@ const List<String> routeNames = <String>[
 
 class Routes {
   const Routes._();
+
+  /// 'collectionPage'
+  ///
+  /// [name] : 'collectionPage'
+  ///
+  /// [routeName] : 'collectionPage'
+  ///
+  /// [constructors] :
+  ///
+  /// CollectionPage : [Key? key]
+  static const _CollectionPage collectionPage = _CollectionPage();
 
   /// 'homeFilterPage'
   ///
@@ -55,6 +68,13 @@ class Routes {
   /// MainPage : [Key? key]
   static const _MainPage mainPage = _MainPage();
 
+  /// 'manageCharaPage'
+  ///
+  /// [name] : 'manageCharaPage'
+  ///
+  /// [routeName] : 'manageCharaPage'
+  static const String manageCharaPage = 'manageCharaPage';
+
   /// 'minePage'
   ///
   /// [name] : 'minePage'
@@ -85,7 +105,7 @@ class Routes {
   ///
   /// [constructors] :
   ///
-  /// ResultPage : [Key? key, List<List<TaskFilterResult>>(required) list]
+  /// ResultPage : [Key? key]
   static const _ResultPage resultPage = _ResultPage();
 
   /// 'spalshPage'
@@ -109,6 +129,19 @@ class Routes {
   ///
   /// TaskDetailPage : [Key? key, int(required) bossPrefab, Task(required) task]
   static const _TaskDetailPage taskDetailPage = _TaskDetailPage();
+}
+
+class _CollectionPage {
+  const _CollectionPage();
+
+  String get name => 'collectionPage';
+
+  Map<String, dynamic> d({Key? key}) => <String, dynamic>{
+        'key': key,
+      };
+
+  @override
+  String toString() => name;
 }
 
 class _HomeFilterPage {
@@ -186,11 +219,8 @@ class _ResultPage {
 
   String get name => 'resultPage';
 
-  Map<String, dynamic> d(
-          {Key? key, required List<List<TaskFilterResult>> list}) =>
-      <String, dynamic>{
+  Map<String, dynamic> d({Key? key}) => <String, dynamic>{
         'key': key,
-        'list': list,
       };
 
   @override

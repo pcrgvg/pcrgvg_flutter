@@ -13,7 +13,9 @@ import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:pcrgvg_flutter/isolate/filter_task.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
+import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
@@ -34,6 +36,7 @@ class _ResultDetailPageState extends State<ResultDetailPage> {
   late String bgUrl;
   PageController pageController =
       PageController(initialPage: 0, keepPage: true);
+  int current = 0;
   @override
   void initState() {
     super.initState();
@@ -42,6 +45,13 @@ class _ResultDetailPageState extends State<ResultDetailPage> {
     final int i = math.Random().nextInt(taskResult.task.charas.length);
     bgUrl = PcrDbUrl.cardImg
         .replaceFirst('{0}', '${taskResult.task.charas[i].prefabId + 30}');
+  }
+
+  void onBottomTap(int index) {
+    current = index;
+    pageController.animateToPage(index,
+        duration: const Duration(milliseconds: 300), curve: Curves.linear);
+    setState(() {});
   }
 
   @override
@@ -56,37 +66,86 @@ class _ResultDetailPageState extends State<ResultDetailPage> {
           Positioned.fill(
               child: PageView(
             controller: pageController,
+            onPageChanged: (int index) {
+              current = index;
+              setState(() {});
+            },
             children: [
               for (TaskFilterResult taskResult in widget.taskResult)
                 _Content(
-                  key: ValueKey<int>(taskResult.task.id),
+                  key: PageStorageKey<int>(taskResult.task.id),
                   theme: theme,
                   taskResult: taskResult,
                   bossPrefab: taskResult.prefabId,
                 ),
             ],
           )),
-          Positioned(
-            left: 0,
-            bottom: 16,
-            width: 200,
-            height: 60,
+          _Bottom(
+              theme: theme,
+              taskResult: widget.taskResult,
+              current: current,
+              onBottomTap: onBottomTap),
+          _Back(theme: theme)
+        ],
+      ),
+    );
+  }
+}
+
+class _Bottom extends StatelessWidget {
+  const _Bottom(
+      {Key? key,
+      required this.theme,
+      required this.taskResult,
+      required this.current,
+      required this.onBottomTap})
+      : super(key: key);
+
+  final ThemeData theme;
+  final List<TaskFilterResult> taskResult;
+  final int current;
+  final Function onBottomTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 16,
+      child: Center(
+        child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(16)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
             child: Container(
+              decoration: BoxDecoration(
+                  color: theme.scaffoldBackgroundColor.withOpacity(0.8)),
               width: 200,
               height: 60,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-              ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                child: Container(
-                  child: Text('3'),
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List<GestureDetector>.generate(taskResult.length,
+                    (int index) {
+                  final TaskFilterResult item = taskResult[index];
+                  return GestureDetector(
+                      onTap: () {
+                        onBottomTap(index);
+                      },
+                      child: AnimatedContainer(
+                          width: current == index ? 40 : 35,
+                          height: current == index ? 40 : 35,
+                          duration: const Duration(milliseconds: 300),
+                          child: BossIcon(
+                            prefabId: item.prefabId,
+                            shape: current == index
+                                ? BoxShape.rectangle
+                                : BoxShape.circle,
+                          )));
+                }),
               ),
             ),
           ),
-          _Back(theme: theme)
-        ],
+        ),
       ),
     );
   }
@@ -166,7 +225,7 @@ class _Content extends StatelessWidget {
         mainAxisSpacing: 16,
       ),
       padding: EdgeInsets.only(
-          top: Screens.statusBarHeight + 100, left: 16, right: 16, bottom: 16),
+          top: Screens.statusBarHeight + 100, left: 16, right: 16, bottom: 92),
       physics: const BouncingScrollPhysics(),
       children: [
         _Head(theme: theme, task: task, bossPrefab: bossPrefab),
@@ -285,12 +344,17 @@ class _Head extends StatelessWidget {
               Row(
                 children: [
                   for (Chara chara in task.charas)
-                    Padding(
+                    Container(
                       padding: const EdgeInsets.only(right: 4),
-                      child: IconChara(
-                        chara: chara,
+                      child: Stack(
+                        children: [
+                          IconChara(
+                            chara: chara,
+                          ),
+                          Positioned( left: 0, top: 0, child: Container())
+                        ],
                       ),
-                    ),
+                    )
                 ],
               ),
             ],
@@ -299,11 +363,8 @@ class _Head extends StatelessWidget {
         Positioned(
             left: 20,
             top: -30,
-            child: ExtendedImage.network(
-              PcrDbUrl.unitImg.replaceFirst(
-                '{0}',
-                bossPrefab.toString(),
-              ),
+            child: BossIcon(
+              prefabId: bossPrefab,
               width: 60,
               height: 60,
             )),

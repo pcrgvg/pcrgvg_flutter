@@ -20,6 +20,11 @@ class PcrGvgApi {
         list.add(GvgTask.fromJson(item as Map<String, dynamic>));
       }
     }
+    // if (res.data is List) {
+    //   for (final item in res.data! as List) {
+    //     list.add(GvgTask.fromJson(item as Map<String, dynamic>));
+    //   }
+    // }
     return list;
   }
 }

@@ -5,16 +5,14 @@ import 'package:oktoast/oktoast.dart';
 import 'package:pcrgvg_flutter/apis/pcr_db_api.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/db/hive_db.dart';
+import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/utils/store_util.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:brotli/brotli.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 
-abstract class ServerType {
-  static const String cn = 'cn';
-  static const String jp = 'jp';
-}
+
 
 class PcrDb {
   const PcrDb._();
@@ -35,8 +33,10 @@ class PcrDb {
   static Future<void> checkUpdate() async {
     final List<PcrDbVersion?> jpVersion = await checkUpdatedbJp();
     final List<PcrDbVersion?> cnVersion = await checkUpdatedbCn();
-    final bool jp = jpVersion.first?.truthVersion != jpVersion.last?.truthVersion;
-    final bool cn = cnVersion.first?.truthVersion != cnVersion.last?.truthVersion;
+    final bool jp =
+        jpVersion.first?.truthVersion != jpVersion.last?.truthVersion;
+    final bool cn =
+        cnVersion.first?.truthVersion != cnVersion.last?.truthVersion;
     if (jp || cn) {
       final Map<String, PcrDbVersion?> serverDbversion = {
         'jp': jp ? jpVersion.last : null,
@@ -102,7 +102,7 @@ class PcrDb {
                     if (cnVersion != null) {
                       await downloadDbCn(cnVersion);
                     }
-                   
+
                     '数据库更新完毕'.toast();
                   },
                   child: Text(
@@ -122,7 +122,7 @@ class PcrDb {
   }
 
   static Future<Database> getDb(String server) async {
-    final String dbName = server == ServerType.jp ? jpDbName : cnDbName;
+    final String dbName = server == ServerType.cn ? cnDbName : jpDbName;
     return await openDatabase('$dbDirPath${Platform.pathSeparator}$dbName');
   }
 
@@ -202,6 +202,8 @@ class PcrDb {
     }).toList();
   }
 
+  // 前中后
+
   // 获取所有会战期次
   static Future<List<ClanPeriod>> getPeriods(String server) async {
     final Database db = await getDb(server);
@@ -212,15 +214,22 @@ class PcrDb {
         FROM
           clan_battle_period
         WHERE
-          clan_battle_period.clan_battle_id >= ${server == ServerType.cn ? 1009 : 1033}
+          clan_battle_period.clan_battle_id >= ${server == ServerType.cn ? 1015 : 1033}
         ORDER BY
           clan_battle_period.clan_battle_id DESC
      ''');
     await db.close();
-    return queryRes
+    final List<ClanPeriod> periodsList = queryRes
         .map<ClanPeriod>(
             (Map<String, Object?> period) => ClanPeriod.fromJson(period))
         .toList();
+    // 台服会战期次少于日服5次
+    if (server == ServerType.tw) {
+      periodsList.forEach((ClanPeriod period) {
+        period.clanBattleId -= 5;
+      });
+    }
+    return periodsList;
   }
 
   // 获取当期boss

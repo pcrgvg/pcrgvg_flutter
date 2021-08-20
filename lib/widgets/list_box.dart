@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:pcrgvg_flutter/providers/base_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:provider/provider.dart';
 
 class ListBox<T extends BaseListProvider> extends StatelessWidget {
   const ListBox(
       {Key? key,
-      required this.model,
       required this.child,
       this.enablePullDown = true,
       this.enablePullUp = false})
       : super(key: key);
 
-  final T model;
   final Widget child;
   final bool enablePullDown;
   final bool enablePullUp;
 
   @override
   Widget build(BuildContext context) {
+    final model = context.read<T>();
     return Scaffold(
       body: NotificationListener<Notification>(
         onNotification: (Notification notification) {

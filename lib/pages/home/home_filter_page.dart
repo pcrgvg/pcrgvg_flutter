@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
+import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/providers/home_filter_provider.dart';
 @FFArgumentImport()
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
@@ -32,48 +33,42 @@ class HomeFilterPage extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     return ChangeNotifierProvider<HomeFilterProvider>(
         create: (_) => HomeFilterProvider(),
-        child: Selector<HomeFilterProvider, HomeFilterProvider>(
-            selector: (_, HomeFilterProvider homeFiltermodel) =>
-                homeFiltermodel,
-            builder: (_, HomeFilterProvider homeFiltermodel, Widget? c) {
-              return ListBox<HomeFilterProvider>(model: homeFiltermodel, child: CustomScrollView(
-                      slivers: <Widget>[
-                        _Header(theme: theme, homeFiltermodel: homeFiltermodel),
-                        SliverPadding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                          ),
-                          sliver: MultiSliver(children: [
-                            _ServerSelection(
-                                theme: theme, homeFiltermodel: homeFiltermodel),
-                            _ClanSelection(
-                              theme: theme,
-                              homeFiltermodel: homeFiltermodel,
-                            ),
-                            _BossSelection(
-                              homeFiltermodel: homeFiltermodel,
-                              theme: theme,
-                            ),
-                            _StageSelection(
-                                theme: theme, homeFiltermodel: homeFiltermodel),
-                            _MethodSelection(
-                                theme: theme, homeFiltermodel: homeFiltermodel),
-                            _UsedOrRemovedSelection(
-                                theme: theme, homeFiltermodel: homeFiltermodel),
-                          ]),
-                        ),
-                      ],
-                    ));
-
-            }));
+        child: ListBox<HomeFilterProvider>(
+            child: CustomScrollView(
+          slivers: <Widget>[
+            _Header(theme: theme),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+              ),
+              sliver: MultiSliver(children: [
+                _ServerSelection(theme: theme),
+                _ClanSelection(
+                  theme: theme,
+                ),
+                _BossSelection(
+                  theme: theme,
+                ),
+                _StageSelection(
+                  theme: theme,
+                ),
+                _MethodSelection(
+                  theme: theme,
+                ),
+                _UsedOrRemovedSelection(
+                  theme: theme,
+                ),
+              ]),
+            ),
+          ],
+        )));
   }
 }
 
 class _UsedOrRemovedSelection extends StatelessWidget {
   const _UsedOrRemovedSelection(
-      {Key? key, required this.theme, required this.homeFiltermodel})
+      {Key? key, required this.theme,})
       : super(key: key);
-  final HomeFilterProvider homeFiltermodel;
   final ThemeData theme;
   Color getColor(bool selected) {
     return selected ? theme.primaryColor : theme.accentColor;
@@ -81,6 +76,7 @@ class _UsedOrRemovedSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      final HomeFilterProvider homeFiltermodel = context.read<HomeFilterProvider>();
     final String usedOrRemoved = context.select<HomeFilterProvider, String>(
         (HomeFilterProvider model) => model.gvgTaskFilter.usedOrRemoved);
     return SliverToBoxAdapter(
@@ -96,10 +92,10 @@ class _UsedOrRemovedSelection extends StatelessWidget {
           Expanded(
               child: Wrap(
             children: [
-              _buildButton(usedOrRemoved, 'all'),
-              _buildButton(usedOrRemoved, 'used'),
-              _buildButton(usedOrRemoved, 'removed'),
-              _buildButton(usedOrRemoved, 'tail'),
+              _buildButton(usedOrRemoved, 'all', homeFiltermodel),
+              _buildButton(usedOrRemoved, 'used', homeFiltermodel),
+              _buildButton(usedOrRemoved, 'removed', homeFiltermodel),
+              _buildButton(usedOrRemoved, 'tail',homeFiltermodel),
             ],
           ))
         ],
@@ -121,7 +117,7 @@ class _UsedOrRemovedSelection extends StatelessWidget {
     }
   }
 
-  Padding _buildButton(String usedOrRemoved, String type) {
+  Padding _buildButton(String usedOrRemoved, String type, HomeFilterProvider homeFiltermodel) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: MaterialButton(
@@ -145,9 +141,8 @@ class _UsedOrRemovedSelection extends StatelessWidget {
 
 class _MethodSelection extends StatelessWidget {
   const _MethodSelection(
-      {Key? key, required this.homeFiltermodel, required this.theme})
+      {Key? key,  required this.theme})
       : super(key: key);
-  final HomeFilterProvider homeFiltermodel;
   final ThemeData theme;
   Color getColor(bool selected) {
     return selected ? theme.primaryColor : theme.accentColor;
@@ -155,6 +150,7 @@ class _MethodSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      final HomeFilterProvider homeFiltermodel = context.read<HomeFilterProvider>();
     return SliverToBoxAdapter(
         child: Selector<HomeFilterProvider, List<int>>(
       selector: (_, HomeFilterProvider model) => model.gvgTaskFilter.methods,
@@ -171,9 +167,9 @@ class _MethodSelection extends StatelessWidget {
             Expanded(
                 child: Wrap(
               children: [
-                _buildButton(methods, AutoType.manual),
-                _buildButton(methods, AutoType.auto),
-                _buildButton(methods, AutoType.harfAuto),
+                _buildButton(methods, AutoType.manual, homeFiltermodel),
+                _buildButton(methods, AutoType.auto, homeFiltermodel),
+                _buildButton(methods, AutoType.harfAuto, homeFiltermodel),
               ],
             ))
           ],
@@ -182,19 +178,7 @@ class _MethodSelection extends StatelessWidget {
     ));
   }
 
-  String getText(int type) {
-    switch (type) {
-      case AutoType.auto:
-        return '自动';
-      case AutoType.harfAuto:
-        return '半自动';
-      case AutoType.manual:
-      default:
-        return '手动';
-    }
-  }
-
-  Padding _buildButton(List<int> methods, int autoType) {
+  Padding _buildButton(List<int> methods, int autoType, HomeFilterProvider homeFiltermodel) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: MaterialButton(
@@ -208,7 +192,7 @@ class _MethodSelection extends StatelessWidget {
         ),
         color: getColor(methods.contains(autoType)).withOpacity(0.2),
         child: Text(
-          getText(autoType),
+          AutoType.getName(autoType),
           style: TextStyle(color: getColor(methods.contains(autoType))),
         ),
       ),
@@ -218,10 +202,9 @@ class _MethodSelection extends StatelessWidget {
 
 class _StageSelection extends StatelessWidget {
   const _StageSelection(
-      {Key? key, required this.homeFiltermodel, required this.theme})
+      {Key? key, required this.theme})
       : super(key: key);
 
-  final HomeFilterProvider homeFiltermodel;
   final ThemeData theme;
   Color getColor(bool selected) {
     return selected ? theme.primaryColor : theme.accentColor;
@@ -229,6 +212,7 @@ class _StageSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      final HomeFilterProvider homeFiltermodel = context.read<HomeFilterProvider>();
     return SliverToBoxAdapter(
         child: Selector<HomeFilterProvider, Tuple2<List<LvPair>, int>>(
       selector: (_, HomeFilterProvider model) => Tuple2<List<LvPair>, int>(
@@ -278,9 +262,8 @@ class _StageSelection extends StatelessWidget {
 
 class _BossSelection extends StatelessWidget {
   const _BossSelection(
-      {Key? key, required this.homeFiltermodel, required this.theme})
+      {Key? key,  required this.theme})
       : super(key: key);
-  final HomeFilterProvider homeFiltermodel;
 
   Color getColor(bool selected) {
     return selected ? theme.primaryColor : theme.accentColor;
@@ -290,6 +273,7 @@ class _BossSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      final HomeFilterProvider homeFiltermodel = context.read<HomeFilterProvider>();
     return SliverToBoxAdapter(
       child: Selector<HomeFilterProvider, List<int>>(
         selector: (_, HomeFilterProvider model) =>
@@ -348,11 +332,9 @@ class _ClanSelection extends StatelessWidget {
   const _ClanSelection({
     Key? key,
     required this.theme,
-    required this.homeFiltermodel,
   }) : super(key: key);
 
   final ThemeData theme;
-  final HomeFilterProvider homeFiltermodel;
 
   Color getColor(bool selected) {
     return selected ? theme.primaryColor : theme.accentColor;
@@ -360,6 +342,7 @@ class _ClanSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      final HomeFilterProvider homeFiltermodel = context.read<HomeFilterProvider>();
     return SliverToBoxAdapter(
       child: Selector<HomeFilterProvider, Tuple2<List<ClanPeriod>, int>>(
         selector: (_, HomeFilterProvider model) =>
@@ -419,12 +402,10 @@ class _ServerSelection extends StatelessWidget {
   const _ServerSelection({
     Key? key,
     required this.theme,
-    required this.homeFiltermodel,
   }) : super(key: key);
 
   final ThemeData theme;
-  final HomeFilterProvider homeFiltermodel;
-  // final GvgTaskFilterHive gvgTaskFilterHive;
+
 
   Color getColor(bool selected) {
     return selected ? theme.primaryColor : theme.accentColor;
@@ -432,6 +413,7 @@ class _ServerSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      final HomeFilterProvider homeFiltermodel = context.read<HomeFilterProvider>();
     return SliverToBoxAdapter(
       child: Selector<HomeFilterProvider, String>(
         selector: (_, HomeFilterProvider model) => model.gvgTaskFilter.server,
@@ -446,42 +428,9 @@ class _ServerSelection extends StatelessWidget {
               Expanded(
                   child: Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: MaterialButton(
-                      minWidth: 0,
-                      elevation: 0,
-                      onPressed: () {
-                        homeFiltermodel.setServer('jp');
-                      },
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                      ),
-                      color: getColor(server == 'jp').withOpacity(0.2),
-                      child: Text(
-                        '日服',
-                        style: TextStyle(color: getColor(server == 'jp')),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: MaterialButton(
-                      minWidth: 0,
-                      elevation: 0,
-                      onPressed: () {
-                        homeFiltermodel.setServer('cn');
-                      },
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                      ),
-                      color: getColor(server == 'cn').withOpacity(0.2),
-                      child: Text(
-                        '国服',
-                        style: TextStyle(color: getColor(server == 'cn')),
-                      ),
-                    ),
-                  ),
+                  _buildButton(server, ServerType.jp, homeFiltermodel),
+                  _buildButton(server, ServerType.cn, homeFiltermodel),
+                  _buildButton(server, ServerType.tw, homeFiltermodel),
                 ],
               ))
             ],
@@ -490,17 +439,41 @@ class _ServerSelection extends StatelessWidget {
       ),
     );
   }
+
+  Padding _buildButton(String server, String serverType, HomeFilterProvider homeFiltermodel) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: MaterialButton(
+        minWidth: 0,
+        elevation: 0,
+        onPressed: () {
+          homeFiltermodel.setServer(serverType);
+        },
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
+        color: getColor(server == serverType).withOpacity(0.2),
+        child: Text(
+          ServerType.getName(serverType),
+          style: TextStyle(color: getColor(server == serverType)),
+        ),
+      ),
+    );
+  }
 }
 
 class _Header extends StatelessWidget {
-  const _Header({Key? key, required this.theme, required this.homeFiltermodel})
-      : super(key: key);
+  const _Header({
+    Key? key,
+    required this.theme,
+  }) : super(key: key);
 
   final ThemeData theme;
-  final HomeFilterProvider homeFiltermodel;
 
   @override
   Widget build(BuildContext context) {
+    final HomeFilterProvider homeFiltermodel =
+        context.read<HomeFilterProvider>();
     return SliverPinnedToBoxAdapter(
       child: AnimateHeader(
         hasScrolled: true,
