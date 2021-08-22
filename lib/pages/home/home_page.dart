@@ -45,7 +45,7 @@ class _HomePage extends State<HomePage> {
   @override
   void initState() {
     // TODO(KURUMI): CHECKUPDATE
-    PcrDb.checkUpdate();
+    // PcrDb.checkUpdate();
 
     super.initState();
   }
@@ -56,52 +56,47 @@ class _HomePage extends State<HomePage> {
     return ChangeNotifierProvider<HomeProvider>(
         create: (_) => HomeProvider(),
         child: Selector<HomeProvider, List<GvgTask>>(
-              selector: (_, HomeProvider homeModel) => homeModel.gvgTaskList,
-              shouldRebuild: (List<GvgTask> pre, List<GvgTask> next) =>
-                  pre.ne(next),
-              builder: (_, List<GvgTask> gvgTaskList, __) {
-                // TODO(KURUMI): 处理判断
-                'build'.debug();
-                return ListBox<HomeProvider>(
-                    child: CustomScrollView(
-                      slivers: <Widget>[
-                        _Header(theme: theme),
-                        ...List<MultiSliver>.generate(gvgTaskList.length,
-                            (int index) {
-                          final GvgTask gvgTask = gvgTaskList[index];
-                          return MultiSliver(
-                              pushPinnedChildren: true,
-                              children: [
-                                _BossHeader(theme: theme, gvgTask: gvgTask),
-                                if (gvgTask.tasks.isNotEmpty)
-                                  SliverPadding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16),
-                                      sliver: SliverGrid(
-                                          gridDelegate:
-                                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 1,
-                                            crossAxisSpacing: 16.0,
-                                            mainAxisSpacing: 8.0,
-                                            mainAxisExtent: 120.0,
-                                          ),
-                                          delegate: SliverChildBuilderDelegate(
-                                            (_, int index) {
-                                              final Task task =
-                                                  gvgTask.tasks[index];
-                                              return _TaskItem(
-                                                  theme: theme,
-                                                  task: task,
-                                                  bossPrefab: gvgTask.prefabId);
-                                            },
-                                            childCount: gvgTask.tasks.length,
-                                          ))),
-                              ]);
-                        })
-                      ],
-                    ));
-              },
+          selector: (_, HomeProvider homeModel) => homeModel.gvgTaskList,
+          shouldRebuild: (List<GvgTask> pre, List<GvgTask> next) =>
+              pre.ne(next),
+          builder: (_, List<GvgTask> gvgTaskList, __) {
+            // TODO(KURUMI): 处理判断
+            'build'.debug();
+            return ListBox<HomeProvider>(
+                child: CustomScrollView(
+              slivers: <Widget>[
+                _Header(theme: theme),
+                ...List<MultiSliver>.generate(gvgTaskList.length, (int index) {
+                  final GvgTask gvgTask = gvgTaskList[index];
+                  return MultiSliver(pushPinnedChildren: true, children: [
+                    _BossHeader(theme: theme, gvgTask: gvgTask),
+                    if (gvgTask.tasks.isNotEmpty)
+                      SliverPadding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          sliver: SliverGrid(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 1,
+                                crossAxisSpacing: 16.0,
+                                mainAxisSpacing: 8.0,
+                                mainAxisExtent: 120.0,
+                              ),
+                              delegate: SliverChildBuilderDelegate(
+                                (_, int index) {
+                                  final Task task = gvgTask.tasks[index];
+                                  return _TaskItem(
+                                      theme: theme,
+                                      task: task,
+                                      bossPrefab: gvgTask.prefabId);
+                                },
+                                childCount: gvgTask.tasks.length,
+                              ))),
+                  ]);
+                })
+              ],
             ));
+          },
+        ));
   }
 }
 
@@ -113,10 +108,11 @@ class _Header extends StatelessWidget {
 
   final ThemeData theme;
 
-
   @override
   Widget build(BuildContext context) {
-      final HomeProvider homeModel = context.read<HomeProvider>();
+    final HomeProvider homeModel = context.read<HomeProvider>();
+    final String server = context.select<HomeProvider, String>(
+        (HomeProvider value) => value.gvgTaskFilter.server);
     return SliverPinnedToBoxAdapter(
       child: Selector<HomeProvider, bool>(
         selector: (_, HomeProvider model) => model.hasScrolled,
@@ -133,9 +129,8 @@ class _Header extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Text( ServerType.getName(context.select<HomeProvider, String>(
-                                          (HomeProvider value) =>
-                                              value.gvgTaskFilter.server)),
+                            Text(
+                              ServerType.getName(server),
                               style: textStyleH1,
                             ),
                             Text(
@@ -192,14 +187,18 @@ class _Header extends StatelessWidget {
                     final List<int> removedList =
                         MyHive.removedBox.values.toList();
                     final List<int> usedList = MyHive.usedBox.values.toList();
+                    final Box<Chara> charaBox =
+                        MyHive.getServerCharaBox(server);
 
-                    /// TODO unhavechara
+                    final List<int> unHaveCharaList =
+                        charaBox.values.map((e) => e.prefabId).toList();
+                        unHaveCharaList.debug();
                     final List<List<TaskFilterResult>> res =
                         await isolateFilter(FilterIsolateConfig(
                             removeList: removedList,
                             usedList: usedList,
                             taskList: homeModel.gvgTaskList,
-                            unHaveCharaList: []));
+                            unHaveCharaList: unHaveCharaList));
                     MyStore.filterResList = res;
                     Navigator.of(context).pushNamed(Routes.resultPage.name);
                   },
@@ -321,7 +320,7 @@ class _TaskItem extends StatelessWidget {
                   )
                 : ColorFiltered(
                     colorFilter:
-                         ColorFilter.mode(theme.primaryColor, BlendMode.color),
+                        ColorFilter.mode(theme.primaryColor, BlendMode.color),
                     child: Image.asset(
                       Images.kkr,
                       width: 10,

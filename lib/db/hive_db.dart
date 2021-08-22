@@ -15,12 +15,13 @@ class MyHive {
   static const int CharaId = TaskId + 1;
 
   static late Box<PcrDbVersion> pcrDbVersionBox;
-  static late Box<dynamic> userConfBox; 
+  static late Box<dynamic> userConfBox;
   static late Box<int> removedBox;
   static late Box<int> usedBox;
-  static late Box<Chara> jpCharaBox;
-  static late Box<Chara> twCharaBox;
-  static late Box<Chara> cnCharaBox;
+  static late Box<Chara> _jpCharaBox;
+  static late Box<Chara> _twCharaBox;
+  static late Box<Chara> _cnCharaBox;
+  static late Box<Chara> charaBox;
 
   static Future<void> init() async {
     Hive.init('${MyStore.appSurDir.path}${Platform.pathSeparator}hivedb');
@@ -32,10 +33,20 @@ class MyHive {
     userConfBox = await Hive.openBox<dynamic>('userConfBox');
     removedBox = await Hive.openBox(HiveBoxKey.removedBox);
     usedBox = await Hive.openBox(HiveBoxKey.usedBox);
-    jpCharaBox = await Hive.openBox(HiveBoxKey.jpCharaBox);
-    twCharaBox = await Hive.openBox(HiveBoxKey.twCharaBox);
-    cnCharaBox = await Hive.openBox(HiveBoxKey.cnCharaBox);
+    _jpCharaBox = await Hive.openBox(HiveBoxKey.jpCharaBox);
+    _twCharaBox = await Hive.openBox(HiveBoxKey.twCharaBox);
+    _cnCharaBox = await Hive.openBox(HiveBoxKey.cnCharaBox);
     await initPcrDbversion();
+  }
+
+  static Box<Chara> getServerCharaBox(String server) {
+    if (server == ServerType.cn) {
+      return _cnCharaBox;
+    } else if (server == ServerType.tw) {
+      return _twCharaBox;
+    } else {
+      return _jpCharaBox;
+    }
   }
 
   static Future<void> initPcrDbversion() async {
@@ -44,7 +55,7 @@ class MyHive {
         HiveDbKey.GvgTaskFilter,
         GvgTaskFilterHive(
             server: ServerType.jp,
-            bossNumber: <int>[1,2,3,4,5],
+            bossNumber: <int>[1, 2, 3, 4, 5],
             usedOrRemoved: 'all',
             stage: 1,
             methods: <int>[AutoType.manual, AutoType.harfAuto, AutoType.auto],

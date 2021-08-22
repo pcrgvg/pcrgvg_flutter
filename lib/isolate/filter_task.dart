@@ -15,6 +15,7 @@ Future<List<List<TaskFilterResult>>> isolateFilter(
 /// 顶层函数在打包时候就初始化,此时main run里面的初始化均未执行
 FutureOr<List<List<TaskFilterResult>>> filterTask(
     FilterIsolateConfig _isolateConfig) async {
+      '1'.debug();
   final int startTime = DateTime.now().millisecondsSinceEpoch;
   final List<TaskFilterResult> flatTaskList =
       flatTask(_isolateConfig.taskList, _isolateConfig.removeList);
@@ -40,7 +41,7 @@ FutureOr<List<List<TaskFilterResult>>> filterTask(
 
 void filterResult(
     {required List<TaskFilterResult> taskList,
-    required List<Chara> unHaveCharas,
+    required List<int> unHaveCharas,
     required List<int> usedList,
     required List<List<List<TaskFilterResult>>> tempArr}) {
   final Set<int> set = <int>{};
@@ -212,11 +213,11 @@ List<TaskFilterResult> repeatCondition(
   return [];
 }
 
-List<int> filterUnHaveCharas(List<Chara> charas, List<Chara> unHaveChras) {
+List<int> filterUnHaveCharas(List<Chara> charas, List<int> unHaveChras) {
   final List<int> result = [];
-  for (final Chara chara in unHaveChras) {
-    if (charas.indexWhere((e) => e.prefabId == chara.prefabId) > -1) {
-      result.add(chara.prefabId);
+  for (final int prefabId  in unHaveChras) {
+    if (charas.indexWhere((Chara e) => e.prefabId == prefabId) > -1) {
+      result.add(prefabId);
     }
   }
   return result;
@@ -224,12 +225,11 @@ List<int> filterUnHaveCharas(List<Chara> charas, List<Chara> unHaveChras) {
 
 /// 将List<TaskFilterResult> 转为以k个为一组的List<List<TaskFilterResult>>,同时过滤不符合条件的组合
 List<List<TaskFilterResult>> combineAndFilter(List<TaskFilterResult> taskList,
-    int k, List<Chara> unHaveCharas, List<int> usedList) {
+    int k, List<int> unHaveCharas, List<int> usedList) {
   final List<TaskFilterResult> subResult = [];
   final List<List<List<TaskFilterResult>>> tempArr = [[], [], [], []];
   int count = 0;
  
-  int total = 0;
   void combineSub(int start, List<TaskFilterResult> subResult) {
     if (subResult.length == k) {
       // result.add(List<TaskFilterResult>.from(subResult));
@@ -256,7 +256,6 @@ List<List<TaskFilterResult>> combineAndFilter(List<TaskFilterResult> taskList,
         prefabId: taskList[i].prefabId,
         task: taskList[i].task,
       ));
-      total += DateTime.now().millisecondsSinceEpoch - startTime;
       combineSub(i + 1, subResult);
       subResult.removeLast();
     }
@@ -326,16 +325,6 @@ class FilterIsolateConfig {
   List<GvgTask> taskList;
   List<int> removeList;
   List<int> usedList;
-  List<Chara> unHaveCharaList;
+  List<int> unHaveCharaList;
 }
 
-class TestCopy {
-  TestCopy({required this.id, required this.name});
-
-  int id;
-  String name;
-
-  TestCopy copy() {
-    return TestCopy(id: id, name: name);
-  }
-}

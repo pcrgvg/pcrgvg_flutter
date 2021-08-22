@@ -12,11 +12,18 @@ class ManageCharaProvider extends BaseListProvider {
     init();
   }
 
-  int showType = 1; // 1 全部，2已选中 3 未选中
+  int _showType = 1; // 1 全部，2已选中 3 未选中
+  int get showType => _showType;
+  set showType(int value) {
+    if (value != _showType) {
+      _showType = value;
+      notifyListeners();
+    }
+  }
 
   late GvgTaskFilterHive _gvgTaskFilter;
   GvgTaskFilterHive get gvgTaskFilter => _gvgTaskFilter;
-  List<Chara> _charaList = [];
+  List<Chara> charaList = [];
   late String _serverType;
   String get serverType => _serverType;
   set serverType(String value) {
@@ -28,25 +35,6 @@ class ManageCharaProvider extends BaseListProvider {
 
   List<Chara> hiveCharaList = [];
 
-  List<Chara> get front {
-    return _charaList
-        .where((Chara chara) => chara.searchAreaWidth < 300)
-        .toList();
-  }
-
-  List<Chara> get middle {
-    return _charaList
-        .where((Chara chara) =>
-            chara.searchAreaWidth > 300 && chara.searchAreaWidth < 600)
-        .toList();
-  }
-
-  List<Chara> get back {
-    return _charaList
-        .where((Chara chara) => chara.searchAreaWidth > 600)
-        .toList();
-  }
-
   void init() {
     serverType =
         (MyHive.userConfBox.get(HiveDbKey.GvgTaskFilter) as GvgTaskFilterHive)
@@ -54,34 +42,29 @@ class ManageCharaProvider extends BaseListProvider {
   }
 
   Box<Chara> getCharaBox(String serverType) {
-    if (serverType == ServerType.cn) {
-      return MyHive.cnCharaBox;
-    } else if (serverType == ServerType.jp) {
-      return MyHive.jpCharaBox;
-    } else {
-      return MyHive.twCharaBox;
-    }
+    return MyHive.getServerCharaBox(serverType);
   }
 
   void getCharaList() {
     PcrDb.charaList(serverType).then((List<Chara> value) {
-      _charaList = value;
+      charaList = value;
       notifyListeners();
     });
   }
 
   void addChara(Chara chara) {
-    final box = getCharaBox(serverType);
+    final Box<Chara> box = getCharaBox(serverType);
     final int index = hiveCharaList
         .indexWhere((Chara element) => element.prefabId == chara.prefabId);
+    final List<Chara> list = [...hiveCharaList];
     if (index > -1) {
-      hiveCharaList.removeAt(index);
+      list.removeAt(index);
       box.deleteAt(index);
     } else {
-      hiveCharaList.add(chara);
+      list.add(chara);
       box.add(chara);
     }
-  
+    hiveCharaList = list;
     notifyListeners();
   }
 

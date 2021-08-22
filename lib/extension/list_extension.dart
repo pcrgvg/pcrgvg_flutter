@@ -11,7 +11,7 @@ extension ListExt<T> on List<T>? {
     }
     return this![index];
   }
-
+  /// 列表相等
   bool eq(List<T>? other) {
     if (this == null) {
       return other == null;
