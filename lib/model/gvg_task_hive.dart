@@ -1,7 +1,8 @@
 part of 'models.dart';
 
+@immutable
 class GvgTask {
-  GvgTask({
+  const GvgTask({
     required this.id,
     required this.prefabId,
     required this.unitName,
@@ -31,17 +32,17 @@ class GvgTask {
     );
   }
 
-  int id;
+  final int id;
 
-  int prefabId;
+  final int prefabId;
 
-  String unitName;
+  final String unitName;
 
-  String server;
+  final String server;
 
-  int index;
+  final int index;
 
-  List<Task> tasks;
+  final List<Task> tasks;
 
   @override
   String toString() {
@@ -71,14 +72,25 @@ class GvgTask {
           server == other.server &&
           index == other.index &&
           tasks.eq(other.tasks);
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      prefabId.hashCode ^
+      unitName.hashCode ^
+      server.hashCode ^
+      index.hashCode ^
+      tasks.hashCode;
 }
 
+@HiveType(typeId: MyHive.TaskId)
 class Task {
   Task({
     required this.id,
     required this.canAuto,
     required this.stage,
     required this.damage,
+    required this.autoDamage,
     required this.charas,
     required this.remarks,
     required this.links,
@@ -123,29 +135,32 @@ class Task {
       canAuto: canAuto!,
       stage: asT<int>(jsonRes['stage'])!,
       damage: asT<int>(jsonRes['damage'])!,
+      autoDamage: asT<int?>(jsonRes['autoDamage']),
       charas: charas!,
       remarks: asT<String>(jsonRes['remarks'])!,
       type: asT<int>(jsonRes['type'])!,
       links: links!,
     );
   }
-
-  int id;
-
-  List<int> canAuto;
-
-  int stage;
-
+  @HiveField(0)
+  final int id;
+  @HiveField(1)
+  final List<int> canAuto;
+  @HiveField(2)
+  final int stage;
+  @HiveField(3)
   int damage;
-
-  List<Chara> charas;
-
-  String remarks;
-
-  List<Link> links;
+  @HiveField(4)
+  final int? autoDamage;
+  @HiveField(5)
+  final List<Chara> charas;
+  @HiveField(6)
+  final String remarks;
+  @HiveField(7)
+  final List<Link> links;
   // 1尾刀,2正常
-
-  int type;
+  @HiveField(8)
+  final int type;
 
   @override
   String toString() {
@@ -157,6 +172,7 @@ class Task {
         'canAuto': canAuto,
         'stage': stage,
         'damage': damage,
+        'autoDamage': autoDamage,
         'charas': charas,
         'remarks': remarks,
         'type': type,
@@ -167,10 +183,11 @@ class Task {
       Task.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
   Task copy() {
     return Task(
-        canAuto: List.from(canAuto),
+        canAuto: List<int>.from(canAuto),
         id: id,
         stage: stage,
         damage: damage,
+        autoDamage: autoDamage,
         remarks: remarks,
         type: type,
         links: links.map((e) => e.copy()).toList(),
@@ -186,9 +203,21 @@ class Task {
           canAuto == other.canAuto &&
           stage == other.stage &&
           damage == other.damage &&
+          autoDamage == other.autoDamage &&
           type == other.type &&
           charas.eq(other.charas) &&
           links.eq(other.links);
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      canAuto.hashCode ^
+      stage.hashCode ^
+      damage.hashCode ^
+      autoDamage.hashCode ^
+      type.hashCode ^
+      charas.hashCode ^
+      links.hashCode;
 }
 
 @HiveType(typeId: MyHive.CharaId)
@@ -272,8 +301,9 @@ class Chara extends HiveObject {
       searchAreaWidth.hashCode;
 }
 
+@HiveType(typeId: MyHive.LinkId)
 class Link {
-  Link({
+  const Link({
     required this.name,
     required this.link,
   });
@@ -282,10 +312,10 @@ class Link {
         name: asT<String>(jsonRes['name'])!,
         link: asT<String>(jsonRes['link'])!,
       );
-
-  String name;
-
-  String link;
+  @HiveField(0)
+  final String name;
+  @HiveField(1)
+  final String link;
 
   @override
   String toString() {
@@ -307,4 +337,7 @@ class Link {
           runtimeType == other.runtimeType &&
           name == other.name &&
           link == other.link;
+
+  @override
+  int get hashCode => name.hashCode ^ link.hashCode;
 }

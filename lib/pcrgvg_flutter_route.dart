@@ -96,7 +96,7 @@ FFRouteSettings getRouteSettings({
         name: name,
         arguments: arguments,
         widget: ResultPage(
-          key: asT<Key?>(safeArguments['key']),
+          bossList: asT<List<ResultBoss>>(safeArguments['bossList'])!,
         ),
         routeName: 'resultPage',
       );

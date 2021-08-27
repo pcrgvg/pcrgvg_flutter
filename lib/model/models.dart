@@ -12,5 +12,6 @@ part  'pcrs.dart';
 part 'gvg_task_hive.dart';
 part 'gvg_task_filter_hive.dart';
 part 'LvPair.dart';
+part 'filter.dart';
 
 

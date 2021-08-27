@@ -46,9 +46,67 @@ class PcrDbVersionAdapter extends TypeAdapter<PcrDbVersion> {
           typeId == other.typeId;
 }
 
+class TaskAdapter extends TypeAdapter<Task> {
+  @override
+  final int typeId = 5;
+
+  @override
+  Task read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Task(
+      id: fields[0] as int,
+      canAuto: (fields[1] as List).cast<int>(),
+      stage: fields[2] as int,
+      damage: fields[3] as int,
+      autoDamage: fields[4] as int?,
+      charas: (fields[5] as List).cast<Chara>(),
+      remarks: fields[6] as String,
+      links: (fields[7] as List).cast<Link>(),
+      type: fields[8] as int,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Task obj) {
+    writer
+      ..writeByte(9)
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.canAuto)
+      ..writeByte(2)
+      ..write(obj.stage)
+      ..writeByte(3)
+      ..write(obj.damage)
+      ..writeByte(4)
+      ..write(obj.autoDamage)
+      ..writeByte(5)
+      ..write(obj.charas)
+      ..writeByte(6)
+      ..write(obj.remarks)
+      ..writeByte(7)
+      ..write(obj.links)
+      ..writeByte(8)
+      ..write(obj.type);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TaskAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
 class CharaAdapter extends TypeAdapter<Chara> {
   @override
-  final int typeId = 4;
+  final int typeId = 3;
 
   @override
   Chara read(BinaryReader reader) {
@@ -94,6 +152,43 @@ class CharaAdapter extends TypeAdapter<Chara> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is CharaAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class LinkAdapter extends TypeAdapter<Link> {
+  @override
+  final int typeId = 6;
+
+  @override
+  Link read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Link(
+      name: fields[0] as String,
+      link: fields[1] as String,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Link obj) {
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.name)
+      ..writeByte(1)
+      ..write(obj.link);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LinkAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
@@ -146,6 +241,52 @@ class GvgTaskFilterHiveAdapter extends TypeAdapter<GvgTaskFilterHive> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is GvgTaskFilterHiveAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class TaskFilterResultAdapter extends TypeAdapter<TaskFilterResult> {
+  @override
+  final int typeId = 4;
+
+  @override
+  TaskFilterResult read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return TaskFilterResult(
+      bossId: fields[0] as int,
+      prefabId: fields[1] as int,
+      index: fields[3] as int,
+      task: fields[4] as Task,
+      borrowChara: fields[2] as Chara?,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, TaskFilterResult obj) {
+    writer
+      ..writeByte(5)
+      ..writeByte(0)
+      ..write(obj.bossId)
+      ..writeByte(1)
+      ..write(obj.prefabId)
+      ..writeByte(2)
+      ..write(obj.borrowChara)
+      ..writeByte(3)
+      ..write(obj.index)
+      ..writeByte(4)
+      ..write(obj.task);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TaskFilterResultAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

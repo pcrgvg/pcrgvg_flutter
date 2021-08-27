@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:pcrgvg_flutter/isolate/filter_task.dart';
+import 'package:pcrgvg_flutter/model/models.dart';
 
 class MyStore {
   const MyStore._();

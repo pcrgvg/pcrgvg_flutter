@@ -105,7 +105,7 @@ class Routes {
   ///
   /// [constructors] :
   ///
-  /// ResultPage : [Key? key]
+  /// ResultPage : [List<ResultBoss>(required) bossList]
   static const _ResultPage resultPage = _ResultPage();
 
   /// 'spalshPage'
@@ -219,8 +219,9 @@ class _ResultPage {
 
   String get name => 'resultPage';
 
-  Map<String, dynamic> d({Key? key}) => <String, dynamic>{
-        'key': key,
+  Map<String, dynamic> d({required List<ResultBoss> bossList}) =>
+      <String, dynamic>{
+        'bossList': bossList,
       };
 
   @override

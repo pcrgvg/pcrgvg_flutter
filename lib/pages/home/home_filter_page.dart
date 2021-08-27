@@ -92,10 +92,10 @@ class _UsedOrRemovedSelection extends StatelessWidget {
           Expanded(
               child: Wrap(
             children: [
-              _buildButton(usedOrRemoved, 'all', homeFiltermodel),
-              _buildButton(usedOrRemoved, 'used', homeFiltermodel),
-              _buildButton(usedOrRemoved, 'removed', homeFiltermodel),
-              _buildButton(usedOrRemoved, 'tail',homeFiltermodel),
+              _buildButton(usedOrRemoved, TaskType.all, homeFiltermodel),
+              _buildButton(usedOrRemoved, TaskType.used, homeFiltermodel),
+              _buildButton(usedOrRemoved, TaskType.removed, homeFiltermodel),
+              _buildButton(usedOrRemoved, TaskType.tail,homeFiltermodel),
             ],
           ))
         ],
@@ -103,19 +103,7 @@ class _UsedOrRemovedSelection extends StatelessWidget {
     );
   }
 
-  String getText(String type) {
-    switch (type) {
-      case 'used':
-        return '已使用';
-      case 'removed':
-        return '已去除';
-      case 'tail':
-        return '尾刀';
-      case 'all':
-      default:
-        return '全部';
-    }
-  }
+
 
   Padding _buildButton(String usedOrRemoved, String type, HomeFilterProvider homeFiltermodel) {
     return Padding(
@@ -131,7 +119,7 @@ class _UsedOrRemovedSelection extends StatelessWidget {
         ),
         color: getColor(usedOrRemoved == type).withOpacity(0.2),
         child: Text(
-          getText(type),
+         TaskType.getName(type),
           style: TextStyle(color: getColor(usedOrRemoved == type)),
         ),
       ),

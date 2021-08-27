@@ -2,9 +2,8 @@ import 'package:extended_sliver/extended_sliver.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
-import 'package:pcrgvg_flutter/constants/screens.dart';
-import 'package:pcrgvg_flutter/db/pcr_db.dart';
 import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/providers/manage_chara_provider.dart';
 import 'package:pcrgvg_flutter/widgets/animate_header.dart';
@@ -39,74 +38,74 @@ class ManageCharaPage extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     return ChangeNotifierProvider<ManageCharaProvider>(
         create: (_) => ManageCharaProvider(),
-        child: Theme(
-            data: theme.copyWith(),
-            child: Scaffold(
-              body: CustomScrollView(
-                slivers: [
-                  _Header(theme: theme),
-                  Selector<ManageCharaProvider,
-                      Tuple3<int, List<Chara>, List<Chara>>>(
-                    selector: (_, ManageCharaProvider model) =>
-                        Tuple3<int, List<Chara>, List<Chara>>(model.showType,
-                            model.hiveCharaList, model.charaList),
-                    shouldRebuild: (Tuple3<int, List<Chara>, List<Chara>> prev,
-                            Tuple3<int, List<Chara>, List<Chara>> next) =>
-                        prev.item1 != next.item1 ||
-                        prev.item2.ne(next.item2) ||
-                        prev.item3.ne(next.item3),
-                    builder:
-                        (_, Tuple3<int, List<Chara>, List<Chara>> tuple, __) {
-                      final int showType = tuple.item1;
-                      final List<Chara> charaList = tuple.item3;
-                      final List<Chara> hiveCharaList = tuple.item2;
-                      final List<Chara> front = charaList
-                          .where((Chara chara) =>
-                              chara.searchAreaWidth < 300 &&
-                              getTypeChara(chara, hiveCharaList, showType))
-                          .toList();
-                      final List<Chara> middle = charaList
-                          .where((Chara chara) =>
-                              chara.searchAreaWidth > 300 &&
-                              chara.searchAreaWidth < 600 &&
-                              getTypeChara(chara, hiveCharaList, showType))
-                          .toList();
-                      final List<Chara> back = charaList
-                          .where((Chara chara) =>
-                              chara.searchAreaWidth > 600 &&
-                              getTypeChara(chara, hiveCharaList, showType))
-                          .toList();
-                      return MultiSliver(children: [
-                        _PinHeader(
-                          theme: theme,
-                          title: '前卫',
-                        ),
-                        _GroupChara(
-                          charas: front,
-                          hiveCharas: hiveCharaList,
-                        ),
-                        _PinHeader(
-                          theme: theme,
-                          title: '中卫',
-                        ),
-                        _GroupChara(
-                          charas: middle,
-                          hiveCharas: hiveCharaList,
-                        ),
-                        _PinHeader(
-                          theme: theme,
-                          title: '后卫',
-                        ),
-                        _GroupChara(
-                          charas: back,
-                          hiveCharas: hiveCharaList,
-                        ),
-                      ]);
-                    },
-                  )
-                ],
-              ),
-            )));
+        child: ListBox<ManageCharaProvider>(
+          child: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                _Header(theme: theme),
+                Selector<ManageCharaProvider,
+                    Tuple3<int, List<Chara>, List<Chara>>>(
+                  selector: (_, ManageCharaProvider model) =>
+                      Tuple3<int, List<Chara>, List<Chara>>(
+                          model.showType, model.hiveCharaList, model.charaList),
+                  shouldRebuild: (Tuple3<int, List<Chara>, List<Chara>> prev,
+                          Tuple3<int, List<Chara>, List<Chara>> next) =>
+                      prev.item1 != next.item1 ||
+                      prev.item2.ne(next.item2) ||
+                      prev.item3.ne(next.item3),
+                  builder:
+                      (_, Tuple3<int, List<Chara>, List<Chara>> tuple, __) {
+                    final int showType = tuple.item1;
+                    final List<Chara> charaList = tuple.item3;
+                    final List<Chara> hiveCharaList = tuple.item2;
+                    final List<Chara> front = charaList
+                        .where((Chara chara) =>
+                            chara.searchAreaWidth < 300 &&
+                            getTypeChara(chara, hiveCharaList, showType))
+                        .toList();
+                    final List<Chara> middle = charaList
+                        .where((Chara chara) =>
+                            chara.searchAreaWidth > 300 &&
+                            chara.searchAreaWidth < 600 &&
+                            getTypeChara(chara, hiveCharaList, showType))
+                        .toList();
+                    final List<Chara> back = charaList
+                        .where((Chara chara) =>
+                            chara.searchAreaWidth > 600 &&
+                            getTypeChara(chara, hiveCharaList, showType))
+                        .toList();
+                    return MultiSliver(children: [
+                      _PinHeader(
+                        theme: theme,
+                        title: '前卫',
+                      ),
+                      _GroupChara(
+                        charas: front,
+                        hiveCharas: hiveCharaList,
+                      ),
+                      _PinHeader(
+                        theme: theme,
+                        title: '中卫',
+                      ),
+                      _GroupChara(
+                        charas: middle,
+                        hiveCharas: hiveCharaList,
+                      ),
+                      _PinHeader(
+                        theme: theme,
+                        title: '后卫',
+                      ),
+                      _GroupChara(
+                        charas: back,
+                        hiveCharas: hiveCharaList,
+                      ),
+                    ]);
+                  },
+                )
+              ],
+            ),
+          ),
+        ));
   }
 }
 
@@ -181,8 +180,10 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasScrolled = context.select<ManageCharaProvider, bool>((model) =>model.hasScrolled);
-    final String serverType = context.select<ManageCharaProvider, String>((model) =>model.serverType);
+    final bool hasScrolled =
+        context.select<ManageCharaProvider, bool>((ManageCharaProvider model) => model.hasScrolled);
+    final String serverType = context
+        .select<ManageCharaProvider, String>((ManageCharaProvider model) => model.serverType);
     final ManageCharaProvider model = context.read<ManageCharaProvider>();
     return SliverPinnedToBoxAdapter(
       child: AnimateHeader(
@@ -217,7 +218,8 @@ class _Header extends StatelessWidget {
                       ? theme.scaffoldBackgroundColor
                       : theme.backgroundColor,
                   onPressed: () async {
-                    showModalBottomSheet(
+                    showMaterialModalBottomSheet(
+                        backgroundColor: Colors.transparent,
                         context: context,
                         builder: (BuildContext context) {
                           return _BottomFilter(
@@ -254,6 +256,11 @@ class _BottomFilter extends StatelessWidget {
             final int showType = tuple.item1;
             return Container(
               height: 200,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16))),
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
@@ -262,9 +269,11 @@ class _BottomFilter extends StatelessWidget {
                     server: serverType,
                     model: model,
                   ),
-                  _TypeSelection( theme: theme,
+                  _TypeSelection(
+                    theme: theme,
                     showType: showType,
-                    model: model,)
+                    model: model,
+                  )
                 ],
               ),
             );
@@ -289,25 +298,25 @@ class _TypeSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Row(
-        children: [
-          const SizedBox(
-            width: 56,
-            child: Text(
-              '类别',
-              style: textStyleH2,
-            ),
+    return Row(
+      children: [
+        const SizedBox(
+          width: 56,
+          child: Text(
+            '类别',
+            style: textStyleH2,
           ),
-          Expanded(
-              child: Wrap(
-            children: [
-              _buildButton(showType, 1, model),
-              _buildButton(showType, 2, model),
-              _buildButton(showType, 3, model),
-            ],
-          ))
-        ],
-      );
+        ),
+        Expanded(
+            child: Wrap(
+          children: [
+            _buildButton(showType, 1, model),
+            _buildButton(showType, 2, model),
+            _buildButton(showType, 3, model),
+          ],
+        ))
+      ],
+    );
   }
 
   String getText(int type) {
@@ -322,8 +331,7 @@ class _TypeSelection extends StatelessWidget {
     }
   }
 
-  Padding _buildButton(
-      int showTpye, int type, ManageCharaProvider model) {
+  Padding _buildButton(int showTpye, int type, ManageCharaProvider model) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: MaterialButton(
@@ -368,7 +376,10 @@ class _ServerSelection extends StatelessWidget {
       children: [
         const SizedBox(
           width: 56,
-          child: Text('服务器', style: textStyleH2),
+          child: Text(
+            '服务器',
+            style: textStyleH2,
+          ),
         ),
         Expanded(
             child: Row(

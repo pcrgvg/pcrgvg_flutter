@@ -39,14 +39,25 @@ class AutoType {
   }
 }
 
-String getTypeText(int type) {
-    switch (type) {
-      case AutoType.auto:
-        return '自动';
-      case AutoType.harfAuto:
-        return '半自动';
-      case AutoType.manual:
+
+class TaskType {
+  const TaskType._();
+  static const String all = 'all';
+  static const String used = 'used';
+  static const String removed = 'removed';
+  static const String tail = 'tail';
+
+   static String getName(String type) {
+       switch (type) {
+      case TaskType.used:
+        return '已使用';
+      case TaskType.removed:
+        return '已去除';
+      case TaskType.tail:
+        return '尾刀';
+      case TaskType.all:
       default:
-        return '手动';
+        return '全部';
     }
   }
+}

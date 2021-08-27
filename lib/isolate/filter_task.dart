@@ -15,22 +15,19 @@ Future<List<List<TaskFilterResult>>> isolateFilter(
 /// 顶层函数在打包时候就初始化,此时main run里面的初始化均未执行
 FutureOr<List<List<TaskFilterResult>>> filterTask(
     FilterIsolateConfig _isolateConfig) async {
-      '1'.debug();
   final int startTime = DateTime.now().millisecondsSinceEpoch;
   final List<TaskFilterResult> flatTaskList =
       flatTask(_isolateConfig.taskList, _isolateConfig.removeList);
-   List<List<TaskFilterResult>> result = combineAndFilter(
+  List<List<TaskFilterResult>> result = combineAndFilter(
       flatTaskList, 3, _isolateConfig.unHaveCharaList, _isolateConfig.usedList);
 
   if (result.isEmpty) {
-     result = combineAndFilter(
-      flatTaskList, 2, _isolateConfig.unHaveCharaList, _isolateConfig.usedList);
-
+    result = combineAndFilter(flatTaskList, 2, _isolateConfig.unHaveCharaList,
+        _isolateConfig.usedList);
   }
   if (result.isEmpty) {
-    result = combineAndFilter(
-      flatTaskList, 1, _isolateConfig.unHaveCharaList, _isolateConfig.usedList);
-
+    result = combineAndFilter(flatTaskList, 1, _isolateConfig.unHaveCharaList,
+        _isolateConfig.usedList);
   }
 
   final int endTime = DateTime.now().millisecondsSinceEpoch;
@@ -215,7 +212,7 @@ List<TaskFilterResult> repeatCondition(
 
 List<int> filterUnHaveCharas(List<Chara> charas, List<int> unHaveChras) {
   final List<int> result = [];
-  for (final int prefabId  in unHaveChras) {
+  for (final int prefabId in unHaveChras) {
     if (charas.indexWhere((Chara e) => e.prefabId == prefabId) > -1) {
       result.add(prefabId);
     }
@@ -228,15 +225,15 @@ List<List<TaskFilterResult>> combineAndFilter(List<TaskFilterResult> taskList,
     int k, List<int> unHaveCharas, List<int> usedList) {
   final List<TaskFilterResult> subResult = [];
   final List<List<List<TaskFilterResult>>> tempArr = [[], [], [], []];
-  int count = 0;
- 
-  void combineSub(int start, List<TaskFilterResult> subResult) {
-    if (subResult.length == k) {
-      // result.add(List<TaskFilterResult>.from(subResult));
-      // 长度符合时候,符合条件则放进tempArr
+  'combineAndFilter'.debug();
 
+  void combineSub(
+    int start,
+  ) {
+    if (subResult.length == k) {
+      // 长度符合时候,符合条件则放进tempArr
       filterResult(
-          taskList: List<TaskFilterResult>.from(subResult),
+          taskList: subResult.map((e) => e.copy()).toList(),
           unHaveCharas: unHaveCharas,
           tempArr: tempArr,
           usedList: usedList);
@@ -245,24 +242,14 @@ List<List<TaskFilterResult>> combineAndFilter(List<TaskFilterResult> taskList,
     final int len = subResult.length;
     // 还需要多少个元素才能符合条件，若taskList剩余的长度不够，则不符合继续循环
     final int conditionLen = taskList.length - (k - len) + 1;
-    for (int i = 0; i < conditionLen; i++) {
-      /// TODO
-      // final dynamic json = jsonDecode(jsonEncode(taskList[i]));
-      count++;
-    final int startTime = DateTime.now().millisecondsSinceEpoch;
-      subResult.add(TaskFilterResult(
-        bossId: taskList[i].bossId,
-        index: taskList[i].index,
-        prefabId: taskList[i].prefabId,
-        task: taskList[i].task,
-      ));
-      combineSub(i + 1, subResult);
+    for (int i = start; i < conditionLen; i++) {
+      subResult.add(taskList[i]);
+      combineSub(i + 1);
       subResult.removeLast();
     }
   }
 
-  combineSub(0, subResult);
-  '$count count'.debug();
+  combineSub(0);
   final List<List<TaskFilterResult>> result = tempArr
       .map((e) => sortByScore(e))
       .toList()
@@ -294,26 +281,7 @@ List<TaskFilterResult> flatTask(List<GvgTask> taskList, List<int> removeList) {
   return result;
 }
 
-class TaskFilterResult {
-  TaskFilterResult(
-      {required this.bossId,
-      required this.prefabId,
-      required this.index,
-      required this.task,
-      this.borrowChara});
-  int bossId;
-  int prefabId;
-  Chara? borrowChara;
-  int index;
-  Task task;
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        "bossId": bossId,
-        "prefabId": prefabId,
-        "borrowChara": borrowChara,
-        "index": index,
-        "task": task
-      };
-}
+
 
 class FilterIsolateConfig {
   FilterIsolateConfig(
@@ -327,4 +295,3 @@ class FilterIsolateConfig {
   List<int> usedList;
   List<int> unHaveCharaList;
 }
-

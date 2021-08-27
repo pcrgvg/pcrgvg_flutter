@@ -46,12 +46,41 @@ extension StringExtension on String? {
     }));
   }
 
+  ToastFuture loading() {
+    return showToastWidget(Builder(builder: (BuildContext context) {
+      final Color bgc = Theme.of(context).accentColor;
+      return Container(
+        decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(Images.loading),
+              if (!isNullOrEmpty)
+                Text(this!,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: bgc.computeLuminance() < 0.5
+                          ? Colors.white
+                          : Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ))
+            ],
+          ),
+        ),
+      );
+    }),
+        position: ToastPosition.center,
+        duration: const Duration(hours: 24),
+        handleTouch: true);
+  }
+
   String dateFormate({String newPattern = 'yyyy/MM'}) {
     if (isNullOrEmpty) {
       return '';
     }
     final String timeStr = this!.replaceAll('/', '-');
-    final DateTime? time =  DateTime.tryParse(timeStr); // 2012-02-27 13:27:00
+    final DateTime? time = DateTime.tryParse(timeStr); // 2012-02-27 13:27:00
     if (time == null) {
       return '';
     }

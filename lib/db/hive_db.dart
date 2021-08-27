@@ -11,8 +11,10 @@ class MyHive {
   const MyHive._();
   static const int PcrDbId = 1;
   static const int GvgTaskFilterId = PcrDbId + 1;
-  static const int TaskId = GvgTaskFilterId + 1;
-  static const int CharaId = TaskId + 1;
+  static const int CharaId = GvgTaskFilterId + 1;
+  static const int FilterResultId = CharaId + 1;
+  static const int TaskId = FilterResultId + 1;
+  static const int LinkId = TaskId + 1;
 
   static late Box<PcrDbVersion> pcrDbVersionBox;
   static late Box<dynamic> userConfBox;
@@ -22,12 +24,16 @@ class MyHive {
   static late Box<Chara> _twCharaBox;
   static late Box<Chara> _cnCharaBox;
   static late Box<Chara> charaBox;
+  static late Box<List<dynamic>> collectBox;
 
   static Future<void> init() async {
     Hive.init('${MyStore.appSurDir.path}${Platform.pathSeparator}hivedb');
     Hive
       ..registerAdapter(PcrDbVersionAdapter())
       ..registerAdapter(GvgTaskFilterHiveAdapter())
+      ..registerAdapter(TaskFilterResultAdapter())
+      ..registerAdapter(TaskAdapter())
+      ..registerAdapter(LinkAdapter())
       ..registerAdapter(CharaAdapter());
     pcrDbVersionBox = await Hive.openBox(HiveBoxKey.PcrDbVersion);
     userConfBox = await Hive.openBox<dynamic>('userConfBox');
@@ -36,6 +42,7 @@ class MyHive {
     _jpCharaBox = await Hive.openBox(HiveBoxKey.jpCharaBox);
     _twCharaBox = await Hive.openBox(HiveBoxKey.twCharaBox);
     _cnCharaBox = await Hive.openBox(HiveBoxKey.cnCharaBox);
+    collectBox = await Hive.openBox(HiveBoxKey.collectBox);
     await initPcrDbversion();
   }
 
@@ -56,7 +63,7 @@ class MyHive {
         GvgTaskFilterHive(
             server: ServerType.jp,
             bossNumber: <int>[1, 2, 3, 4, 5],
-            usedOrRemoved: 'all',
+            usedOrRemoved: TaskType.all,
             stage: 1,
             methods: <int>[AutoType.manual, AutoType.harfAuto, AutoType.auto],
             clanBattleId: 1,
@@ -64,14 +71,17 @@ class MyHive {
       );
     }
   }
+
+
+
+
 }
 
 abstract class HiveDbKey {
   static const String Cn = 'Cn';
   static const String Jp = 'Jp';
+  static const String Tw = 'Tw';
   static const String GvgTaskFilter = 'GvgTaskFilter';
-  static const String collection = 'collection';
-  static const String removed = 'removed';
 }
 
 abstract class HiveBoxKey {
@@ -82,4 +92,5 @@ abstract class HiveBoxKey {
   static const String cnCharaBox = 'cnCharaBox';
   static const String twCharaBox = 'twCharaBox';
   static const String jpCharaBox = 'jpCharaBox';
+  static const String collectBox = 'collectBox';
 }

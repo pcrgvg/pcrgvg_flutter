@@ -1,6 +1,4 @@
 import 'dart:ui';
-
-import 'package:extended_image/extended_image.dart';
 import 'package:extended_sliver/extended_sliver.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -9,23 +7,21 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:like_button/like_button.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:pcrgvg_flutter/constants/Images.dart';
-import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/db/hive_db.dart';
 import 'package:pcrgvg_flutter/db/pcr_db.dart';
 import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
-import 'package:pcrgvg_flutter/isolate/filter_task.dart';
-import 'package:pcrgvg_flutter/utils/store_util.dart';
+import 'package:pcrgvg_flutter/providers/result_provider.dart';
 import 'package:pcrgvg_flutter/widgets/animate_header.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
 import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
 import 'package:pcrgvg_flutter/widgets/list_box.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -45,7 +41,7 @@ class _HomePage extends State<HomePage> {
   @override
   void initState() {
     // TODO(KURUMI): CHECKUPDATE
-    // PcrDb.checkUpdate();
+    PcrDb.checkUpdate();
 
     super.initState();
   }
@@ -60,8 +56,6 @@ class _HomePage extends State<HomePage> {
           shouldRebuild: (List<GvgTask> pre, List<GvgTask> next) =>
               pre.ne(next),
           builder: (_, List<GvgTask> gvgTaskList, __) {
-            // TODO(KURUMI): 处理判断
-            'build'.debug();
             return ListBox<HomeProvider>(
                 child: CustomScrollView(
               slivers: <Widget>[
@@ -153,7 +147,7 @@ class _Header extends StatelessWidget {
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 2),
                                   child: Text(
-                                    getTypeText(method),
+                                    AutoType.getName(method),
                                     style: textStyleH2,
                                   ))
                           ],
@@ -184,23 +178,13 @@ class _Header extends StatelessWidget {
                   minWidth: 0,
                   elevation: 0,
                   onPressed: () async {
-                    final List<int> removedList =
-                        MyHive.removedBox.values.toList();
-                    final List<int> usedList = MyHive.usedBox.values.toList();
-                    final Box<Chara> charaBox =
-                        MyHive.getServerCharaBox(server);
-
-                    final List<int> unHaveCharaList =
-                        charaBox.values.map((e) => e.prefabId).toList();
-                        unHaveCharaList.debug();
-                    final List<List<TaskFilterResult>> res =
-                        await isolateFilter(FilterIsolateConfig(
-                            removeList: removedList,
-                            usedList: usedList,
-                            taskList: homeModel.gvgTaskList,
-                            unHaveCharaList: unHaveCharaList));
-                    MyStore.filterResList = res;
-                    Navigator.of(context).pushNamed(Routes.resultPage.name);
+                   final ToastFuture loading =   '分刀处理中'.loading();
+                   final List<ResultBoss> bossList = await homeModel.filterIsolate();
+                    if (bossList.isNotEmpty) {
+                       Navigator.of(context).pushNamed(Routes.resultPage.name, arguments: Routes.resultPage.d(bossList: bossList));
+                    }
+                   
+                    loading.dismiss();
                   },
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -234,6 +218,7 @@ class _TaskItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final HomeProvider model = context.read<HomeProvider>();
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(Routes.taskDetailPage.name,
@@ -266,7 +251,7 @@ class _TaskItem extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      '${task.damage}w',
+                      '${model.typeDamage(task)}w',
                       style: TextStyle(
                           color: HexColor.fromHex('#ff2277'), fontSize: 18),
                     ),

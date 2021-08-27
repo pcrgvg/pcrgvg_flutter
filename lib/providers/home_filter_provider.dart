@@ -8,7 +8,7 @@ import 'base_provider.dart';
 
 class HomeFilterProvider extends BaseListProvider {
   HomeFilterProvider() {
-    init();
+   init();
   }
   late GvgTaskFilterHive _gvgTaskFilter;
   GvgTaskFilterHive get gvgTaskFilter => _gvgTaskFilter;
@@ -57,7 +57,7 @@ class HomeFilterProvider extends BaseListProvider {
 
   @override
   Future<void> refresh() async {
-    await _initGvgTaskFilter();
+    // await _initGvgTaskFilter();
     Future<void>.delayed(const Duration(seconds: 1))
         .then((_) => controller.refreshCompleted());
   }

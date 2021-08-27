@@ -57,6 +57,10 @@ class CancelableBaseModel extends BaseProvider {
 
 abstract class BaseListProvider extends CancelableBaseModel {
 
+  BaseListProvider({ bool initialRefresh = true}) {
+    _controller = RefreshController(initialRefresh: initialRefresh);
+  }
+
   bool _hasScrolled = true;
   bool get hasScrolled => _hasScrolled;
 
@@ -71,7 +75,7 @@ abstract class BaseListProvider extends CancelableBaseModel {
     }
   }
 
-  final RefreshController _controller = RefreshController();
+  late final RefreshController _controller;
   RefreshController get controller => _controller;
 
   Future<void> refresh();

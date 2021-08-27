@@ -17,7 +17,7 @@ class ListBox<T extends BaseListProvider> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<T>();
+    final T model = context.read<T>();
     return Scaffold(
       body: NotificationListener<Notification>(
         onNotification: (Notification notification) {

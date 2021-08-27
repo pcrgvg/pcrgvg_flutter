@@ -1,9 +1,13 @@
+import 'package:hive/hive.dart';
 import 'package:pcrgvg_flutter/apis/pcrgvg_api.dart';
 import 'package:pcrgvg_flutter/db/hive_db.dart';
+import 'package:pcrgvg_flutter/global/pcr_enum.dart';
+import 'package:pcrgvg_flutter/isolate/filter_task.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
+import 'package:pcrgvg_flutter/utils/store_util.dart';
 import 'base_provider.dart';
+
 
 class HomeProvider extends BaseListProvider {
   HomeProvider() {
@@ -13,27 +17,27 @@ class HomeProvider extends BaseListProvider {
   List<GvgTask> _gvgTaskList = [];
   List<GvgTask> get gvgTaskList => _gvgTaskList;
 
-
   late GvgTaskFilterHive _gvgTaskFilter;
   GvgTaskFilterHive get gvgTaskFilter => _gvgTaskFilter;
 
   Future<void> init() async {
     _gvgTaskFilter =
         MyHive.userConfBox.get(HiveDbKey.GvgTaskFilter) as GvgTaskFilterHive;
+    refresh();
+  }
+
+  @override
+  Future<void> refresh() async {
+    // await (this + init());
     final List<GvgTask> arr = await PcrGvgApi.getGvgTaskList(
         stage: _gvgTaskFilter.stage,
         server: _gvgTaskFilter.server,
         clanBattleId: _gvgTaskFilter.clanBattleId);
     dealGvgTask(arr);
-    notifyListeners();
-  }
-
-  @override
-  Future<void> refresh() async {
-    // controller.requestRefresh();
-    await (this + init());
-    controller.refreshCompleted();
+    Future<void>.delayed(const Duration(milliseconds: 500))
+        .then((_) => controller.refreshCompleted());
     '加载完成'.toast();
+    notifyListeners();
   }
 
   /// 比对条件是否需要进行网络查询 /
@@ -46,6 +50,7 @@ class HomeProvider extends BaseListProvider {
       init();
     } else {
       fiterGvgTask();
+      notifyListeners();
     }
   }
 
@@ -54,6 +59,7 @@ class HomeProvider extends BaseListProvider {
     // ignore: avoid_function_literals_in_foreach_calls
     arr.forEach((GvgTask g) {
       g.tasks.sort((Task a, Task b) => b.damage - a.damage);
+      // ignore: avoid_function_literals_in_foreach_calls
       g.tasks.forEach((Task t) {
         t.charas
             .sort((Chara c, Chara d) => d.searchAreaWidth - c.searchAreaWidth);
@@ -73,16 +79,18 @@ class HomeProvider extends BaseListProvider {
         gvgTask.tasks.retainWhere((Task task) {
           bool b = false;
           switch (_gvgTaskFilter.usedOrRemoved) {
-            case 'used':
-              b = MyHive.usedBox.values.any((int element) => element == task.id);
+            case TaskType.used:
+              b = MyHive.usedBox.values
+                  .any((int element) => element == task.id);
               break;
-            case 'removed':
-              b = MyHive.removedBox.values.any((int element) => element == task.id);
+            case TaskType.removed:
+              b = MyHive.removedBox.values
+                  .any((int element) => element == task.id);
               break;
-            case 'tail':
+            case TaskType.tail:
               b = task.type == 1;
               break;
-            case 'all':
+            case TaskType.all:
             default:
               b = true;
           }
@@ -101,11 +109,46 @@ class HomeProvider extends BaseListProvider {
       }
     }
     _gvgTaskList = tempList;
-    notifyListeners();
   }
 
   @override
-  Future<void> loadMore() async {
+  Future<void> loadMore() async {}
 
+  Future<List<ResultBoss>> filterIsolate() async {
+    final List<int> removedList = MyHive.removedBox.values.toList();
+    final List<int> usedList = MyHive.usedBox.values.toList();
+    final Box<Chara> charaBox = MyHive.getServerCharaBox(_gvgTaskFilter.server);
+    final List<int> unHaveCharaList =
+        charaBox.values.map((Chara e) => e.prefabId).toList();
+    final List<ResultBoss> bossList = [];
+    final List<GvgTask> taskList = [];
+    for (final GvgTask item in _gvgTaskList) {
+      final GvgTask gvgTask = item.clone();
+      for (final Task task in gvgTask.tasks) {
+        task.damage = typeDamage(task);
+      }
+      taskList.add(gvgTask);
+      bossList.add(ResultBoss(prefabId: gvgTask.prefabId, id: gvgTask.id));
+    }
+    if (taskList.isEmpty) {
+      '至少选择一个boss'.toast();
+      return [];
+    }
+    final List<List<TaskFilterResult>> res = await isolateFilter(
+        FilterIsolateConfig(
+            removeList: removedList,
+            usedList: usedList,
+            taskList: _gvgTaskList,
+            unHaveCharaList: unHaveCharaList));
+    MyStore.filterResList = res;
+    return bossList;
+  }
+
+  // 如果包含手动，则使用damage， 如果不包含且有自动刀的伤害显示自动刀的伤害
+  int typeDamage(Task task) {
+    if (_gvgTaskFilter.methods.contains(AutoType.manual)) {
+      return task.damage;
+    }
+    return task.autoDamage ?? task.damage;
   }
 }

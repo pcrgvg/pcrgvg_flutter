@@ -8,7 +8,7 @@ import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'base_provider.dart';
 
 class ManageCharaProvider extends BaseListProvider {
-  ManageCharaProvider() {
+  ManageCharaProvider() : super(initialRefresh: true) {
     init();
   }
 
@@ -24,13 +24,16 @@ class ManageCharaProvider extends BaseListProvider {
   late GvgTaskFilterHive _gvgTaskFilter;
   GvgTaskFilterHive get gvgTaskFilter => _gvgTaskFilter;
   List<Chara> charaList = [];
-  late String _serverType;
+  String _serverType = '';
   String get serverType => _serverType;
   set serverType(String value) {
-    _serverType = value;
-    final Box<Chara> box = getCharaBox(value);
-     hiveCharaList = box.values.toList();
-    getCharaList();
+    if (_serverType != value) {
+      _serverType = value;
+      final Box<Chara> box = getCharaBox(value);
+      hiveCharaList = box.values.toList();
+      getCharaList();
+      notifyListeners();
+    }
   }
 
   List<Chara> hiveCharaList = [];
@@ -49,6 +52,7 @@ class ManageCharaProvider extends BaseListProvider {
     PcrDb.charaList(serverType).then((List<Chara> value) {
       charaList = value;
       notifyListeners();
+      Future<void>.delayed(const Duration(milliseconds: 800)).then((_) => controller.refreshCompleted());
     });
   }
 
@@ -69,7 +73,9 @@ class ManageCharaProvider extends BaseListProvider {
   }
 
   @override
-  Future<void> refresh() async {}
+  Future<void> refresh() async {
+    init();
+  }
 
   @override
   Future<void> loadMore() async {}

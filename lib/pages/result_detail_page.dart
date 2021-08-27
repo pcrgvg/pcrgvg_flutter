@@ -5,6 +5,9 @@ import 'package:extended_image/extended_image.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:like_button/like_button.dart';
+import 'package:pcrgvg_flutter/constants/Images.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
@@ -15,7 +18,6 @@ import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
 import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
@@ -85,10 +87,51 @@ class _ResultDetailPageState extends State<ResultDetailPage> {
               taskResult: widget.taskResult,
               current: current,
               onBottomTap: onBottomTap),
-          _Back(theme: theme)
+          _Back(theme: theme),
+          _Like(theme: theme)
         ],
       ),
     );
+  }
+}
+
+class _Like extends StatelessWidget {
+  const _Like({Key? key, required this.theme}) : super(key: key);
+  final ThemeData theme;
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+        right: 16,
+        top: Screens.statusBarHeight,
+        child: MaterialButton(
+          minWidth: 36,
+          height: 36,
+          shape: circleShape,
+          color: theme.backgroundColor,
+          padding: EdgeInsets.zero,
+          onPressed: null,
+          child: Center(
+            child: LikeButton(
+              onTap: (bool isLiked) async {
+                return !isLiked;
+              },
+              likeBuilder: (bool isLiked) {
+                return isLiked
+                    ? ExtendedImage.asset(
+                        Images.kkr,
+                      )
+                    : ColorFiltered(
+                        colorFilter: const ColorFilter.mode(
+                            Colors.orange, BlendMode.color),
+                        child: ExtendedImage.asset(
+                          Images.kkr,
+                          fit: BoxFit.cover,
+                          shape: BoxShape.circle,
+                        ));
+              },
+            ),
+          ),
+        ));
   }
 }
 
@@ -167,6 +210,7 @@ class _BgCover extends StatelessWidget {
             image: DecorationImage(
                 image: ExtendedNetworkImageProvider(bgUrl), fit: BoxFit.cover)),
         child: BackdropFilter(
+          // filter: ImageFilter.blur(sigmaY: 0, sigmaX: 0),
           filter: ImageFilter.blur(sigmaY: 2.0, sigmaX: 2.0),
           child: Container(
             color: Colors.transparent,
@@ -228,7 +272,7 @@ class _Content extends StatelessWidget {
           top: Screens.statusBarHeight + 100, left: 16, right: 16, bottom: 92),
       physics: const BouncingScrollPhysics(),
       children: [
-        _Head(theme: theme, task: task, bossPrefab: bossPrefab),
+        _Head(theme: theme, taskResult: taskResult),
         _Link(theme: theme, task: task),
         if (!task.remarks.isNullOrEmpty)
           Container(
@@ -299,16 +343,15 @@ class _Head extends StatelessWidget {
   const _Head({
     Key? key,
     required this.theme,
-    required this.task,
-    required this.bossPrefab,
+    required this.taskResult,
   }) : super(key: key);
 
   final ThemeData theme;
-  final Task task;
-  final int bossPrefab;
+  final TaskFilterResult taskResult;
 
   @override
   Widget build(BuildContext context) {
+    final Task task = taskResult.task;
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -349,9 +392,10 @@ class _Head extends StatelessWidget {
                       child: Stack(
                         children: [
                           IconChara(
-                            chara: chara,
-                          ),
-                          Positioned( left: 0, top: 0, child: Container())
+                              chara: chara,
+                              shimmer: taskResult.borrowChara?.prefabId ==
+                                  chara.prefabId),
+                          Positioned(left: 0, top: 0, child: Container())
                         ],
                       ),
                     )
@@ -364,7 +408,7 @@ class _Head extends StatelessWidget {
             left: 20,
             top: -30,
             child: BossIcon(
-              prefabId: bossPrefab,
+              prefabId: taskResult.prefabId,
               width: 60,
               height: 60,
             )),
