@@ -26,7 +26,7 @@ class AutoTypeView extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: Text(text, style: TextStyle(color: color),),
+      child: Text(text, style: TextStyle(color: color, height: 1.1),),
     );
 
     // return Container(

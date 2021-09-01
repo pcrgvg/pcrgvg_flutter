@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:extended_image/extended_image.dart';
@@ -8,12 +9,12 @@ import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
+import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 @FFArgumentImport()
 import 'package:pcrgvg_flutter/model/models.dart';
+import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
 import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
-import 'dart:math' as math;
-
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
@@ -38,7 +39,8 @@ class TaskDetailPage extends StatelessWidget {
       body: Stack(
         children: [
           _BgCover(bgUrl: bgUrl),
-          _Content(theme: theme, task: task, bossPrefab: bossPrefab),
+          _Content(
+              theme: theme, task: task, bossPrefab: bossPrefab, bgUrl: bgUrl),
           _Back(theme: theme)
         ],
       ),
@@ -57,19 +59,19 @@ class _Back extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: 16,
-      top: Screens.statusBarHeight,
+        left: 16,
+        top: Screens.statusBarHeight,
         child: MaterialButton(
-      minWidth: 36,
-      height: 36,
-      child: const Icon(Icons.chevron_left),
-      shape: circleShape,
-      color: theme.backgroundColor,
-      padding: EdgeInsets.zero,
-      onPressed: () {
-        Navigator.pop(context);
-      },
-    ));
+          minWidth: 36,
+          height: 36,
+          child: const Icon(Icons.chevron_left),
+          shape: circleShape,
+          color: theme.backgroundColor,
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ));
   }
 }
 
@@ -79,11 +81,13 @@ class _Content extends StatelessWidget {
     required this.theme,
     required this.task,
     required this.bossPrefab,
+    required this.bgUrl,
   }) : super(key: key);
 
   final ThemeData theme;
   final Task task;
   final int bossPrefab;
+  final String bgUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -93,11 +97,12 @@ class _Content extends StatelessWidget {
         crossAxisCount: 1,
         mainAxisSpacing: 16,
       ),
-      padding:  EdgeInsets.only(top: Screens.statusBarHeight + 100, left: 16, right: 16, bottom: 16),
+      padding: EdgeInsets.only(
+          top: Screens.statusBarHeight + 100, left: 16, right: 16, bottom: 16),
       physics: const BouncingScrollPhysics(),
       children: [
         _Head(theme: theme, task: task, bossPrefab: bossPrefab),
-        _Link(theme: theme, task: task),
+        _Link(theme: theme, task: task, bgUrl: bgUrl),
         if (!task.remarks.isNullOrEmpty)
           Container(
             decoration: BoxDecoration(
@@ -109,7 +114,7 @@ class _Content extends StatelessWidget {
               children: [
                 const Text(
                   '备注',
-                  style: textStyleH1,
+                  style: textStyleH2,
                 ),
                 Text(task.remarks)
               ],
@@ -151,10 +156,12 @@ class _Link extends StatelessWidget {
     Key? key,
     required this.theme,
     required this.task,
+    required this.bgUrl,
   }) : super(key: key);
 
   final ThemeData theme;
   final Task task;
+  final String bgUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -168,14 +175,20 @@ class _Link extends StatelessWidget {
         children: [
           const Text(
             '视频',
-            style: textStyleH1,
+            style: textStyleH2,
           ),
           for (Link link in task.links)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: GestureDetector(
                 onTap: () {
-                  launch(link.link);
+                  if (link.remarks.isNotEmpty) {
+                    Navigator.of(context).pushNamed(Routes.linkDetailPage.name,
+                        arguments:
+                            Routes.linkDetailPage.d(link: link, bgUrl: bgUrl));
+                  } else {
+                    launch(link.link);
+                  }
                 },
                 child: Text(
                   link.name,
@@ -212,19 +225,23 @@ class _Head extends StatelessWidget {
               borderRadius: const BorderRadius.all(Radius.circular(16))),
           padding: const EdgeInsets.all(16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  for (int type in task.canAuto)
+                  for (int type in task.canAuto) ...[
                     AutoTypeView(
                       type: type,
                     ),
-                  Text(
-                    '${task.damage}w',
-                    style: TextStyle(
-                        color: HexColor.fromHex('#ff2277'), fontSize: 18),
-                  ),
+                    if (type == AutoType.manual)
+                      Text('${task.damage}w',
+                          style: TextStyle(color: HexColor.fromHex('#ff2277'))),
+                    if (type == AutoType.auto || type == AutoType.harfAuto)
+                      Text('(${task.autoDamage ?? task.damage}w)',
+                          style: TextStyle(color: HexColor.fromHex('#ff2277'))),
+                  ],
                   if (task.type == 1)
                     const Text(
                       '(尾刀)',
@@ -246,6 +263,8 @@ class _Head extends StatelessWidget {
                     ),
                 ],
               ),
+              if(task.exRemarks.isNotEmpty)
+              Text(task.exRemarks)
             ],
           ),
         ),
@@ -253,8 +272,13 @@ class _Head extends StatelessWidget {
             left: 20,
             top: -30,
             child: Hero(
-                tag: '$bossPrefab',
-                child:  BossIcon(prefabId: bossPrefab, width: 60, height: 60,),)),
+              tag: '$bossPrefab',
+              child: BossIcon(
+                prefabId: bossPrefab,
+                width: 60,
+                height: 60,
+              ),
+            )),
       ],
     );
   }

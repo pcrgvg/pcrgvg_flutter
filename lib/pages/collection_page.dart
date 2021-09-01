@@ -4,6 +4,7 @@ import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pcrgvg_flutter/constants/Images.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
@@ -59,28 +60,18 @@ class _CollectButton extends StatelessWidget {
         context.select<CollectProvider, List<List<TaskFilterResult>>>(
             (CollectProvider value) => value.collectionList);
     return LikeButton(
-      isLiked: Collection.indexOfCollection(list, collectionTask) > -1,
+      isLiked: true,
       onTap: (bool isLiked) async {
         model.changeCollect(list);
         return !isLiked;
       },
       likeBuilder: (bool isLiked) {
-        return isLiked
-            ? Image.asset(
+        return Image.asset(
                 Images.kkr,
                 width: 10,
                 height: 10,
-              )
-            : ColorFiltered(
-                colorFilter:
-                    const ColorFilter.mode(Colors.orange, BlendMode.color),
-                child: Image.asset(
-                  Images.kkr,
-                  width: 10,
-                  height: 10,
-                ));
-      },
-    );
+              );
+      });
   }
 }
 
@@ -97,8 +88,6 @@ class _Content extends StatelessWidget {
     final List<List<TaskFilterResult>> list =
         context.select<CollectProvider, List<List<TaskFilterResult>>>(
             (CollectProvider model) => model.collectionList);
-    final List<int> usedList = context.select<CollectProvider, List<int>>(
-        (CollectProvider model) => model.usedList);
     return SliverWaterfallFlow(
         gridDelegate: const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
           crossAxisCount: 1,
@@ -132,7 +121,7 @@ class _Content extends StatelessWidget {
                       ],
                     ),
                     for (TaskFilterResult taskResult in taskList)
-                      _buildTaskItem(taskResult, usedList)
+                      _buildTaskItem(taskResult)
                   ],
                 ),
               ),
@@ -141,7 +130,7 @@ class _Content extends StatelessWidget {
         }, childCount: list.length));
   }
 
-  Container _buildTaskItem(TaskFilterResult taskResult, List<int> usedList) {
+  Container _buildTaskItem(TaskFilterResult taskResult) {
     return Container(
       child: Column(
         children: [
@@ -180,12 +169,6 @@ class _Content extends StatelessWidget {
                     shimmer: taskResult.borrowChara?.prefabId == chara.prefabId,
                   ),
                 ),
-              if (usedList.contains(taskResult.task.id))
-                Image.asset(
-                  Images.kkr,
-                  width: 30,
-                  height: 30,
-                )
             ],
           ),
           const SizedBox(
@@ -234,29 +217,71 @@ class _Header extends StatelessWidget {
                       ? theme.scaffoldBackgroundColor
                       : theme.backgroundColor,
                   onPressed: () async {
-                    // showMaterialModalBottomSheet(
-                    //     backgroundColor: Colors.transparent,
-                    //     context: context,
-                    //     builder: (BuildContext context) {
-                    //       return _BossFilter(model, theme);
-                    //     });
+                    showMaterialModalBottomSheet(
+                        backgroundColor: Colors.transparent,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return _BottomServer(model: model);
+                        });
                   },
                 )
               ],
             ),
             MaterialButton(
-               minWidth: 0,
-                  elevation: 0,
-              child: const Text('清空'),
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-               color: theme.accentColor.withOpacity(0.2),
-              onPressed: () async {},
+              minWidth: 0,
+              elevation: 0,
+              child: Text(
+                '清空',
+                style: TextStyle(color: theme.accentColor),
+              ),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+              ),
+              color: theme.accentColor.withOpacity(0.2),
+              onPressed: () async {
+                model.clearCollection();
+              },
             )
           ],
         ),
       ),
     );
+  }
+}
+
+class _BottomServer extends StatelessWidget {
+  const _BottomServer({Key? key, required this.model}) : super(key: key);
+  final CollectProvider model;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildButton(ServerType.jp, context),
+          _buildButton(ServerType.cn, context),
+          _buildButton(ServerType.tw, context),
+        ],
+      ),
+    );
+  }
+
+  InkWell _buildButton(String server, BuildContext context) {
+    return InkWell(
+          onTap: () {
+            model.changeServer(server);
+            Navigator.of(context).pop();
+          },
+          child: Container(
+            height: 40,
+            child: Text(ServerType.getName(server),textAlign: TextAlign.center,),
+          ),
+        );
   }
 }

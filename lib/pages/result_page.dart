@@ -194,10 +194,13 @@ class _CollectButton extends StatelessWidget {
             : ColorFiltered(
                 colorFilter:
                     const ColorFilter.mode(Colors.orange, BlendMode.color),
-                child: Image.asset(
-                  Images.kkr,
-                  width: 10,
-                  height: 10,
+                child: Container(
+                  color: Colors.white,
+                  child: Image.asset(
+                    Images.kkr,
+                    width: 10,
+                    height: 10,
+                  ),
                 ));
       },
     );

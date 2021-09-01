@@ -64,6 +64,7 @@ class TaskAdapter extends TypeAdapter<Task> {
       autoDamage: fields[4] as int?,
       charas: (fields[5] as List).cast<Chara>(),
       remarks: fields[6] as String,
+      exRemarks: fields[9] as String,
       links: (fields[7] as List).cast<Link>(),
       type: fields[8] as int,
     );
@@ -72,7 +73,7 @@ class TaskAdapter extends TypeAdapter<Task> {
   @override
   void write(BinaryWriter writer, Task obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -90,7 +91,9 @@ class TaskAdapter extends TypeAdapter<Task> {
       ..writeByte(7)
       ..write(obj.links)
       ..writeByte(8)
-      ..write(obj.type);
+      ..write(obj.type)
+      ..writeByte(9)
+      ..write(obj.exRemarks);
   }
 
   @override
@@ -169,17 +172,20 @@ class LinkAdapter extends TypeAdapter<Link> {
     return Link(
       name: fields[0] as String,
       link: fields[1] as String,
+      remarks: fields[2] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Link obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
-      ..write(obj.link);
+      ..write(obj.link)
+      ..writeByte(2)
+      ..write(obj.remarks);
   }
 
   @override
@@ -259,6 +265,7 @@ class TaskFilterResultAdapter extends TypeAdapter<TaskFilterResult> {
       bossId: fields[0] as int,
       prefabId: fields[1] as int,
       index: fields[3] as int,
+      fixedBorrowChara: fields[5] as Chara?,
       task: fields[4] as Task,
       borrowChara: fields[2] as Chara?,
     );
@@ -267,7 +274,7 @@ class TaskFilterResultAdapter extends TypeAdapter<TaskFilterResult> {
   @override
   void write(BinaryWriter writer, TaskFilterResult obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.bossId)
       ..writeByte(1)
@@ -277,7 +284,9 @@ class TaskFilterResultAdapter extends TypeAdapter<TaskFilterResult> {
       ..writeByte(3)
       ..write(obj.index)
       ..writeByte(4)
-      ..write(obj.task);
+      ..write(obj.task)
+      ..writeByte(5)
+      ..write(obj.fixedBorrowChara);
   }
 
   @override

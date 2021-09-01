@@ -88,7 +88,7 @@ class _ResultDetailPageState extends State<ResultDetailPage> {
               current: current,
               onBottomTap: onBottomTap),
           _Back(theme: theme),
-          _Like(theme: theme)
+          // _Like(theme: theme)
         ],
       ),
     );

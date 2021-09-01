@@ -6,6 +6,7 @@ class TaskFilterResult extends HiveObject {
       {required this.bossId,
       required this.prefabId,
       required this.index,
+      this.fixedBorrowChara,
       required this.task,
       this.borrowChara});
   @HiveField(0)
@@ -18,10 +19,14 @@ class TaskFilterResult extends HiveObject {
   int index;
   @HiveField(4)
   Task task;
+  @HiveField(5)
+  Chara? fixedBorrowChara;
+
   Map<String, dynamic> toJson() => <String, dynamic>{
         "bossId": bossId,
         "prefabId": prefabId,
         "borrowChara": borrowChara,
+        "fixedBorrowChara": fixedBorrowChara,
         "index": index,
         "task": task
       };
@@ -30,6 +35,7 @@ class TaskFilterResult extends HiveObject {
       bossId: bossId,
       index: index,
       prefabId: prefabId,
+      fixedBorrowChara: fixedBorrowChara,
       task: task,
       borrowChara: borrowChara);
 }

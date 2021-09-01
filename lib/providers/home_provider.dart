@@ -23,7 +23,6 @@ class HomeProvider extends BaseListProvider {
   Future<void> init() async {
     _gvgTaskFilter =
         MyHive.userConfBox.get(HiveDbKey.GvgTaskFilter) as GvgTaskFilterHive;
-    refresh();
   }
 
   @override

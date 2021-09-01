@@ -25,6 +25,7 @@ import 'package:provider/provider.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:waterfall_flow/waterfall_flow.dart';
 
 @FFRoute(
   name: 'homePage',
@@ -41,7 +42,7 @@ class _HomePage extends State<HomePage> {
   @override
   void initState() {
     // TODO(KURUMI): CHECKUPDATE
-    PcrDb.checkUpdate();
+    // PcrDb.checkUpdate();
 
     super.initState();
   }
@@ -67,13 +68,11 @@ class _HomePage extends State<HomePage> {
                     if (gvgTask.tasks.isNotEmpty)
                       SliverPadding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          sliver: SliverGrid(
+                          sliver: SliverWaterfallFlow(
                               gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                  const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 1,
-                                crossAxisSpacing: 16.0,
-                                mainAxisSpacing: 8.0,
-                                mainAxisExtent: 120.0,
+                                mainAxisSpacing: 16,
                               ),
                               delegate: SliverChildBuilderDelegate(
                                 (_, int index) {
@@ -178,12 +177,14 @@ class _Header extends StatelessWidget {
                   minWidth: 0,
                   elevation: 0,
                   onPressed: () async {
-                   final ToastFuture loading =   '分刀处理中'.loading();
-                   final List<ResultBoss> bossList = await homeModel.filterIsolate();
+                    final ToastFuture loading = '分刀处理中'.loading();
+                    final List<ResultBoss> bossList =
+                        await homeModel.filterIsolate();
                     if (bossList.isNotEmpty) {
-                       Navigator.of(context).pushNamed(Routes.resultPage.name, arguments: Routes.resultPage.d(bossList: bossList));
+                      Navigator.of(context).pushNamed(Routes.resultPage.name,
+                          arguments: Routes.resultPage.d(bossList: bossList));
                     }
-                   
+
                     loading.dismiss();
                   },
                   shape: const RoundedRectangleBorder(
@@ -204,7 +205,7 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _TaskItem extends StatelessWidget {
+class _TaskItem extends StatefulWidget {
   const _TaskItem(
       {Key? key,
       required this.theme,
@@ -217,29 +218,47 @@ class _TaskItem extends StatelessWidget {
   final int bossPrefab;
 
   @override
+  __TaskItemState createState() => __TaskItemState();
+}
+
+class __TaskItemState extends State<_TaskItem> {
+  @override
   Widget build(BuildContext context) {
     final HomeProvider model = context.read<HomeProvider>();
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(Routes.taskDetailPage.name,
-            arguments:
-                Routes.taskDetailPage.d(bossPrefab: bossPrefab, task: task));
+            arguments: Routes.taskDetailPage
+                .d(bossPrefab: widget.bossPrefab, task: widget.task));
       },
       child: Container(
         decoration: BoxDecoration(
-            color: theme.backgroundColor,
+            color: widget.theme.backgroundColor,
             borderRadius: const BorderRadius.all(Radius.circular(8))),
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                for (Chara chara in task.charas)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 4),
-                    child: IconChara(
-                      chara: chara,
+                for (Chara chara in widget.task.charas)
+                  GestureDetector(
+                    onTap: () {
+                      if (widget.task.fixedBorrowChara?.prefabId ==
+                          chara.prefabId) {
+                        widget.task.fixedBorrowChara = null;
+                      } else {
+                        widget.task.fixedBorrowChara = chara;
+                      }
+                      setState(() {});
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: IconChara(
+                          chara: chara,
+                          shimmer: widget.task.fixedBorrowChara?.prefabId ==
+                              chara.prefabId),
                     ),
                   ),
                 const Icon(FluentIcons.chevron_right_16_regular),
@@ -250,19 +269,24 @@ class _TaskItem extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      '${model.typeDamage(task)}w',
-                      style: TextStyle(
-                          color: HexColor.fromHex('#ff2277'), fontSize: 18),
-                    ),
-                    if (task.type == 1)
+                    for (int type in widget.task.canAuto) ...[
+                      AutoTypeView(
+                        type: type,
+                      ),
+                      if (type == AutoType.manual)
+                        Text('${widget.task.damage}w',
+                            style:
+                                TextStyle(color: HexColor.fromHex('#ff2277'))),
+                      if (type == AutoType.auto || type == AutoType.harfAuto)
+                        Text(
+                            '(${widget.task.autoDamage ?? widget.task.damage}w)',
+                            style:
+                                TextStyle(color: HexColor.fromHex('#ff2277'))),
+                    ],
+                    if (widget.task.type == 1)
                       const Text(
                         '(尾刀)',
                         style: TextStyle(color: Colors.deepPurple),
-                      ),
-                    for (int type in task.canAuto)
-                      AutoTypeView(
-                        type: type,
                       ),
                   ],
                 ),
@@ -273,7 +297,8 @@ class _TaskItem extends StatelessWidget {
                   ],
                 )
               ],
-            )
+            ),
+            if (widget.task.exRemarks.isNotEmpty) Text(widget.task.exRemarks)
           ],
         ),
       ),
@@ -284,15 +309,15 @@ class _TaskItem extends StatelessWidget {
     return ValueListenableBuilder<Box<int>>(
       valueListenable: Hive.box<int>(HiveBoxKey.usedBox).listenable(),
       builder: (_, Box<int> box, __) {
-        final bool isLiked = box.values.contains(task.id);
-        final int index = box.values.toList().indexOf(task.id);
+        final bool isLiked = box.values.contains(widget.task.id);
+        final int index = box.values.toList().indexOf(widget.task.id);
         return LikeButton(
           isLiked: isLiked,
           onTap: (bool isLiked) async {
             if (isLiked) {
               await box.deleteAt(index);
             } else {
-              await box.add(task.id);
+              await box.add(widget.task.id);
             }
             return !isLiked;
           },
@@ -304,13 +329,15 @@ class _TaskItem extends StatelessWidget {
                     height: 10,
                   )
                 : ColorFiltered(
-                    colorFilter:
-                        ColorFilter.mode(theme.primaryColor, BlendMode.color),
-                    child: Image.asset(
-                      Images.kkr,
-                      width: 10,
-                      height: 10,
-                    ));
+                    colorFilter: ColorFilter.mode(
+                        Colors.orange, BlendMode.color),
+                    child: Container(
+                        color: Colors.white,
+                        child: Image.asset(
+                          Images.kkr,
+                          width: 10,
+                          height: 10,
+                        )));
           },
         );
       },
@@ -321,21 +348,21 @@ class _TaskItem extends StatelessWidget {
     return ValueListenableBuilder<Box<int>>(
       valueListenable: Hive.box<int>(HiveBoxKey.removedBox).listenable(),
       builder: (_, Box<int> box, __) {
-        final bool removed = box.values.contains(task.id);
-        final int index = box.values.toList().indexOf(task.id);
+        final bool removed = box.values.contains(widget.task.id);
+        final int index = box.values.toList().indexOf(widget.task.id);
         return AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             child: IconButton(
               iconSize: 24,
-              key: ValueKey<String>('${task.id}$removed'),
+              key: ValueKey<String>('${widget.task.id}$removed'),
               onPressed: () {
                 if (removed) {
                   box.deleteAt(index);
                 } else {
-                  box.add(task.id);
+                  box.add(widget.task.id);
                 }
               },
-              color: removed ? Colors.green : theme.accentColor,
+              color: removed ? Colors.green : widget.theme.accentColor,
               icon: removed
                   ? const Icon(
                       FluentIcons.add_square_multiple_16_regular,

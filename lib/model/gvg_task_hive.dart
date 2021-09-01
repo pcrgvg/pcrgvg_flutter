@@ -93,8 +93,10 @@ class Task {
     required this.autoDamage,
     required this.charas,
     required this.remarks,
+    required this.exRemarks,
     required this.links,
     required this.type,
+    this.fixedBorrowChara,
   });
 
   factory Task.fromJson(Map<String, dynamic> jsonRes) {
@@ -138,6 +140,7 @@ class Task {
       autoDamage: asT<int?>(jsonRes['autoDamage']),
       charas: charas!,
       remarks: asT<String>(jsonRes['remarks'])!,
+      exRemarks: asT<String>(jsonRes['exRemarks'])!,
       type: asT<int>(jsonRes['type'])!,
       links: links!,
     );
@@ -162,6 +165,11 @@ class Task {
   @HiveField(8)
   final int type;
 
+  @HiveField(9)
+  final String exRemarks;
+
+  Chara? fixedBorrowChara;
+
   @override
   String toString() {
     return jsonEncode(this);
@@ -173,8 +181,10 @@ class Task {
         'stage': stage,
         'damage': damage,
         'autoDamage': autoDamage,
+        'fixedBorrowChara': fixedBorrowChara,
         'charas': charas,
         'remarks': remarks,
+        'exRemarks': exRemarks,
         'type': type,
         'links': links,
       };
@@ -189,6 +199,8 @@ class Task {
         damage: damage,
         autoDamage: autoDamage,
         remarks: remarks,
+        exRemarks: exRemarks,
+        fixedBorrowChara: fixedBorrowChara,
         type: type,
         links: links.map((e) => e.copy()).toList(),
         charas: charas.map((r) => r.cpoy()).toList());
@@ -203,7 +215,10 @@ class Task {
           canAuto == other.canAuto &&
           stage == other.stage &&
           damage == other.damage &&
+          exRemarks == other.exRemarks &&
+          remarks == other.remarks &&
           autoDamage == other.autoDamage &&
+          fixedBorrowChara == other.fixedBorrowChara &&
           type == other.type &&
           charas.eq(other.charas) &&
           links.eq(other.links);
@@ -215,7 +230,10 @@ class Task {
       stage.hashCode ^
       damage.hashCode ^
       autoDamage.hashCode ^
+      fixedBorrowChara.hashCode ^
       type.hashCode ^
+      remarks.hashCode ^
+      exRemarks.hashCode ^
       charas.hashCode ^
       links.hashCode;
 }
@@ -306,16 +324,20 @@ class Link {
   const Link({
     required this.name,
     required this.link,
+    required this.remarks,
   });
 
   factory Link.fromJson(Map<String, dynamic> jsonRes) => Link(
         name: asT<String>(jsonRes['name'])!,
         link: asT<String>(jsonRes['link'])!,
+        remarks: asT<String>(jsonRes['remarks'])!,
       );
   @HiveField(0)
   final String name;
   @HiveField(1)
   final String link;
+    @HiveField(2)
+  final String remarks;
 
   @override
   String toString() {
@@ -325,19 +347,21 @@ class Link {
   Map<String, dynamic> toJson() => <String, dynamic>{
         'name': name,
         'link': link,
+        'remarks': remarks,
       };
 
   Link clone() =>
       Link.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
-  Link copy() => Link(name: name, link: link);
+  Link copy() => Link(name: name, link: link, remarks: remarks);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is Link &&
           runtimeType == other.runtimeType &&
           name == other.name &&
+          remarks == other.remarks &&
           link == other.link;
 
   @override
-  int get hashCode => name.hashCode ^ link.hashCode;
+  int get hashCode => name.hashCode ^ link.hashCode ^ remarks.hashCode;
 }

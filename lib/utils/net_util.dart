@@ -1,13 +1,14 @@
-import 'dart:isolate';
+import 'dart:math' as math;
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pcrgvg_flutter/apis/pcr_db_api.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/db/pcr_db.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:flutter_isolate/flutter_isolate.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
+import 'package:crypto/crypto.dart';
 // import 'package:isolate/load_balancer.dart';
 
 abstract class RequestMethods {
@@ -30,6 +31,7 @@ class Resp {
 
 abstract class HttpStatus {
   static const int OK = 200; 
+  static const int Fail = 500; 
 }
 
 // TODO(kurumi): 根据uri 返回不同的res
@@ -49,6 +51,12 @@ class PcrTransFormer extends DefaultTransformer {
           data:
               PcrDbVersion.fromJson(transformResponse as Map<String, dynamic>));
     }
+    if (uri.contains(PcrGvgUrl.host)) {
+      if (transformResponse['code'] == 200) {
+        return Resp(code: HttpStatus.OK,data: transformResponse['data']);
+      }
+      return Resp(code: HttpStatus.Fail);
+    }
 
     return transformResponse;
   }
@@ -58,16 +66,26 @@ class NetUtil {
   final String baseUrl = '';
   static final Dio dio = Dio(BaseOptions(
     baseUrl: kReleaseMode ? '' : '',
-    // baseUrl: "https://www.5dm.tv/",
     connectTimeout: 60000,
     receiveTimeout: 60000,
   ));
+  static late final String _d;
+  static late final int _l;
+  static late final String _t;
 
   static void init() {
+    _d = DateTime.now().millisecondsSinceEpoch.toString();
+     _l = math.Random().nextInt(_d.length);
+     _t = sha1.convert(utf8.encode(_d.substring(_l) + '123456')).toString();
     dio.transformer = PcrTransFormer();
     dio.interceptors.add(InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
       'net start'.debug();
+      options.headers.addAll({
+        "d": _d,
+        "l": _l.toString(),
+        "t": _t
+      });
       return handler.next(options);
       // 如果你想完成请求并返回一些自定义数据，你可以resolve一个Response对象 `handler.resolve(response)`。
       // 这样请求将会被终止，上层then会被调用，then中返回的数据将是你的自定义response.

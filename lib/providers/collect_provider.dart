@@ -14,9 +14,8 @@ class CollectProvider extends BaseListProvider {
   CollectProvider() {
     init();
   }
-  late final String serverType;
+  late String serverType;
   List<List<TaskFilterResult>> collectionList = <List<TaskFilterResult>>[];
-   List<int> usedList = <int>[];
 
   void init() {
     serverType =
@@ -29,7 +28,7 @@ class CollectProvider extends BaseListProvider {
   @override
   Future<void> refresh() async {
      collectionList = Collection.getCollection(serverType);
-       usedList = MyHive.usedBox.values.toList();
+      notifyListeners();
     Future<void>.delayed(const Duration(milliseconds: 500))
         .then((_) => controller.refreshCompleted());
   }
@@ -44,9 +43,22 @@ class CollectProvider extends BaseListProvider {
     }
     MyHive.collectBox.put(serverType, arr);
     collectionList = arr;
+    notifyListeners();
     return false;
   }
 
+  void clearCollection() {
+     MyHive.collectBox.put(serverType, []);
+     collectionList = [];
+     notifyListeners();
+  }
+
+  void changeServer(String server) {
+    if (server != serverType) {
+      serverType = server;
+      refresh();
+    }
+  }
 
   @override
   Future<void> loadMore() async {}

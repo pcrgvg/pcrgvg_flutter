@@ -45,7 +45,7 @@ void filterResult(
   // 重复的角色
   final List<int> repeartCharaIdList = [];
   // 当前组合使用的角色
-  final List<Chara> charaList = [];
+  List<Chara> charaList = [];
   // 获取重复角色
   for (final TaskFilterResult task in taskList) {
     for (final Chara chara in task.task.charas) {
@@ -60,6 +60,7 @@ void filterResult(
   }
   // 未拥有角色算作重复
   final List<int> unHaveList = filterUnHaveCharas(charaList, unHaveCharas);
+
   final List<TaskFilterResult> arr = repeatCondition(
       repeatCharas: repeartCharaIdList,
       unHaveCharas: unHaveList,
@@ -156,18 +157,9 @@ List<TaskFilterResult> repeatCondition(
     final int charaCount = map[prefabId] ?? 0;
     map[prefabId] = charaCount + 1;
   }
+  // 优先处理fixed和未拥有
 
-  // final List<TaskFilterResult> tempList = taskList.map((TaskFilterResult task) {
-  // final dynamic json = jsonDecode(jsonEncode(task));
-  //   return TaskFilterResult(
-  //       bossId: json['bossId'] as int,
-  //       index: json['index'] as int,
-  //       prefabId: json['prefabId'] as int,
-  //       task: Task.fromJson(json['task'] as Map<String, dynamic>));
-  // }).toList();
-  final List<TaskFilterResult> tempList = List.from(taskList);
-
-  for (final TaskFilterResult filterResult in tempList) {
+  for (final TaskFilterResult filterResult in taskList) {
     Chara? unHaveChara;
     // 若包含未拥有角色，该作业必定要借该角色
     for (final int item in unHaveCharas) {
@@ -178,6 +170,14 @@ List<TaskFilterResult> repeatCondition(
         break;
       }
     }
+    final Chara? fixedBorrowChara = filterResult.fixedBorrowChara;
+    // 两者冲突
+    if (fixedBorrowChara != null &&
+        unHaveChara != null &&
+        fixedBorrowChara.prefabId != unHaveChara.prefabId) {
+      return [];
+    }
+
     if (unHaveChara != null) {
       final int charaCount = map[unHaveChara.prefabId] ?? 0;
       if (charaCount > 0 && filterResult.borrowChara == null) {
@@ -186,7 +186,47 @@ List<TaskFilterResult> repeatCondition(
         continue;
       }
     }
-    // 借重复的角色
+
+    // 强制借人
+    if (fixedBorrowChara != null) {
+      filterResult.borrowChara = fixedBorrowChara;
+      final int charaCount = map[fixedBorrowChara.prefabId] ?? 0;
+      // 如果强制借用角色包含在重复角色中且在该使用角色合集里,重复-1;
+      if (charaCount > 0) {
+        for (Chara chara in filterResult.task.charas) {
+          if (repeatCharas.contains(chara.prefabId) &&
+              chara.prefabId == fixedBorrowChara.prefabId) {
+            map[fixedBorrowChara.prefabId] = charaCount - 1;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  // 处理虽然有2个重复，但是另一个重复被fixed占用
+  for (final TaskFilterResult filterResult in taskList) {
+    if (filterResult.borrowChara != null) {
+      continue;
+    }
+    Chara? repeateChara;
+    int count = 0;
+    for (Chara chara in filterResult.task.charas) {
+      final int charaCount = map[chara.prefabId] ?? 0;
+      if (charaCount > 0) {
+        repeateChara = chara;
+        count++;
+      }
+    }
+    if (count == 1) {
+      filterResult.borrowChara = repeateChara;
+      final int charaCount = map[repeateChara!.prefabId] ?? 0;
+      map[repeateChara.prefabId] = charaCount - 1;
+    }
+  }
+ // 借重复的角色
+  for (final TaskFilterResult filterResult in taskList) {
+   
     Chara? repeatChara;
     for (final int prefabId in repeatCharas) {
       final int index = filterResult.task.charas
@@ -205,7 +245,7 @@ List<TaskFilterResult> repeatCondition(
 
   final List<int> values = map.values.toList();
   if (values.every((int v) => v == 0)) {
-    return tempList;
+    return taskList;
   }
   return [];
 }
@@ -225,8 +265,6 @@ List<List<TaskFilterResult>> combineAndFilter(List<TaskFilterResult> taskList,
     int k, List<int> unHaveCharas, List<int> usedList) {
   final List<TaskFilterResult> subResult = [];
   final List<List<List<TaskFilterResult>>> tempArr = [[], [], [], []];
-  'combineAndFilter'.debug();
-
   void combineSub(
     int start,
   ) {
@@ -273,6 +311,7 @@ List<TaskFilterResult> flatTask(List<GvgTask> taskList, List<int> removeList) {
             bossId: gvgTask.id,
             prefabId: gvgTask.prefabId,
             task: task,
+            fixedBorrowChara: task.fixedBorrowChara,
             index: gvgTask.index));
       }
     }
@@ -280,8 +319,6 @@ List<TaskFilterResult> flatTask(List<GvgTask> taskList, List<int> removeList) {
 
   return result;
 }
-
-
 
 class FilterIsolateConfig {
   FilterIsolateConfig(

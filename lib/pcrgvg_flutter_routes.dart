@@ -12,6 +12,7 @@ const List<String> routeNames = <String>[
   'collectionPage',
   'homeFilterPage',
   'homePage',
+  'linkDetailPage',
   'mainPage',
   'manageCharaPage',
   'minePage',
@@ -56,6 +57,17 @@ class Routes {
   ///
   /// HomePage : [Key? key]
   static const _HomePage homePage = _HomePage();
+
+  /// 'linkDetailPage'
+  ///
+  /// [name] : 'linkDetailPage'
+  ///
+  /// [routeName] : 'linkDetailPage'
+  ///
+  /// [constructors] :
+  ///
+  /// LinkDetailPage : [Key? key, Link(required) link, String(required) bgUrl]
+  static const _LinkDetailPage linkDetailPage = _LinkDetailPage();
 
   /// 'mainPage'
   ///
@@ -166,6 +178,23 @@ class _HomePage {
 
   Map<String, dynamic> d({Key? key}) => <String, dynamic>{
         'key': key,
+      };
+
+  @override
+  String toString() => name;
+}
+
+class _LinkDetailPage {
+  const _LinkDetailPage();
+
+  String get name => 'linkDetailPage';
+
+  Map<String, dynamic> d(
+          {Key? key, required Link link, required String bgUrl}) =>
+      <String, dynamic>{
+        'key': key,
+        'link': link,
+        'bgUrl': bgUrl,
       };
 
   @override

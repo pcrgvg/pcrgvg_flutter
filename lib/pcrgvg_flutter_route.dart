@@ -12,6 +12,7 @@ import 'package:flutter/widgets.dart';
 import 'pages/collection_page.dart';
 import 'pages/home/home_filter_page.dart';
 import 'pages/home/home_page.dart';
+import 'pages/link_detail_page.dart';
 import 'pages/main_page.dart';
 import 'pages/manage_chara_page.dart';
 import 'pages/mine_page.dart';
@@ -55,6 +56,17 @@ FFRouteSettings getRouteSettings({
           key: asT<Key?>(safeArguments['key']),
         ),
         routeName: 'homePage',
+      );
+    case 'linkDetailPage':
+      return FFRouteSettings(
+        name: name,
+        arguments: arguments,
+        widget: LinkDetailPage(
+          key: asT<Key?>(safeArguments['key']),
+          link: asT<Link>(safeArguments['link'])!,
+          bgUrl: asT<String>(safeArguments['bgUrl'])!,
+        ),
+        routeName: 'linkDetailPage',
       );
     case 'mainPage':
       return FFRouteSettings(
