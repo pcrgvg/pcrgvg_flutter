@@ -13,16 +13,9 @@ class PcrGvgApi {
     final CommRes res = await Http.fetch(RequestOptions(
         path: PcrGvgUrl.gvgTaskList,
         method: RequestMethods.Post,
-        data: {stage: stage, server: server, clanBattleId: clanBattleId}));
-
+        data: {"stage": stage, "server": server, "clanBattleId": clanBattleId}));
     if (res.success) {
       final List<GvgTask> list = [];
-      // if (templist['data'] is List) {
-      //   for (final item in templist['data']! as List) {
-      //     list.add(GvgTask.fromJson(item as Map<String, dynamic>));
-      //   }
-      // }
-      print(res.data);
       if (res.data is List) {
         for (final item in res.data! as List) {
           list.add(GvgTask.fromJson(item as Map<String, dynamic>));

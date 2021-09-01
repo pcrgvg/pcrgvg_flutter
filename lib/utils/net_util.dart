@@ -13,7 +13,7 @@ import 'package:crypto/crypto.dart';
 
 abstract class RequestMethods {
   static const String Get = 'get';
-  static const String Post = 'post';
+  static const String Post = 'POST';
 }
 
 class CommRes {
@@ -52,6 +52,7 @@ class PcrTransFormer extends DefaultTransformer {
               PcrDbVersion.fromJson(transformResponse as Map<String, dynamic>));
     }
     if (uri.contains(PcrGvgUrl.host)) {
+      print(transformResponse);
       if (transformResponse['code'] == 200) {
         return Resp(code: HttpStatus.OK,data: transformResponse['data']);
       }
@@ -108,6 +109,7 @@ class NetUtil {
 
   static Future<Response<T>> fetch<T>(RequestOptions requestOptions) async {
     return await dio.fetch(requestOptions);
+    // return await  dio.request(requestOptions.path, data: requestOptions.data, options: Options(method: requestOptions.method));
   }
 }
 

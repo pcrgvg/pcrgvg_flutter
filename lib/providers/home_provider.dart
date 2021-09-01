@@ -8,7 +8,6 @@ import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:pcrgvg_flutter/utils/store_util.dart';
 import 'base_provider.dart';
 
-
 class HomeProvider extends BaseListProvider {
   HomeProvider() {
     init();
@@ -33,8 +32,7 @@ class HomeProvider extends BaseListProvider {
         server: _gvgTaskFilter.server,
         clanBattleId: _gvgTaskFilter.clanBattleId);
     dealGvgTask(arr);
-    Future<void>.delayed(const Duration(milliseconds: 500))
-        .then((_) => controller.refreshCompleted());
+    controller.refreshCompleted();
     '加载完成'.toast();
     notifyListeners();
   }
@@ -42,12 +40,16 @@ class HomeProvider extends BaseListProvider {
   /// 比对条件是否需要进行网络查询 /
   Future<void> changeFilter(GvgTaskFilterHive filter) async {
     MyHive.userConfBox.put(HiveDbKey.GvgTaskFilter, filter);
-    _gvgTaskFilter = filter;
+filter.stage.debug();
+gvgTaskFilter.stage.debug();
     if (filter.clanBattleId != gvgTaskFilter.clanBattleId ||
         filter.stage != gvgTaskFilter.stage ||
         filter.server != gvgTaskFilter.server) {
-      init();
+      _gvgTaskFilter = filter;
+      controller.requestRefresh();
+      refresh();
     } else {
+      _gvgTaskFilter = filter;
       fiterGvgTask();
       notifyListeners();
     }

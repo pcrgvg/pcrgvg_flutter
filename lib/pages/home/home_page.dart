@@ -166,6 +166,8 @@ class _Header extends StatelessWidget {
                             .pushNamed(Routes.homeFilterPage.name,
                                 arguments: Routes.homeFilterPage
                                     .d(homeProvider: homeModel));
+                        (filter as GvgTaskFilterHive == homeModel.gvgTaskFilter).debug();
+                        homeModel.gvgTaskFilter.stage.debug();
                         if (filter != null) {
                           homeModel.changeFilter(filter as GvgTaskFilterHive);
                         }
@@ -329,8 +331,8 @@ class __TaskItemState extends State<_TaskItem> {
                     height: 10,
                   )
                 : ColorFiltered(
-                    colorFilter: ColorFilter.mode(
-                        Colors.orange, BlendMode.color),
+                    colorFilter:
+                        ColorFilter.mode(Colors.orange, BlendMode.color),
                     child: Container(
                         color: Colors.white,
                         child: Image.asset(
