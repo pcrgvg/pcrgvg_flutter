@@ -7,7 +7,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'base_provider.dart';
 
 class HomeFilterProvider extends BaseListProvider {
-  HomeFilterProvider() {
+  HomeFilterProvider():super(initialRefresh: false) {
    init();
   }
   late GvgTaskFilterHive _gvgTaskFilter;
@@ -28,12 +28,10 @@ class HomeFilterProvider extends BaseListProvider {
 
   Future<void> _initGvgTaskFilter() async {
     _gvgTaskFilter =
-        MyHive.userConfBox.get(HiveDbKey.GvgTaskFilter) as GvgTaskFilterHive;
-    
+        (MyHive.userConfBox.get(HiveDbKey.GvgTaskFilter) as GvgTaskFilterHive).copy();
     await getPeriods();
     final ClanPeriod lastPeriod = clanPeriodList.first;
-    if (_gvgTaskFilter.clanBattleId == 1 ||
-        _gvgTaskFilter.clanBattleId != lastPeriod.clanBattleId) {
+    if (_gvgTaskFilter.clanBattleId == 1) {
       // 1的时候为第一次默认值
       _gvgTaskFilter.clanBattleId = lastPeriod.clanBattleId;
       _gvgTaskFilter.startTime = lastPeriod.startTime;
@@ -58,8 +56,8 @@ class HomeFilterProvider extends BaseListProvider {
   @override
   Future<void> refresh() async {
     // await _initGvgTaskFilter();
-    Future<void>.delayed(const Duration(seconds: 1))
-        .then((_) => controller.refreshCompleted());
+    // Future<void>.delayed(const Duration(seconds: 1))
+    //     .then((_) => controller.refreshCompleted());
   }
 
   Future<void> setServer(String server) async {

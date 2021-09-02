@@ -9,6 +9,7 @@ import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/widgets.dart';
+import 'pages/about_page.dart';
 import 'pages/collection_page.dart';
 import 'pages/home/home_filter_page.dart';
 import 'pages/home/home_page.dart';
@@ -29,6 +30,15 @@ FFRouteSettings getRouteSettings({
   final Map<String, dynamic> safeArguments =
       arguments ?? const <String, dynamic>{};
   switch (name) {
+    case 'aboutPage':
+      return FFRouteSettings(
+        name: name,
+        arguments: arguments,
+        widget: AboutPage(
+          key: asT<Key?>(safeArguments['key']),
+        ),
+        routeName: 'aboutPage',
+      );
     case 'collectionPage':
       return FFRouteSettings(
         name: name,

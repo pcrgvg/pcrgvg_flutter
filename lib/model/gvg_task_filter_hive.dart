@@ -2,15 +2,14 @@ part of 'models.dart';
 
 @HiveType(typeId: MyHive.GvgTaskFilterId)
 class GvgTaskFilterHive extends HiveObject {
-  GvgTaskFilterHive({
-    required this.server,
-    required this.bossNumber,
-    required this.methods,
-    required this.clanBattleId,
-    required this.startTime,
-    required this.stage,
-    this.usedOrRemoved = 'all'
-  });
+  GvgTaskFilterHive(
+      {required this.server,
+      required this.bossNumber,
+      required this.methods,
+      required this.clanBattleId,
+      required this.startTime,
+      required this.stage,
+      this.usedOrRemoved = 'all'});
   @HiveField(0)
   String server;
   @HiveField(1)
@@ -23,7 +22,17 @@ class GvgTaskFilterHive extends HiveObject {
   int stage;
   @HiveField(5)
   String startTime;
+
   /// all used removed tail
   @HiveField(6)
-  String usedOrRemoved  = 'all';  
+  String usedOrRemoved = 'all';
+  /// HIVE内存存取，同一个引用
+  GvgTaskFilterHive copy() => GvgTaskFilterHive(
+      bossNumber: bossNumber,
+      clanBattleId: clanBattleId,
+      methods: [...methods],
+      server: server,
+      stage: stage,
+      usedOrRemoved: usedOrRemoved,
+      startTime: startTime);
 }

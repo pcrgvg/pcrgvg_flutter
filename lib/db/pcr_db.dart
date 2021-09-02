@@ -12,8 +12,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:brotli/brotli.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 
-
-
 class PcrDb {
   const PcrDb._();
 
@@ -43,6 +41,8 @@ class PcrDb {
         "cn": cn ? cnVersion.last : null
       };
       updateModal(serverDbversion);
+    } else {
+      '数据库已经是最新'.toast();
     }
   }
 
@@ -53,7 +53,7 @@ class PcrDb {
         color: bgc.computeLuminance() < 0.5 ? Colors.white : Colors.black,
       );
       return Container(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: HexColor.fromHex('#f94800'),
           borderRadius: const BorderRadius.all(Radius.circular(8.0)),
@@ -142,13 +142,14 @@ class PcrDb {
     final String dbPath = '$dbDirPath${Platform.pathSeparator}$jpDbName';
     '$dbPath dowload start'.debug();
     await PcrDbApi.downloadDbJp('$dbPath.br');
-    final List<int> dbString =
-        brotli.decode(File('$dbPath.br').readAsBytesSync());
+    final File brFile = File('$dbPath.br');
+    final List<int> dbString = brotli.decode(brFile.readAsBytesSync());
     final File db = File(dbPath);
     if (!db.existsSync()) {
       db.createSync();
     }
     db.writeAsBytesSync(dbString);
+    brFile.delete();
     MyHive.pcrDbVersionBox.put(HiveDbKey.Jp, dbVersion);
     '$dbPath dowload end'.debug();
   }
@@ -156,13 +157,15 @@ class PcrDb {
   static Future<void> downloadDbCn(PcrDbVersion dbVersion) async {
     final String dbPath = '$dbDirPath${Platform.pathSeparator}$cnDbName';
     await PcrDbApi.downloadDbCn('$dbPath.br');
+     final File brFile = File('$dbPath.br');
     final List<int> dbString =
-        brotli.decode(File('$dbPath.br').readAsBytesSync());
+        brotli.decode(brFile.readAsBytesSync());
     final File db = File(dbPath);
     if (!db.existsSync()) {
       db.createSync();
     }
     db.writeAsBytesSync(dbString);
+    brFile.delete();
     MyHive.pcrDbVersionBox.put(HiveDbKey.Cn, dbVersion);
     '$dbPath dowload end'.debug();
   }

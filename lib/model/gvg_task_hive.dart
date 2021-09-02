@@ -26,7 +26,7 @@ class GvgTask {
       id: asT<int>(jsonRes['id'])!,
       prefabId: asT<int>(jsonRes['prefabId'])!,
       unitName: asT<String>(jsonRes['unitName'])!,
-      server: asT<String>(jsonRes['server'])!,
+      server: asT<String?>(jsonRes['server']),
       index: asT<int>(jsonRes['index'])!,
       tasks: tasks!,
     );
@@ -38,7 +38,7 @@ class GvgTask {
 
   final String unitName;
 
-  final String server;
+  final String? server;
 
   final int index;
 

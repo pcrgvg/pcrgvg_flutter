@@ -14,7 +14,6 @@ import 'package:pcrgvg_flutter/utils/net_util.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -73,7 +72,7 @@ class MyApp extends StatelessWidget {
                       title: '公主链接公会战',
                       theme: themeProvider.theme(),
                       darkTheme: themeProvider.theme(isDark: true),
-                      initialRoute: Routes.spalshPage.name,
+                      initialRoute: Routes.homePage.name,
                       onGenerateRoute: (RouteSettings settings) {
                         return onGenerateRoute(
                           settings: settings,

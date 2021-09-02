@@ -52,7 +52,6 @@ class PcrTransFormer extends DefaultTransformer {
               PcrDbVersion.fromJson(transformResponse as Map<String, dynamic>));
     }
     if (uri.contains(PcrGvgUrl.host)) {
-      print(transformResponse);
       if (transformResponse['code'] == 200) {
         return Resp(code: HttpStatus.OK,data: transformResponse['data']);
       }

@@ -34,7 +34,6 @@ class ResultProvider extends BaseListProvider {
     filterByBoss();
   }
 
-
   void filterByBoss() {
     resultList = _resultListTemp;
     notifyListeners();
@@ -102,7 +101,7 @@ class ResultProvider extends BaseListProvider {
 
   bool changeCollect(List<TaskFilterResult> item) {
     final arr = [...collectionTask];
-    final int index =  Collection.indexOfCollection(item, arr);
+    final int index = Collection.indexOfCollection(item, arr);
     if (index > -1) {
       arr.removeAt(index);
     } else {
@@ -113,10 +112,15 @@ class ResultProvider extends BaseListProvider {
     return false;
   }
 
-
   @override
   Future<void> refresh() async {}
 
   @override
   Future<void> loadMore() async {}
+
+  @override
+  void dispose() {
+    MyStore.filterResList = [];
+    super.dispose();
+  }
 }

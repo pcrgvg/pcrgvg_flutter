@@ -166,8 +166,6 @@ class _Header extends StatelessWidget {
                             .pushNamed(Routes.homeFilterPage.name,
                                 arguments: Routes.homeFilterPage
                                     .d(homeProvider: homeModel));
-                        (filter as GvgTaskFilterHive == homeModel.gvgTaskFilter).debug();
-                        homeModel.gvgTaskFilter.stage.debug();
                         if (filter != null) {
                           homeModel.changeFilter(filter as GvgTaskFilterHive);
                         }

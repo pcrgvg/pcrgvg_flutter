@@ -9,6 +9,7 @@ import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
 
 const List<String> routeNames = <String>[
+  'aboutPage',
   'collectionPage',
   'homeFilterPage',
   'homePage',
@@ -24,6 +25,17 @@ const List<String> routeNames = <String>[
 
 class Routes {
   const Routes._();
+
+  /// 'aboutPage'
+  ///
+  /// [name] : 'aboutPage'
+  ///
+  /// [routeName] : 'aboutPage'
+  ///
+  /// [constructors] :
+  ///
+  /// AboutPage : [Key? key]
+  static const _AboutPage aboutPage = _AboutPage();
 
   /// 'collectionPage'
   ///
@@ -141,6 +153,19 @@ class Routes {
   ///
   /// TaskDetailPage : [Key? key, int(required) bossPrefab, Task(required) task]
   static const _TaskDetailPage taskDetailPage = _TaskDetailPage();
+}
+
+class _AboutPage {
+  const _AboutPage();
+
+  String get name => 'aboutPage';
+
+  Map<String, dynamic> d({Key? key}) => <String, dynamic>{
+        'key': key,
+      };
+
+  @override
+  String toString() => name;
 }
 
 class _CollectionPage {

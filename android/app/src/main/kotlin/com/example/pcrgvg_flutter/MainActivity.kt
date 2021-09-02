@@ -1,4 +1,4 @@
-package com.example.pcrgvg_flutter
+package com.kurumi.pcrgvg_flutter
 
 import io.flutter.embedding.android.FlutterActivity
 

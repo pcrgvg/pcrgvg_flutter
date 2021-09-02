@@ -4,7 +4,9 @@ import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
+import 'package:pcrgvg_flutter/db/pcr_db.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
+import 'package:pcrgvg_flutter/extension/extensions.dart';
 
 @FFRoute(
   name: "minePage",
@@ -27,12 +29,14 @@ class _MinePage extends State<MinePage> {
         Positioned.fill(
             child: Center(
           child: Container(
+            width: 150,
             decoration: BoxDecoration(
                 color: theme.backgroundColor,
                 borderRadius: const BorderRadius.all(Radius.circular(16))),
             padding: const EdgeInsets.all(16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 GestureDetector(
                   onTap: () {
@@ -43,13 +47,24 @@ class _MinePage extends State<MinePage> {
                     child: const Text('管理角色'),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: const Text('更新数据库'),
+                GestureDetector(
+                  onTap: () {
+                    '检查数据中'.toast();
+                     PcrDb.checkUpdate();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    child: const Text('更新数据库'),
+                  ),
                 ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: const Text('关于'),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(Routes.aboutPage.name);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    child: const Text('关于'),
+                  ),
                 ),
               ],
             ),

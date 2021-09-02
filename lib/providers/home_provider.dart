@@ -21,7 +21,7 @@ class HomeProvider extends BaseListProvider {
 
   Future<void> init() async {
     _gvgTaskFilter =
-        MyHive.userConfBox.get(HiveDbKey.GvgTaskFilter) as GvgTaskFilterHive;
+        (MyHive.userConfBox.get(HiveDbKey.GvgTaskFilter) as GvgTaskFilterHive).copy();
   }
 
   @override
@@ -40,14 +40,12 @@ class HomeProvider extends BaseListProvider {
   /// 比对条件是否需要进行网络查询 /
   Future<void> changeFilter(GvgTaskFilterHive filter) async {
     MyHive.userConfBox.put(HiveDbKey.GvgTaskFilter, filter);
-filter.stage.debug();
-gvgTaskFilter.stage.debug();
     if (filter.clanBattleId != gvgTaskFilter.clanBattleId ||
         filter.stage != gvgTaskFilter.stage ||
         filter.server != gvgTaskFilter.server) {
       _gvgTaskFilter = filter;
       controller.requestRefresh();
-      refresh();
+      // refresh();
     } else {
       _gvgTaskFilter = filter;
       fiterGvgTask();

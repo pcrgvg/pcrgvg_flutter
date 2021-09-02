@@ -13,7 +13,7 @@ class PcrDbUrl {
 class PcrGvgUrl {
   const PcrGvgUrl._();
   // static const String host = 'https://www.aikurumi.cn';
-  static const String host = 'http://192.168.1.102:5000';
+  static const String host = 'http://192.168.101.107:5000';
 
   static const String gvgTaskList = '$host/api/pcr/gvgTask';
 }
