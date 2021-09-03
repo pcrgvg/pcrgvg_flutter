@@ -1,6 +1,9 @@
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:pcrgvg_flutter/apis/pcrgvg_api.dart';
 import 'package:pcrgvg_flutter/db/hive_db.dart';
+import 'package:pcrgvg_flutter/db/pcr_db.dart';
+import 'package:pcrgvg_flutter/global/app_update.dart';
 import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/isolate/filter_task.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
@@ -11,6 +14,8 @@ import 'base_provider.dart';
 class HomeProvider extends BaseListProvider {
   HomeProvider() {
     init();
+    // checkAppVersion();
+    //  PcrDb.checkUpdate();
   }
   List<GvgTask> _gvgTaskListCache = [];
   List<GvgTask> _gvgTaskList = [];
@@ -18,6 +23,8 @@ class HomeProvider extends BaseListProvider {
 
   late GvgTaskFilterHive _gvgTaskFilter;
   GvgTaskFilterHive get gvgTaskFilter => _gvgTaskFilter;
+
+  PcrDbVersion? pcrDbVersion;
 
   Future<void> init() async {
     _gvgTaskFilter =
@@ -150,4 +157,6 @@ class HomeProvider extends BaseListProvider {
     }
     return task.autoDamage ?? task.damage;
   }
+
+
 }

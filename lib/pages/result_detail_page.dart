@@ -5,21 +5,21 @@ import 'package:extended_image/extended_image.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:like_button/like_button.dart';
 import 'package:pcrgvg_flutter/constants/Images.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
-@FFArgumentImport()
-import 'package:pcrgvg_flutter/isolate/filter_task.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
+import 'package:pcrgvg_flutter/providers/user_provider.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
+import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
 import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
+import 'package:provider/provider.dart';
 
 @FFRoute(
   name: "resultDetailPage",
@@ -58,12 +58,13 @@ class _ResultDetailPageState extends State<ResultDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bool random = context.select<UserProvider, bool>((model) => model.userConfig.randomBg);
     final ThemeData theme = Theme.of(context);
     return Scaffold(
       body: Stack(
         children: [
-          _BgCover(
-            bgUrl: bgUrl,
+          BgCover(
+            bgUrl: random ? bgUrl : null,
           ),
           Positioned.fill(
               child: PageView(
@@ -194,32 +195,6 @@ class _Bottom extends StatelessWidget {
   }
 }
 
-class _BgCover extends StatelessWidget {
-  const _BgCover({
-    Key? key,
-    required this.bgUrl,
-  }) : super(key: key);
-
-  final String bgUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: ExtendedNetworkImageProvider(bgUrl), fit: BoxFit.cover)),
-        child: BackdropFilter(
-          // filter: ImageFilter.blur(sigmaY: 0, sigmaX: 0),
-          filter: ImageFilter.blur(sigmaY: 2.0, sigmaX: 2.0),
-          child: Container(
-            color: Colors.transparent,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _Back extends StatelessWidget {
   const _Back({

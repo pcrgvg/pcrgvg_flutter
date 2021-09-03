@@ -11,13 +11,12 @@ import 'package:oktoast/oktoast.dart';
 import 'package:pcrgvg_flutter/constants/Images.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/db/hive_db.dart';
-import 'package:pcrgvg_flutter/db/pcr_db.dart';
 import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
-import 'package:pcrgvg_flutter/providers/result_provider.dart';
 import 'package:pcrgvg_flutter/widgets/animate_header.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
+import 'package:pcrgvg_flutter/widgets/blank.dart';
 import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
 import 'package:pcrgvg_flutter/widgets/list_box.dart';
@@ -42,7 +41,6 @@ class _HomePage extends State<HomePage> {
   @override
   void initState() {
     // TODO(KURUMI): CHECKUPDATE
-    // PcrDb.checkUpdate();
 
     super.initState();
   }
@@ -61,6 +59,10 @@ class _HomePage extends State<HomePage> {
                 child: CustomScrollView(
               slivers: <Widget>[
                 _Header(theme: theme),
+                if (gvgTaskList.isEmpty)
+                  const SliverToBoxAdapter(
+                    child: Blank(tip: '果咩,啥都没有,如果是第一次请更新数据库',),
+                  ),
                 ...List<MultiSliver>.generate(gvgTaskList.length, (int index) {
                   final GvgTask gvgTask = gvgTaskList[index];
                   return MultiSliver(pushPinnedChildren: true, children: [

@@ -1,4 +1,4 @@
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +8,7 @@ import 'package:pcrgvg_flutter/pcrgvg_flutter_route.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/providers/theme_provider.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:pcrgvg_flutter/providers/user_provider.dart';
 import 'package:pcrgvg_flutter/utils/store_util.dart';
 import 'package:provider/provider.dart';
 import 'package:pcrgvg_flutter/utils/net_util.dart';
@@ -38,6 +39,9 @@ class MyApp extends StatelessWidget {
         case ConnectivityResult.none:
           "您已断开网络".toast();
           break;
+        case ConnectivityResult.ethernet:
+          "您正在使用以太网".toast();
+          break;
       }
     });
   }
@@ -51,6 +55,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<ThemeProvider>(
           create: (_) => ThemeProvider(),
         ),
+        ChangeNotifierProvider<UserProvider>(
+          create: (_) => UserProvider(),
+        )
       ],
       child: Consumer<ThemeProvider>(
           builder: (_, ThemeProvider themeProvider, __) {
@@ -72,7 +79,7 @@ class MyApp extends StatelessWidget {
                       title: '公主链接公会战',
                       theme: themeProvider.theme(),
                       darkTheme: themeProvider.theme(isDark: true),
-                      initialRoute: Routes.homePage.name,
+                      initialRoute: Routes.mainPage.name,
                       onGenerateRoute: (RouteSettings settings) {
                         return onGenerateRoute(
                           settings: settings,

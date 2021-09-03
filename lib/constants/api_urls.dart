@@ -12,8 +12,15 @@ class PcrDbUrl {
 
 class PcrGvgUrl {
   const PcrGvgUrl._();
-  // static const String host = 'https://www.aikurumi.cn';
-  static const String host = 'http://192.168.101.107:5000';
+  static const String host = 'https://www.aikurumi.cn';
+  // static const String host = 'http://192.168.101.107:5000';
 
   static const String gvgTaskList = '$host/api/pcr/gvgTask';
+}
+
+class GitUrl {
+  static const String gitHost = 'https://cdn.jsdelivr.net/gh/zafkielkurumi/pcrgvg/pcrgvg_flutter';
+  static const String gitApiHost = 'https://api.github.com/repos/zafkielkurumi/pcrgvg/pcrgvg_flutter';
+  static const String gitRepo = '$gitHost@master';
+  static const String release = '$gitApiHost/releases/latest';
 }

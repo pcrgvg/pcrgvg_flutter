@@ -7,6 +7,7 @@ import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/db/pcr_db.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
+import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
 
 @FFRoute(
   name: "minePage",
@@ -25,7 +26,7 @@ class _MinePage extends State<MinePage> {
     final ThemeData theme = Theme.of(context);
     return Stack(
       children: [
-        const _Bg(),
+        const BgCover(sigmaX: 0, sigmaY: 0,),
         Positioned.fill(
             child: Center(
           child: Container(
@@ -66,6 +67,15 @@ class _MinePage extends State<MinePage> {
                     child: const Text('关于'),
                   ),
                 ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(Routes.settingPage.name);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    child: const Text('设置'),
+                  ),
+                ),
               ],
             ),
           ),
@@ -75,17 +85,3 @@ class _MinePage extends State<MinePage> {
   }
 }
 
-class _Bg extends StatelessWidget {
-  const _Bg({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-        child: ExtendedImage.network(
-      PcrDbUrl.cardImg.replaceFirst('{0}', '115531'),
-      fit: BoxFit.cover,
-    ));
-  }
-}

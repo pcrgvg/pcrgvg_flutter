@@ -24,8 +24,8 @@ class CommRes {
 }
 
 class Resp {
-  Resp({required this.code, this.data});
-  int code;
+  Resp({required this.success, this.data});
+  bool success;
   dynamic data;
 }
 
@@ -47,15 +47,18 @@ class PcrTransFormer extends DefaultTransformer {
     final String uri = '${options.uri}';
     if (<String>[PcrDbUrl.lastVersionCn, PcrDbUrl.lastVersionJp].contains(uri)) {
       return Resp(
-          code: HttpStatus.OK,
+          success: true,
           data:
               PcrDbVersion.fromJson(transformResponse as Map<String, dynamic>));
     }
     if (uri.contains(PcrGvgUrl.host)) {
       if (transformResponse['code'] == 200) {
-        return Resp(code: HttpStatus.OK,data: transformResponse['data']);
+        return Resp(success: true,data: transformResponse['data']);
       }
-      return Resp(code: HttpStatus.Fail);
+      return Resp(success: false);
+    }
+    if (uri.contains(GitUrl.gitApiHost) || uri.contains(GitUrl.gitHost)) {
+      return Resp(success: true, data:transformResponse);
     }
 
     return transformResponse;
@@ -124,17 +127,17 @@ class Http {
     return CommRes(success: false, msg: '');
   }
 
-  static Future<CommRes> fetch(
+  static Future<Resp> fetch(
     RequestOptions requestOptions,
   ) async {
     Response<Resp> res;
     if (requestOptions.method.isEmpty) {
-       return CommRes(success: false, msg: 'method is not right');
+       return Resp(success: false);
     }
-   res = await NetUtil.fetch(requestOptions);
-    if (res.statusCode == HttpStatus.OK && res.data?.code == HttpStatus.OK) {
-      return CommRes(success: true, data: res.data?.data);
+   res = await NetUtil.fetch<Resp>(requestOptions);
+    if (res.statusCode == HttpStatus.OK && res.data?.success == true) {
+      return res.data!;
     }
-    return CommRes(success: false, msg: '');
+    return Resp(success: false);
   }
 }

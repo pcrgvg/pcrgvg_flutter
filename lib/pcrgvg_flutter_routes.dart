@@ -19,6 +19,7 @@ const List<String> routeNames = <String>[
   'minePage',
   'resultDetailPage',
   'resultPage',
+  'settingPage',
   'spalshPage',
   'taskDetailPage',
 ];
@@ -131,6 +132,17 @@ class Routes {
   ///
   /// ResultPage : [List<ResultBoss>(required) bossList]
   static const _ResultPage resultPage = _ResultPage();
+
+  /// 'settingPage'
+  ///
+  /// [name] : 'settingPage'
+  ///
+  /// [routeName] : 'settingPage'
+  ///
+  /// [constructors] :
+  ///
+  /// SettingPage : [Key? key]
+  static const _SettingPage settingPage = _SettingPage();
 
   /// 'spalshPage'
   ///
@@ -276,6 +288,19 @@ class _ResultPage {
   Map<String, dynamic> d({required List<ResultBoss> bossList}) =>
       <String, dynamic>{
         'bossList': bossList,
+      };
+
+  @override
+  String toString() => name;
+}
+
+class _SettingPage {
+  const _SettingPage();
+
+  String get name => 'settingPage';
+
+  Map<String, dynamic> d({Key? key}) => <String, dynamic>{
+        'key': key,
       };
 
   @override

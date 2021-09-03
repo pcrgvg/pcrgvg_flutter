@@ -15,6 +15,7 @@ class MyHive {
   static const int FilterResultId = CharaId + 1;
   static const int TaskId = FilterResultId + 1;
   static const int LinkId = TaskId + 1;
+  static const int UserId = LinkId + 1;
 
   static late Box<PcrDbVersion> pcrDbVersionBox;
   static late Box<dynamic> userConfBox;
@@ -34,6 +35,7 @@ class MyHive {
       ..registerAdapter(TaskFilterResultAdapter())
       ..registerAdapter(TaskAdapter())
       ..registerAdapter(LinkAdapter())
+      ..registerAdapter(UserConfigAdapter())
       ..registerAdapter(CharaAdapter());
     pcrDbVersionBox = await Hive.openBox(HiveBoxKey.PcrDbVersion);
     userConfBox = await Hive.openBox<dynamic>('userConfBox');
@@ -43,7 +45,8 @@ class MyHive {
     _twCharaBox = await Hive.openBox(HiveBoxKey.twCharaBox);
     _cnCharaBox = await Hive.openBox(HiveBoxKey.cnCharaBox);
     collectBox = await Hive.openBox(HiveBoxKey.collectBox);
-    await initPcrDbversion();
+    initUserConfig();
+    initPcrDbversion();
   }
 
   static Box<Chara> getServerCharaBox(String server) {
@@ -56,7 +59,7 @@ class MyHive {
     }
   }
 
-  static Future<void> initPcrDbversion() async {
+  static void initPcrDbversion() {
     if (userConfBox.get(HiveDbKey.GvgTaskFilter) == null) {
       userConfBox.put(
         HiveDbKey.GvgTaskFilter,
@@ -72,9 +75,14 @@ class MyHive {
     }
   }
 
-
-
-
+  static void initUserConfig() {
+    userConfBox.delete(HiveDbKey.UserConfig);
+    final dynamic userConfig = userConfBox.get(HiveDbKey.UserConfig);
+    if (userConfig == null) {
+      userConfBox.put(
+          HiveDbKey.UserConfig, UserConfig());
+    }
+  }
 }
 
 abstract class HiveDbKey {
@@ -82,6 +90,7 @@ abstract class HiveDbKey {
   static const String Jp = 'Jp';
   static const String Tw = 'Tw';
   static const String GvgTaskFilter = 'GvgTaskFilter';
+  static const String UserConfig = 'userConfig';
 }
 
 abstract class HiveBoxKey {

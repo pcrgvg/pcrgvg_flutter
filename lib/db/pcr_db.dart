@@ -29,20 +29,24 @@ class PcrDb {
   }
 
   static Future<void> checkUpdate() async {
-    final List<PcrDbVersion?> jpVersion = await checkUpdatedbJp();
-    final List<PcrDbVersion?> cnVersion = await checkUpdatedbCn();
-    final bool jp =
-        jpVersion.first?.truthVersion != jpVersion.last?.truthVersion;
-    final bool cn =
-        cnVersion.first?.truthVersion != cnVersion.last?.truthVersion;
-    if (jp || cn) {
-      final Map<String, PcrDbVersion?> serverDbversion = {
-        'jp': jp ? jpVersion.last : null,
-        "cn": cn ? cnVersion.last : null
-      };
-      updateModal(serverDbversion);
-    } else {
-      '数据库已经是最新'.toast();
+    try {
+      final List<PcrDbVersion?> jpVersion = await checkUpdatedbJp();
+      final List<PcrDbVersion?> cnVersion = await checkUpdatedbCn();
+      final bool jp =
+          jpVersion.first?.truthVersion != jpVersion.last?.truthVersion;
+      final bool cn =
+          cnVersion.first?.truthVersion != cnVersion.last?.truthVersion;
+      if (jp || cn) {
+        final Map<String, PcrDbVersion?> serverDbversion = {
+          'jp': jp ? jpVersion.last : null,
+          "cn": cn ? cnVersion.last : null
+        };
+        updateModal(serverDbversion);
+      } else {
+        '数据库已经是最新'.toast();
+      }
+    } catch (e) {
+      '数据库更新失败'.toast();
     }
   }
 
@@ -157,9 +161,8 @@ class PcrDb {
   static Future<void> downloadDbCn(PcrDbVersion dbVersion) async {
     final String dbPath = '$dbDirPath${Platform.pathSeparator}$cnDbName';
     await PcrDbApi.downloadDbCn('$dbPath.br');
-     final File brFile = File('$dbPath.br');
-    final List<int> dbString =
-        brotli.decode(brFile.readAsBytesSync());
+    final File brFile = File('$dbPath.br');
+    final List<int> dbString = brotli.decode(brFile.readAsBytesSync());
     final File db = File(dbPath);
     if (!db.existsSync()) {
       db.createSync();

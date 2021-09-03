@@ -19,6 +19,7 @@ import 'pages/manage_chara_page.dart';
 import 'pages/mine_page.dart';
 import 'pages/result_detail_page.dart';
 import 'pages/result_page.dart';
+import 'pages/setting_page.dart';
 import 'pages/spalsh_page.dart';
 import 'pages/task_detail_page.dart';
 
@@ -121,6 +122,15 @@ FFRouteSettings getRouteSettings({
           bossList: asT<List<ResultBoss>>(safeArguments['bossList'])!,
         ),
         routeName: 'resultPage',
+      );
+    case 'settingPage':
+      return FFRouteSettings(
+        name: name,
+        arguments: arguments,
+        widget: SettingPage(
+          key: asT<Key?>(safeArguments['key']),
+        ),
+        routeName: 'settingPage',
       );
     case 'spalshPage':
       return FFRouteSettings(

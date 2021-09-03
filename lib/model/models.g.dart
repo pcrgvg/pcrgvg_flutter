@@ -299,3 +299,49 @@ class TaskFilterResultAdapter extends TypeAdapter<TaskFilterResult> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+class UserConfigAdapter extends TypeAdapter<UserConfig> {
+  @override
+  final int typeId = 7;
+
+  @override
+  UserConfig read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return UserConfig(
+      showBg: fields[0] == null ? true : fields[0] as bool,
+      bgCharaPrefabId: fields[1] == null ? 110031 : fields[1] as int,
+      bgBlurX: fields[2] == null ? 2 : fields[2] as double,
+      bgBlurY: fields[3] == null ? 2 : fields[3] as double,
+      randomBg: fields[4] == null ? true : fields[4] as bool,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, UserConfig obj) {
+    writer
+      ..writeByte(5)
+      ..writeByte(0)
+      ..write(obj.showBg)
+      ..writeByte(1)
+      ..write(obj.bgCharaPrefabId)
+      ..writeByte(2)
+      ..write(obj.bgBlurX)
+      ..writeByte(3)
+      ..write(obj.bgBlurY)
+      ..writeByte(4)
+      ..write(obj.randomBg);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UserConfigAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}

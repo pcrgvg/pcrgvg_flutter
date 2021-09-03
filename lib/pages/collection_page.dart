@@ -14,6 +14,7 @@ import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/providers/collect_provider.dart';
 import 'package:pcrgvg_flutter/widgets/animate_header.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
+import 'package:pcrgvg_flutter/widgets/blank.dart';
 import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
 import 'package:pcrgvg_flutter/widgets/list_box.dart';
@@ -56,9 +57,6 @@ class _CollectButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CollectProvider model = context.read<CollectProvider>();
-    final List<List<TaskFilterResult>> collectionTask =
-        context.select<CollectProvider, List<List<TaskFilterResult>>>(
-            (CollectProvider value) => value.collectionList);
     return LikeButton(
       isLiked: true,
       onTap: (bool isLiked) async {
@@ -88,7 +86,9 @@ class _Content extends StatelessWidget {
     final List<List<TaskFilterResult>> list =
         context.select<CollectProvider, List<List<TaskFilterResult>>>(
             (CollectProvider model) => model.collectionList);
-    return SliverWaterfallFlow(
+    return list.isEmpty ? const SliverToBoxAdapter(
+      child:  Blank(),
+    ) : SliverWaterfallFlow(
         gridDelegate: const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
           crossAxisCount: 1,
           mainAxisSpacing: 16,

@@ -9,6 +9,7 @@ import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 @FFArgumentImport()
 import 'package:pcrgvg_flutter/model/models.dart';
+import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
@@ -27,7 +28,7 @@ class LinkDetailPage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          _BgCover(bgUrl: bgUrl),
+          BgCover(bgUrl: bgUrl),
           Positioned.fill(
             child: WaterfallFlow(
                 gridDelegate:
@@ -123,28 +124,4 @@ class _Back extends StatelessWidget {
   }
 }
 
-class _BgCover extends StatelessWidget {
-  const _BgCover({
-    Key? key,
-    required this.bgUrl,
-  }) : super(key: key);
 
-  final String bgUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: ExtendedNetworkImageProvider(bgUrl), fit: BoxFit.cover)),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaY: 2.0, sigmaX: 2.0),
-          child: Container(
-            color: Colors.transparent,
-          ),
-        ),
-      ),
-    );
-  }
-}

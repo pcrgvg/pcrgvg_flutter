@@ -5,8 +5,7 @@
 // **************************************************************************
 
 class Images {
-  static const String bg = 'assets/images/bg.png';
-	static const String kkr = 'assets/images/kkr.jpg';
+  static const String kkr = 'assets/images/kkr.jpg';
 	static const String loading = 'assets/images/loading.gif';
 	static const String star = 'assets/images/star.png';
 	static const String starDisabled = 'assets/images/star_disabled.png';
@@ -16,6 +15,7 @@ class Images {
 	static const String tabMmActive = 'assets/images/tab/mm_active.png';
 	static const String tabNnk = 'assets/images/tab/nnk.png';
 	static const String tabNnkActive = 'assets/images/tab/nnk_active.png';
+	static const String u1Blank = 'assets/images/u1_blank.png';
 	static const String unitIcon = 'assets/images/unit_icon.webp';
 	
 }

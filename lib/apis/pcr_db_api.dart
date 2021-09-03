@@ -5,13 +5,13 @@ import 'package:dio/dio.dart';
 
 class PcrDbApi {
   static Future<PcrDbVersion> dbVersionJp() async {
-    final CommRes res = await Http.fetch(RequestOptions(
+    final Resp res = await Http.fetch(RequestOptions(
         path: PcrDbUrl.lastVersionJp, method: RequestMethods.Get));
     return res.data as PcrDbVersion;
   }
 
   static Future<PcrDbVersion> dbVersionCn() async {
-    final CommRes res = await Http.fetch(RequestOptions(
+    final Resp res = await Http.fetch(RequestOptions(
         path: PcrDbUrl.lastVersionCn, method: RequestMethods.Get));
     return res.data as PcrDbVersion;
   }

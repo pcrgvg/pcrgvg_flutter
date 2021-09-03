@@ -13,11 +13,14 @@ import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 @FFArgumentImport()
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
+import 'package:pcrgvg_flutter/providers/user_provider.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
+import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
 import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
+import 'package:provider/provider.dart';
 
 @FFRoute(
   name: "taskDetailPage",
@@ -34,11 +37,12 @@ class TaskDetailPage extends StatelessWidget {
     final int index = math.Random().nextInt(task.charas.length);
     final String bgUrl = PcrDbUrl.cardImg
         .replaceFirst('{0}', '${task.charas[index].prefabId + 30}');
+    final bool random = context.select<UserProvider, bool>((model) => model.userConfig.randomBg);
     final ThemeData theme = Theme.of(context);
     return Scaffold(
       body: Stack(
         children: [
-          _BgCover(bgUrl: bgUrl),
+          BgCover(bgUrl: random ? bgUrl : null),
           _Content(
               theme: theme, task: task, bossPrefab: bossPrefab, bgUrl: bgUrl),
           _Back(theme: theme)
@@ -125,31 +129,6 @@ class _Content extends StatelessWidget {
   }
 }
 
-class _BgCover extends StatelessWidget {
-  const _BgCover({
-    Key? key,
-    required this.bgUrl,
-  }) : super(key: key);
-
-  final String bgUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: ExtendedNetworkImageProvider(bgUrl), fit: BoxFit.cover)),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaY: 2.0, sigmaX: 2.0),
-          child: Container(
-            color: Colors.transparent,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _Link extends StatelessWidget {
   const _Link({
