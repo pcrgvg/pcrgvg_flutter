@@ -100,11 +100,12 @@ class ResultProvider extends BaseListProvider {
   }
 
   bool changeCollect(List<TaskFilterResult> item) {
-    final arr = [...collectionTask];
+    final List<List<TaskFilterResult>> arr = <List<TaskFilterResult>>[...collectionTask];
     final int index = Collection.indexOfCollection(item, arr);
     if (index > -1) {
       arr.removeAt(index);
     } else {
+      '收藏成功'.toast();
       arr.add(item);
     }
     MyHive.collectBox.put(serverType, arr);

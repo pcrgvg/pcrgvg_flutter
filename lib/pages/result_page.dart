@@ -1,4 +1,3 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:extended_sliver/extended_sliver.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 @FFArgumentImport()
@@ -7,17 +6,13 @@ import 'package:like_button/like_button.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pcrgvg_flutter/constants/Images.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
-import 'package:pcrgvg_flutter/db/hive_db.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:pcrgvg_flutter/global/collection.dart';
 import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 @FFArgumentImport()
-import 'package:pcrgvg_flutter/isolate/filter_task.dart';
-@FFArgumentImport()
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/providers/result_provider.dart';
-import 'package:pcrgvg_flutter/utils/store_util.dart';
 import 'package:pcrgvg_flutter/widgets/animate_header.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
 import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
@@ -112,6 +107,31 @@ class _Content extends StatelessWidget {
         }, childCount: list.length));
   }
 
+    Wrap _buildDamage(Task task) {
+    return Wrap(
+      children: [
+        for (int type in task.canAuto) ...[
+          AutoTypeView(
+            type: type,
+          ),
+          if (type == AutoType.manual)
+            Text('(${task.damage}w)',
+                style:
+                    TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
+          if (type == AutoType.auto || type == AutoType.harfAuto)
+            Text('(${task.autoDamage ?? task.damage}w)',
+                style:
+                    TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
+        ],
+        if (task.type == 1)
+          const Text(
+            '(尾刀)',
+            style: TextStyle(color: Colors.deepPurple, height: 1.1),
+          ),
+      ],
+    );
+  }
+
   Container _buildTaskItem(TaskFilterResult taskResult, List<int> usedList) {
     return Container(
       child: Column(
@@ -123,18 +143,7 @@ class _Content extends StatelessWidget {
                 width: 35,
                 height: 35,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: Text(
-                  '${taskResult.task.damage}w',
-                  style: TextStyle(
-                      color: HexColor.fromHex('#ff2277'), fontSize: 18),
-                ),
-              ),
-              for (int item in taskResult.task.canAuto)
-                AutoTypeView(
-                  type: item,
-                )
+              Expanded(child: _buildDamage(taskResult.task))
             ],
           ),
           const SizedBox(
@@ -177,7 +186,7 @@ class _CollectButton extends StatelessWidget {
     final ResultProvider model = context.read<ResultProvider>();
     final List<List<TaskFilterResult>> collectionTask =
         context.select<ResultProvider, List<List<TaskFilterResult>>>(
-            (value) => value.collectionTask);
+            (ResultProvider value) => value.collectionTask);
     return LikeButton(
       isLiked: Collection.indexOfCollection(list, collectionTask) > -1,
       onTap: (bool isLiked) async {

@@ -5,6 +5,7 @@ import 'package:pcrgvg_flutter/db/hive_db.dart';
 import 'package:pcrgvg_flutter/db/pcr_db.dart';
 import 'package:pcrgvg_flutter/global/app_update.dart';
 import 'package:pcrgvg_flutter/global/pcr_enum.dart';
+import 'package:pcrgvg_flutter/global/redive.dart';
 import 'package:pcrgvg_flutter/isolate/filter_task.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
@@ -23,23 +24,26 @@ class HomeProvider extends BaseListProvider {
 
   late GvgTaskFilterHive _gvgTaskFilter;
   GvgTaskFilterHive get gvgTaskFilter => _gvgTaskFilter;
+  String stageLabel = '1';
 
   PcrDbVersion? pcrDbVersion;
 
   Future<void> init() async {
     _gvgTaskFilter =
-        (MyHive.userConfBox.get(HiveDbKey.GvgTaskFilter) as GvgTaskFilterHive).copy();
+        (MyHive.userConfBox.get(HiveDbKey.GvgTaskFilter) as GvgTaskFilterHive)
+            .copy();
+    
   }
 
   @override
   Future<void> refresh() async {
-    // await (this + init());
     final List<GvgTask> arr = await PcrGvgApi.getGvgTaskList(
         stage: _gvgTaskFilter.stage,
         server: _gvgTaskFilter.server,
         clanBattleId: _gvgTaskFilter.clanBattleId);
     dealGvgTask(arr);
     controller.refreshCompleted();
+    setStageString();
     '加载完成'.toast();
     notifyListeners();
   }
@@ -56,6 +60,7 @@ class HomeProvider extends BaseListProvider {
     } else {
       _gvgTaskFilter = filter;
       fiterGvgTask();
+      setStageString();
       notifyListeners();
     }
   }
@@ -158,5 +163,11 @@ class HomeProvider extends BaseListProvider {
     return task.autoDamage ?? task.damage;
   }
 
-
+  setStageString() {
+    stageLabel =
+        setStageOption(_gvgTaskFilter.clanBattleId, _gvgTaskFilter.server)
+            .firstWhere((LvPair a) => a.value == _gvgTaskFilter.stage,
+                orElse: () => LvPair(value: 1, label: '1'))
+            .label;
+  }
 }

@@ -1,10 +1,10 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
-import 'package:extended_image/extended_image.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
@@ -37,7 +37,8 @@ class TaskDetailPage extends StatelessWidget {
     final int index = math.Random().nextInt(task.charas.length);
     final String bgUrl = PcrDbUrl.cardImg
         .replaceFirst('{0}', '${task.charas[index].prefabId + 30}');
-    final bool random = context.select<UserProvider, bool>((model) => model.userConfig.randomBg);
+    final bool random = context.select<UserProvider, bool>(
+        (UserProvider model) => model.userConfig.randomBg);
     final ThemeData theme = Theme.of(context);
     return Scaffold(
       body: Stack(
@@ -107,28 +108,65 @@ class _Content extends StatelessWidget {
       children: [
         _Head(theme: theme, task: task, bossPrefab: bossPrefab),
         _Link(theme: theme, task: task, bgUrl: bgUrl),
-        if (!task.remarks.isNullOrEmpty)
-          Container(
-            decoration: BoxDecoration(
-                color: theme.backgroundColor,
-                borderRadius: const BorderRadius.all(Radius.circular(16))),
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '备注',
-                  style: textStyleH2,
-                ),
-                Text(task.remarks)
-              ],
-            ),
-          )
+        if (!task.remarks.isNullOrEmpty) _Remarks(theme: theme, task: task)
       ],
     ));
   }
 }
 
+class _Remarks extends StatelessWidget {
+  const _Remarks({
+    Key? key,
+    required this.theme,
+    required this.task,
+  }) : super(key: key);
+
+  final ThemeData theme;
+  final Task task;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          color: theme.backgroundColor,
+          borderRadius: const BorderRadius.all(Radius.circular(16))),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                '备注',
+                style: textStyleH2,
+              ),
+              MaterialButton(
+                minWidth: 0,
+                elevation: 0,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                ),
+                color: theme.accentColor.withOpacity(0.2),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: task.remarks));
+                  '已复制'.toast();
+                },
+                child: Text(
+                  '复制',
+                  style: TextStyle(color: theme.accentColor),
+                ),
+              ),
+            ],
+          ),
+          Text(
+            task.remarks,
+          )
+        ],
+      ),
+    );
+  }
+}
 
 class _Link extends StatelessWidget {
   const _Link({
@@ -207,25 +245,12 @@ class _Head extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  for (int type in task.canAuto) ...[
-                    AutoTypeView(
-                      type: type,
-                    ),
-                    if (type == AutoType.manual)
-                      Text('${task.damage}w',
-                          style: TextStyle(color: HexColor.fromHex('#ff2277'))),
-                    if (type == AutoType.auto || type == AutoType.harfAuto)
-                      Text('(${task.autoDamage ?? task.damage}w)',
-                          style: TextStyle(color: HexColor.fromHex('#ff2277'))),
-                  ],
-                  if (task.type == 1)
-                    const Text(
-                      '(尾刀)',
-                      style: TextStyle(color: Colors.deepPurple),
-                    ),
+                  const SizedBox(
+                    width: 65,
+                  ),
+                  Expanded(child: _buildDamage())
                 ],
               ),
               const SizedBox(
@@ -242,8 +267,7 @@ class _Head extends StatelessWidget {
                     ),
                 ],
               ),
-              if(task.exRemarks.isNotEmpty)
-              Text(task.exRemarks)
+              if (task.exRemarks.isNotEmpty) Text(task.exRemarks)
             ],
           ),
         ),
@@ -258,6 +282,30 @@ class _Head extends StatelessWidget {
                 height: 60,
               ),
             )),
+      ],
+    );
+  }
+
+  Wrap _buildDamage() {
+    return Wrap(
+      alignment: WrapAlignment.end,
+      children: [
+        for (int type in task.canAuto) ...[
+          AutoTypeView(
+            type: type,
+          ),
+          if (type == AutoType.manual)
+            Text('${task.damage}w',
+                style: TextStyle(color: HexColor.fromHex('#ff2277'))),
+          if (type == AutoType.auto || type == AutoType.harfAuto)
+            Text('(${task.autoDamage ?? task.damage}w)',
+                style: TextStyle(color: HexColor.fromHex('#ff2277'))),
+        ],
+        if (task.type == 1)
+          const Text(
+            '(尾刀)',
+            style: TextStyle(color: Colors.deepPurple, height: 1.1),
+          ),
       ],
     );
   }

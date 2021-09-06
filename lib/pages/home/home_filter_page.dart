@@ -1,11 +1,8 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:extended_sliver/extended_sliver.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
-import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
-import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/providers/home_filter_provider.dart';
 @FFArgumentImport()
@@ -13,7 +10,6 @@ import 'package:pcrgvg_flutter/providers/home_provider.dart';
 import 'package:pcrgvg_flutter/widgets/animate_header.dart';
 import 'package:pcrgvg_flutter/widgets/list_box.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -71,7 +67,7 @@ class _UsedOrRemovedSelection extends StatelessWidget {
       : super(key: key);
   final ThemeData theme;
   Color getColor(bool selected) {
-    return selected ? theme.primaryColor : theme.accentColor;
+    return selected ? theme.accentColor : Colors.grey;
   }
 
   @override
@@ -133,7 +129,7 @@ class _MethodSelection extends StatelessWidget {
       : super(key: key);
   final ThemeData theme;
   Color getColor(bool selected) {
-    return selected ? theme.primaryColor : theme.accentColor;
+   return selected ? theme.accentColor : Colors.grey;
   }
 
   @override
@@ -195,7 +191,7 @@ class _StageSelection extends StatelessWidget {
 
   final ThemeData theme;
   Color getColor(bool selected) {
-    return selected ? theme.primaryColor : theme.accentColor;
+   return selected ? theme.accentColor : Colors.grey;
   }
 
   @override
@@ -254,7 +250,7 @@ class _BossSelection extends StatelessWidget {
       : super(key: key);
 
   Color getColor(bool selected) {
-    return selected ? theme.primaryColor : theme.accentColor;
+   return selected ? theme.accentColor : Colors.grey;
   }
 
   final ThemeData theme;
@@ -325,7 +321,7 @@ class _ClanSelection extends StatelessWidget {
   final ThemeData theme;
 
   Color getColor(bool selected) {
-    return selected ? theme.primaryColor : theme.accentColor;
+   return selected ? theme.accentColor : Colors.grey;
   }
 
   @override
@@ -396,7 +392,7 @@ class _ServerSelection extends StatelessWidget {
 
 
   Color getColor(bool selected) {
-    return selected ? theme.primaryColor : theme.accentColor;
+    return selected ? theme.accentColor : Colors.grey;
   }
 
   @override

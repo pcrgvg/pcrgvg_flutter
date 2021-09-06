@@ -1,9 +1,9 @@
 import 'dart:ui';
 
-import 'package:extended_image/extended_image.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
@@ -18,16 +18,16 @@ import 'package:waterfall_flow/waterfall_flow.dart';
   routeName: "linkDetailPage",
 )
 class LinkDetailPage extends StatelessWidget {
-  const LinkDetailPage({Key? key, required this.link, required this.bgUrl})
+  const LinkDetailPage({Key? key, required this.link,  this.bgUrl})
       : super(key: key);
   final Link link;
-  final String bgUrl;
+  final String? bgUrl;
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
       body: Stack(
-        children: [
+        children: <Widget>[
           BgCover(bgUrl: bgUrl),
           Positioned.fill(
             child: WaterfallFlow(
@@ -80,9 +80,32 @@ class LinkDetailPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          '备注',
-                          style: textStyleH2,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              '备注',
+                              style: textStyleH2,
+                            ),
+                            MaterialButton(
+                              minWidth: 0,
+                              elevation: 0,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                              ),
+                              color: theme.accentColor.withOpacity(0.2),
+                              onPressed: () {
+                                Clipboard.setData(
+                                    ClipboardData(text: link.remarks));
+                                '已复制'.toast();
+                              },
+                              child: Text(
+                                '复制',
+                                style: TextStyle(color: theme.accentColor),
+                              ),
+                            ),
+                          ],
                         ),
                         Text(link.remarks)
                       ],
@@ -123,5 +146,3 @@ class _Back extends StatelessWidget {
         ));
   }
 }
-
-

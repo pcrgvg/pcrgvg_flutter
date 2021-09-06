@@ -61,7 +61,9 @@ class _HomePage extends State<HomePage> {
                 _Header(theme: theme),
                 if (gvgTaskList.isEmpty)
                   const SliverToBoxAdapter(
-                    child: Blank(tip: '果咩,啥都没有,如果是第一次请更新数据库',),
+                    child: Blank(
+                      tip: '果咩,啥都没有,如果是第一次请更新数据库',
+                    ),
                   ),
                 ...List<MultiSliver>.generate(gvgTaskList.length, (int index) {
                   final GvgTask gvgTask = gvgTaskList[index];
@@ -112,6 +114,12 @@ class _Header extends StatelessWidget {
       child: Selector<HomeProvider, bool>(
         selector: (_, HomeProvider model) => model.hasScrolled,
         builder: (BuildContext context, bool hasScrolled, __) {
+          final String startTime = context
+              .select<HomeProvider, String>(
+                  (HomeProvider value) => value.gvgTaskFilter.startTime)
+              .dateFormate();
+          final String stage = context.select<HomeProvider, String>(
+              (HomeProvider value) => value.stageLabel);
           return AnimateHeader(
             hasScrolled: hasScrolled,
             child: Row(
@@ -129,17 +137,14 @@ class _Header extends StatelessWidget {
                               style: textStyleH1,
                             ),
                             Text(
-                              context
-                                  .select<HomeProvider, String>(
-                                      (HomeProvider value) =>
-                                          value.gvgTaskFilter.startTime)
-                                  .dateFormate(),
+                              startTime,
                               style: textStyleH1,
                             ),
                           ],
                         ),
                         Row(
                           children: [
+                            Text('阶段$stage', style: textStyleH2),
                             for (int method
                                 in context.select<HomeProvider, List<int>>(
                                     (HomeProvider model) =>
@@ -150,7 +155,7 @@ class _Header extends StatelessWidget {
                                   child: Text(
                                     AutoType.getName(method),
                                     style: textStyleH2,
-                                  ))
+                                  )),
                           ],
                         )
                       ],
@@ -226,7 +231,6 @@ class _TaskItem extends StatefulWidget {
 class __TaskItemState extends State<_TaskItem> {
   @override
   Widget build(BuildContext context) {
-    final HomeProvider model = context.read<HomeProvider>();
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(Routes.taskDetailPage.name,
@@ -269,28 +273,8 @@ class __TaskItemState extends State<_TaskItem> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    for (int type in widget.task.canAuto) ...[
-                      AutoTypeView(
-                        type: type,
-                      ),
-                      if (type == AutoType.manual)
-                        Text('${widget.task.damage}w',
-                            style:
-                                TextStyle(color: HexColor.fromHex('#ff2277'))),
-                      if (type == AutoType.auto || type == AutoType.harfAuto)
-                        Text(
-                            '(${widget.task.autoDamage ?? widget.task.damage}w)',
-                            style:
-                                TextStyle(color: HexColor.fromHex('#ff2277'))),
-                    ],
-                    if (widget.task.type == 1)
-                      const Text(
-                        '(尾刀)',
-                        style: TextStyle(color: Colors.deepPurple),
-                      ),
-                  ],
+                Expanded(
+                  child: _buildDamage(),
                 ),
                 Row(
                   children: [
@@ -307,6 +291,31 @@ class __TaskItemState extends State<_TaskItem> {
     );
   }
 
+  Wrap _buildDamage() {
+    return Wrap(
+      children: [
+        for (int type in widget.task.canAuto) ...[
+          AutoTypeView(
+            type: type,
+          ),
+          if (type == AutoType.manual)
+            Text('(${widget.task.damage}w)',
+                style:
+                    TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
+          if (type == AutoType.auto || type == AutoType.harfAuto)
+            Text('(${widget.task.autoDamage ?? widget.task.damage}w)',
+                style:
+                    TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
+        ],
+        if (widget.task.type == 1)
+          const Text(
+            '(尾刀)',
+            style: TextStyle(color: Colors.deepPurple, height: 1.1),
+          ),
+      ],
+    );
+  }
+
   ValueListenableBuilder<Box<int>> _buildLike() {
     return ValueListenableBuilder<Box<int>>(
       valueListenable: Hive.box<int>(HiveBoxKey.usedBox).listenable(),
@@ -319,6 +328,7 @@ class __TaskItemState extends State<_TaskItem> {
             if (isLiked) {
               await box.deleteAt(index);
             } else {
+              '加入已使用'.toast();
               await box.add(widget.task.id);
             }
             return !isLiked;
@@ -332,7 +342,7 @@ class __TaskItemState extends State<_TaskItem> {
                   )
                 : ColorFiltered(
                     colorFilter:
-                        ColorFilter.mode(Colors.orange, BlendMode.color),
+                        const ColorFilter.mode(Colors.orange, BlendMode.color),
                     child: Container(
                         color: Colors.white,
                         child: Image.asset(
@@ -360,7 +370,9 @@ class __TaskItemState extends State<_TaskItem> {
               onPressed: () {
                 if (removed) {
                   box.deleteAt(index);
+                  '已加入分刀'.toast();
                 } else {
+                  '已去除'.toast();
                   box.add(widget.task.id);
                 }
               },

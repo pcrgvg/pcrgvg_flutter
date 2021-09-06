@@ -9,7 +9,7 @@ class BottomBar extends StatefulWidget {
       required this.items,
       required this.onItemClick,
       this.bottomBarindex = 1,
-      this.height = 54.0})
+      this.height = 64.0})
       : super(key: key);
   final List<BottomBarItem> items;
   final double height;
@@ -58,10 +58,12 @@ class BottomBarItem {
     required this.iconPath,
     required this.activeIconPath,
     this.size = 40,
+    required this.label
   });
   String iconPath;
   String activeIconPath;
   double size;
+  String label;
 }
 
 class BottomBarItemView extends StatefulWidget {
@@ -107,7 +109,6 @@ class _BottomBarItemViewState extends State<BottomBarItemView>
     return widget.isActive
         ? Image.asset(
             bottomBarItem.activeIconPath,
-            key: ValueKey(bottomBarItem.activeIconPath + DateTime.now().microsecondsSinceEpoch.toString()),
             width: bottomBarItem.size,
             height: bottomBarItem.size,
           )
@@ -115,12 +116,13 @@ class _BottomBarItemViewState extends State<BottomBarItemView>
             bottomBarItem.iconPath,
             width: bottomBarItem.size,
             height: bottomBarItem.size,
-            key: ValueKey(bottomBarItem.iconPath),
           );
   }
 
   @override
   Widget build(BuildContext context) {
+    final  BottomBarItem bottomBarItem = widget.bottomBarItem;
+    final ThemeData theme = Theme.of(context);
     return GestureDetector(
       onTap: () {
         if (!widget.isActive) {
@@ -141,7 +143,14 @@ class _BottomBarItemViewState extends State<BottomBarItemView>
           ),
         )),
         alignment: Alignment.center,
-        child: _buildIcon(widget.bottomBarItem),)
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            _buildIcon(bottomBarItem),
+            if (!widget.isActive)
+            Text(bottomBarItem.label, )
+          ],
+        ),)
       
     );
   }

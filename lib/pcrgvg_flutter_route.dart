@@ -4,7 +4,6 @@
 // **************************************************************************
 
 import 'package:flutter/material.dart';
-import 'package:pcrgvg_flutter/isolate/filter_task.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
@@ -75,7 +74,7 @@ FFRouteSettings getRouteSettings({
         widget: LinkDetailPage(
           key: asT<Key?>(safeArguments['key']),
           link: asT<Link>(safeArguments['link'])!,
-          bgUrl: asT<String>(safeArguments['bgUrl'])!,
+          bgUrl: asT<String?>(safeArguments['bgUrl']),
         ),
         routeName: 'linkDetailPage',
       );

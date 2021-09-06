@@ -5,13 +5,16 @@ import 'package:extended_image/extended_image.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:like_button/like_button.dart';
 import 'package:pcrgvg_flutter/constants/Images.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
+import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
+import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/providers/user_provider.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
 import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
@@ -58,7 +61,8 @@ class _ResultDetailPageState extends State<ResultDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool random = context.select<UserProvider, bool>((model) => model.userConfig.randomBg);
+    final bool random = context.select<UserProvider, bool>(
+        (UserProvider model) => model.userConfig.randomBg);
     final ThemeData theme = Theme.of(context);
     return Scaffold(
       body: Stack(
@@ -80,6 +84,7 @@ class _ResultDetailPageState extends State<ResultDetailPage> {
                   theme: theme,
                   taskResult: taskResult,
                   bossPrefab: taskResult.prefabId,
+                  bgUrl: bgUrl,
                 ),
             ],
           )),
@@ -195,7 +200,6 @@ class _Bottom extends StatelessWidget {
   }
 }
 
-
 class _Back extends StatelessWidget {
   const _Back({
     Key? key,
@@ -224,16 +228,18 @@ class _Back extends StatelessWidget {
 }
 
 class _Content extends StatelessWidget {
-  const _Content({
-    Key? key,
-    required this.theme,
-    required this.taskResult,
-    required this.bossPrefab,
-  }) : super(key: key);
+  const _Content(
+      {Key? key,
+      required this.theme,
+      required this.taskResult,
+      required this.bossPrefab,
+      required this.bgUrl})
+      : super(key: key);
 
   final ThemeData theme;
   final TaskFilterResult taskResult;
   final int bossPrefab;
+  final String? bgUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -248,7 +254,7 @@ class _Content extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       children: [
         _Head(theme: theme, taskResult: taskResult),
-        _Link(theme: theme, task: task),
+        _Link(theme: theme, task: task, bgUrl: bgUrl),
         if (!task.remarks.isNullOrEmpty)
           Container(
             decoration: BoxDecoration(
@@ -258,9 +264,30 @@ class _Content extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '备注',
-                  style: textStyleH1,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      '备注',
+                      style: textStyleH2,
+                    ),
+                    MaterialButton(
+                      minWidth: 0,
+                      elevation: 0,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                      ),
+                      color: theme.accentColor.withOpacity(0.2),
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: task.remarks));
+                        '已复制'.toast();
+                      },
+                      child: Text(
+                        '复制',
+                        style: TextStyle(color: theme.accentColor),
+                      ),
+                    ),
+                  ],
                 ),
                 Text(task.remarks)
               ],
@@ -272,14 +299,13 @@ class _Content extends StatelessWidget {
 }
 
 class _Link extends StatelessWidget {
-  const _Link({
-    Key? key,
-    required this.theme,
-    required this.task,
-  }) : super(key: key);
+  const _Link(
+      {Key? key, required this.theme, required this.task, required this.bgUrl})
+      : super(key: key);
 
   final ThemeData theme;
   final Task task;
+  final String? bgUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -300,7 +326,13 @@ class _Link extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: GestureDetector(
                 onTap: () {
-                  launch(link.link);
+                  if (link.remarks.isNotEmpty) {
+                    Navigator.of(context).pushNamed(Routes.linkDetailPage.name,
+                        arguments:
+                            Routes.linkDetailPage.d(link: link, bgUrl: bgUrl));
+                  } else {
+                    launch(link.link);
+                  }
                 },
                 child: Text(
                   link.name,
@@ -338,22 +370,12 @@ class _Head extends StatelessWidget {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  for (int type in task.canAuto)
-                    AutoTypeView(
-                      type: type,
-                    ),
-                  Text(
-                    '${task.damage}w',
-                    style: TextStyle(
-                        color: HexColor.fromHex('#ff2277'), fontSize: 18),
+                  const SizedBox(
+                    width: 65,
                   ),
-                  if (task.type == 1)
-                    const Text(
-                      '(尾刀)',
-                      style: TextStyle(color: Colors.deepPurple),
-                    ),
+                  Expanded(child: _buildDamage(task))
                 ],
               ),
               const SizedBox(
@@ -387,6 +409,30 @@ class _Head extends StatelessWidget {
               width: 60,
               height: 60,
             )),
+      ],
+    );
+  }
+
+  Wrap _buildDamage(Task task) {
+    return Wrap(
+      alignment: WrapAlignment.end,
+      children: [
+        for (int type in task.canAuto) ...[
+          AutoTypeView(
+            type: type,
+          ),
+          if (type == AutoType.manual)
+            Text('${task.damage}w',
+                style: TextStyle(color: HexColor.fromHex('#ff2277'))),
+          if (type == AutoType.auto || type == AutoType.harfAuto)
+            Text('(${task.autoDamage ?? task.damage}w)',
+                style: TextStyle(color: HexColor.fromHex('#ff2277'))),
+        ],
+        if (task.type == 1)
+          const Text(
+            '(尾刀)',
+            style: TextStyle(color: Colors.deepPurple, height: 1.1),
+          ),
       ],
     );
   }

@@ -1,8 +1,8 @@
 import 'package:pcrgvg_flutter/db/hive_db.dart';
 import 'package:pcrgvg_flutter/db/pcr_db.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
+import 'package:pcrgvg_flutter/global/redive.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'base_provider.dart';
 
@@ -37,7 +37,7 @@ class HomeFilterProvider extends BaseListProvider {
       _gvgTaskFilter.startTime = lastPeriod.startTime;
       MyHive.userConfBox.put(HiveDbKey.GvgTaskFilter, _gvgTaskFilter);
     }
-    setStageOption(_gvgTaskFilter.clanBattleId);
+   _stageOption = setStageOption(_gvgTaskFilter.clanBattleId, _gvgTaskFilter.server);
   }
 
   Future<void> getPeriods() async {
@@ -50,14 +50,14 @@ class HomeFilterProvider extends BaseListProvider {
       period.startTime = startTime;
       return period;
     }).toList();
+    // if(periods.indexWhere((ClanPeriod a) => a.clanBattleId == _gvgTaskFilter.clanBattleId) == -1)  {
+    //   _gvgTaskFilter.clanBattleId = periods.first.clanBattleId;
+    // }
   }
 
 
   @override
   Future<void> refresh() async {
-    // await _initGvgTaskFilter();
-    // Future<void>.delayed(const Duration(seconds: 1))
-    //     .then((_) => controller.refreshCompleted());
   }
 
   Future<void> setServer(String server) async {
@@ -66,13 +66,15 @@ class HomeFilterProvider extends BaseListProvider {
     }
     _gvgTaskFilter.server = server;
     await getPeriods();
+    setClanPeriod(clanPeriodList.first);
     notifyListeners();
   }
 
   Future<void> setClanPeriod(ClanPeriod clanPeriod) async {
     _gvgTaskFilter.clanBattleId = clanPeriod.clanBattleId;
     _gvgTaskFilter.startTime = clanPeriod.startTime;
-    setStageOption(_gvgTaskFilter.clanBattleId);
+    _stageOption = setStageOption(_gvgTaskFilter.clanBattleId, _gvgTaskFilter.server);
+    setStage(_stageOption.first.value as int);
     notifyListeners();
   }
 
@@ -102,25 +104,7 @@ class HomeFilterProvider extends BaseListProvider {
     _gvgTaskFilter.methods = methodList;
     notifyListeners();
   }
-  //  日服在1037期后将4 5阶段合并
-  void setStageOption(int clanId) {
-    if (clanId > 1037) {
-      _stageOption = [
-        LvPair(label: "1", value: 1),
-        LvPair(label: "2", value: 2),
-        LvPair(label: "3", value: 3),
-        LvPair(label: "4+5", value: 6),
-      ];
-    } else {
-      _stageOption = [
-        LvPair(label: "1", value: 1),
-        LvPair(label: "2", value: 2),
-        LvPair(label: "3", value: 3),
-        LvPair(label: "4", value: 4),
-        LvPair(label: "5", value: 5),
-      ];
-    }
-  }
+
 
   // 
   void setUsedOrRemoved(String type) {

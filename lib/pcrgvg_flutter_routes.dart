@@ -4,7 +4,6 @@
 // **************************************************************************
 
 import 'package:flutter/material.dart';
-import 'package:pcrgvg_flutter/isolate/filter_task.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/providers/home_provider.dart';
 
@@ -79,7 +78,7 @@ class Routes {
   ///
   /// [constructors] :
   ///
-  /// LinkDetailPage : [Key? key, Link(required) link, String(required) bgUrl]
+  /// LinkDetailPage : [Key? key, Link(required) link, String? bgUrl]
   static const _LinkDetailPage linkDetailPage = _LinkDetailPage();
 
   /// 'mainPage'
@@ -226,8 +225,7 @@ class _LinkDetailPage {
 
   String get name => 'linkDetailPage';
 
-  Map<String, dynamic> d(
-          {Key? key, required Link link, required String bgUrl}) =>
+  Map<String, dynamic> d({Key? key, required Link link, String? bgUrl}) =>
       <String, dynamic>{
         'key': key,
         'link': link,

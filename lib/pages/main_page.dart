@@ -2,6 +2,7 @@ import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
 import 'package:pcrgvg_flutter/constants/Images.dart';
+import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:pcrgvg_flutter/pages/collection_page.dart';
 import 'package:pcrgvg_flutter/pages/home/home_page.dart';
@@ -49,15 +50,16 @@ class _MainPage extends State<MainPage> {
           ),
           onWillPop: _onWillPop),
       bottomNavigationBar: BottomBar(
+        height: Screens.bottomSafeHeight + 64,
         bottomBarindex: currentPageIndex,
         onItemClick: (int index) {
           currentPageIndex = index;
           setState(() {});
         },
         items: <BottomBarItem>[
-          BottomBarItem(iconPath: Images.tabMm, activeIconPath: Images.tabMmActive),
-          BottomBarItem(iconPath: Images.tabMmt, activeIconPath: Images.tabMmtActive),
-          BottomBarItem(iconPath: Images.tabNnk, activeIconPath: Images.tabNnkActive),
+          BottomBarItem(iconPath: Images.tabMm, activeIconPath: Images.tabMmActive, label: '收藏'),
+          BottomBarItem(iconPath: Images.tabMmt, activeIconPath: Images.tabMmtActive, label: '作业'),
+          BottomBarItem(iconPath: Images.tabNnk, activeIconPath: Images.tabNnkActive, label: '我的'),
         ],
       ),
     );
