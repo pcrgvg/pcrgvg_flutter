@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget {
                       title: '公主链接公会战',
                       theme: themeProvider.theme(),
                       darkTheme: themeProvider.theme(isDark: true),
-                      initialRoute: Routes.mainPage.name,
+                      initialRoute: Routes.spalshPage.name,
                       onGenerateRoute: (RouteSettings settings) {
                         return onGenerateRoute(
                           settings: settings,

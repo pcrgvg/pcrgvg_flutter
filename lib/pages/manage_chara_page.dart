@@ -38,72 +38,72 @@ class ManageCharaPage extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     return ChangeNotifierProvider<ManageCharaProvider>(
         create: (_) => ManageCharaProvider(),
-        child: ListBox<ManageCharaProvider>(
-          child: Scaffold(
-            body: CustomScrollView(
-              slivers: [
-                _Header(theme: theme),
-                Selector<ManageCharaProvider,
-                    Tuple3<int, List<Chara>, List<Chara>>>(
-                  selector: (_, ManageCharaProvider model) =>
-                      Tuple3<int, List<Chara>, List<Chara>>(
-                          model.showType, model.hiveCharaList, model.charaList),
-                  shouldRebuild: (Tuple3<int, List<Chara>, List<Chara>> prev,
-                          Tuple3<int, List<Chara>, List<Chara>> next) =>
-                      prev.item1 != next.item1 ||
-                      prev.item2.ne(next.item2) ||
-                      prev.item3.ne(next.item3),
-                  builder:
-                      (_, Tuple3<int, List<Chara>, List<Chara>> tuple, __) {
-                    final int showType = tuple.item1;
-                    final List<Chara> charaList = tuple.item3;
-                    final List<Chara> hiveCharaList = tuple.item2;
-                    final List<Chara> front = charaList
-                        .where((Chara chara) =>
-                            chara.searchAreaWidth < 300 &&
-                            getTypeChara(chara, hiveCharaList, showType))
-                        .toList();
-                    final List<Chara> middle = charaList
-                        .where((Chara chara) =>
-                            chara.searchAreaWidth > 300 &&
-                            chara.searchAreaWidth < 600 &&
-                            getTypeChara(chara, hiveCharaList, showType))
-                        .toList();
-                    final List<Chara> back = charaList
-                        .where((Chara chara) =>
-                            chara.searchAreaWidth > 600 &&
-                            getTypeChara(chara, hiveCharaList, showType))
-                        .toList();
-                    return MultiSliver(children: [
-                      _PinHeader(
-                        theme: theme,
-                        title: '前卫',
-                      ),
-                      _GroupChara(
-                        charas: front,
-                        hiveCharas: hiveCharaList,
-                      ),
-                      _PinHeader(
-                        theme: theme,
-                        title: '中卫',
-                      ),
-                      _GroupChara(
-                        charas: middle,
-                        hiveCharas: hiveCharaList,
-                      ),
-                      _PinHeader(
-                        theme: theme,
-                        title: '后卫',
-                      ),
-                      _GroupChara(
-                        charas: back,
-                        hiveCharas: hiveCharaList,
-                      ),
-                    ]);
-                  },
-                )
-              ],
-            ),
+        child: Scaffold(
+          body: ListBox<ManageCharaProvider>(
+            child: CustomScrollView(
+                slivers: [
+                  _Header(theme: theme),
+                  Selector<ManageCharaProvider,
+                      Tuple3<int, List<Chara>, List<Chara>>>(
+                    selector: (_, ManageCharaProvider model) =>
+                        Tuple3<int, List<Chara>, List<Chara>>(
+                            model.showType, model.hiveCharaList, model.charaList),
+                    shouldRebuild: (Tuple3<int, List<Chara>, List<Chara>> prev,
+                            Tuple3<int, List<Chara>, List<Chara>> next) =>
+                        prev.item1 != next.item1 ||
+                        prev.item2.ne(next.item2) ||
+                        prev.item3.ne(next.item3),
+                    builder:
+                        (_, Tuple3<int, List<Chara>, List<Chara>> tuple, __) {
+                      final int showType = tuple.item1;
+                      final List<Chara> charaList = tuple.item3;
+                      final List<Chara> hiveCharaList = tuple.item2;
+                      final List<Chara> front = charaList
+                          .where((Chara chara) =>
+                              chara.searchAreaWidth < 300 &&
+                              getTypeChara(chara, hiveCharaList, showType))
+                          .toList();
+                      final List<Chara> middle = charaList
+                          .where((Chara chara) =>
+                              chara.searchAreaWidth > 300 &&
+                              chara.searchAreaWidth < 600 &&
+                              getTypeChara(chara, hiveCharaList, showType))
+                          .toList();
+                      final List<Chara> back = charaList
+                          .where((Chara chara) =>
+                              chara.searchAreaWidth > 600 &&
+                              getTypeChara(chara, hiveCharaList, showType))
+                          .toList();
+                      return MultiSliver(children: [
+                        _PinHeader(
+                          theme: theme,
+                          title: '前卫',
+                        ),
+                        _GroupChara(
+                          charas: front,
+                          hiveCharas: hiveCharaList,
+                        ),
+                        _PinHeader(
+                          theme: theme,
+                          title: '中卫',
+                        ),
+                        _GroupChara(
+                          charas: middle,
+                          hiveCharas: hiveCharaList,
+                        ),
+                        _PinHeader(
+                          theme: theme,
+                          title: '后卫',
+                        ),
+                        _GroupChara(
+                          charas: back,
+                          hiveCharas: hiveCharaList,
+                        ),
+                      ]);
+                    },
+                  )
+                ],
+              ),
           ),
         ));
   }

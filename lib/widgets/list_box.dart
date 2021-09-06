@@ -18,8 +18,7 @@ class ListBox<T extends BaseListProvider> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final T model = context.read<T>();
-    return Scaffold(
-      body: NotificationListener<Notification>(
+    return  NotificationListener<Notification>(
         onNotification: (Notification notification) {
           if (notification is ScrollUpdateNotification) {
             if (notification.depth == 0) {
@@ -40,7 +39,6 @@ class ListBox<T extends BaseListProvider> extends StatelessWidget {
           enablePullUp: enablePullUp,
           child: child,
         ),
-      ),
-    );
+      );
   }
 }

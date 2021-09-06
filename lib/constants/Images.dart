@@ -6,7 +6,7 @@
 
 class Images {
   static const String kkr = 'assets/images/kkr.jpg';
-	static const String loading = 'assets/images/loading.gif';
+	static const String loading = 'assets/images/loading.png';
 	static const String star = 'assets/images/star.png';
 	static const String starDisabled = 'assets/images/star_disabled.png';
 	static const String tabMm = 'assets/images/tab/mm.png';

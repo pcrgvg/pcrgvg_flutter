@@ -29,35 +29,37 @@ class HomeFilterPage extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     return ChangeNotifierProvider<HomeFilterProvider>(
         create: (_) => HomeFilterProvider(),
-        child: ListBox<HomeFilterProvider>(
-            child: CustomScrollView(
-          slivers: <Widget>[
-            _Header(theme: theme),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
+        child: Scaffold(
+          body: ListBox<HomeFilterProvider>(
+              child: CustomScrollView(
+            slivers: <Widget>[
+              _Header(theme: theme),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                ),
+                sliver: MultiSliver(children: [
+                  _ServerSelection(theme: theme),
+                  _ClanSelection(
+                    theme: theme,
+                  ),
+                  _BossSelection(
+                    theme: theme,
+                  ),
+                  _StageSelection(
+                    theme: theme,
+                  ),
+                  _MethodSelection(
+                    theme: theme,
+                  ),
+                  _UsedOrRemovedSelection(
+                    theme: theme,
+                  ),
+                ]),
               ),
-              sliver: MultiSliver(children: [
-                _ServerSelection(theme: theme),
-                _ClanSelection(
-                  theme: theme,
-                ),
-                _BossSelection(
-                  theme: theme,
-                ),
-                _StageSelection(
-                  theme: theme,
-                ),
-                _MethodSelection(
-                  theme: theme,
-                ),
-                _UsedOrRemovedSelection(
-                  theme: theme,
-                ),
-              ]),
-            ),
-          ],
-        )));
+            ],
+          )),
+        ));
   }
 }
 

@@ -1,4 +1,4 @@
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:pcrgvg_flutter/apis/pcrgvg_api.dart';
 import 'package:pcrgvg_flutter/db/hive_db.dart';
@@ -25,13 +25,26 @@ class HomeProvider extends BaseListProvider {
   late GvgTaskFilterHive _gvgTaskFilter;
   GvgTaskFilterHive get gvgTaskFilter => _gvgTaskFilter;
   String stageLabel = '1';
+  bool _showRightControll = false;
+  bool get showRightControll => _showRightControll;
+  set showRightControll(bool value) {
+    if (value != _showRightControll) {
+      _showRightControll = value;
+      notifyListeners();
+    }
+  }
+
+  final List<GlobalKey> _keyList = <GlobalKey>[];
+  List<GlobalKey> get keyList => _keyList;
 
   PcrDbVersion? pcrDbVersion;
+  final ScrollController scrollController = ScrollController();
 
   Future<void> init() async {
     _gvgTaskFilter =
         (MyHive.userConfBox.get(HiveDbKey.GvgTaskFilter) as GvgTaskFilterHive)
             .copy();
+     createKeyList();
     
   }
 
@@ -163,11 +176,31 @@ class HomeProvider extends BaseListProvider {
     return task.autoDamage ?? task.damage;
   }
 
-  setStageString() {
+  void setStageString() {
     stageLabel =
         setStageOption(_gvgTaskFilter.clanBattleId, _gvgTaskFilter.server)
             .firstWhere((LvPair a) => a.value == _gvgTaskFilter.stage,
                 orElse: () => LvPair(value: 1, label: '1'))
             .label;
   }
+
+  void scrollTo(int index) {
+    // keyList[index].currentContext?.findRenderObject()
+    // scrollController.jumpTo(0);
+    if (index == 0) {
+      // 直接跳转到第一个,可能会错位
+     scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.linear);
+    } else {
+      Scrollable.ensureVisible(keyList[index].currentContext!);
+    }
+    
+    // scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.linear);
+  }
+
+  void createKeyList() {
+    for (int item in List<int>.filled(5, 1)) {
+        _keyList.add(GlobalKey());
+    }
+  }
+
 }
