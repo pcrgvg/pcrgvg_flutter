@@ -9,7 +9,7 @@ Future<void> checkAppVersion() async {
   final String version = packageInfo.version;
   final String buildNumber = packageInfo.buildNumber;
   final String v = version.split('.').join();
-  final info = await GitApi.release();
+  final info = await GitApi.releaseInfo();
   print(info);
   buildNumber.debug();
 }

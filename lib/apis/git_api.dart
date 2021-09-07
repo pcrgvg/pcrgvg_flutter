@@ -4,9 +4,9 @@ import 'package:pcrgvg_flutter/utils/net_util.dart';
 import 'package:dio/dio.dart';
 
 class GitApi {
-  static Future release() async {
+  static Future releaseInfo() async {
     final Resp resp = await Http.fetch(RequestOptions(
-        path: GitUrl.release, method: RequestMethods.Get));
+        path: GitUrl.releaseInfo, method: RequestMethods.Get));
     return resp.data;
   }
 }

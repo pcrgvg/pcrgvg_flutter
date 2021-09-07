@@ -19,8 +19,9 @@ class PcrGvgUrl {
 }
 
 class GitUrl {
-  static const String gitHost = 'https://cdn.jsdelivr.net/gh/zafkielkurumi/pcrgvg/pcrgvg_flutter';
-  static const String gitApiHost = 'https://api.github.com/repos/zafkielkurumi/pcrgvg/pcrgvg_flutter';
+  static const String gitHost = 'https://cdn.jsdelivr.net/gh/pcrgvg/pcrgvg_flutter';
+  static const String gitApiHost = 'https://api.github.com/repos/pcrgvg/pcrgvg_flutter';
   static const String gitRepo = '$gitHost@master';
   static const String release = '$gitApiHost/releases/latest';
+  static const String releaseInfo = '$gitHost/releases/releases.json';
 }
