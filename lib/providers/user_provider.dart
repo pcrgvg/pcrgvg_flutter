@@ -26,6 +26,18 @@ class UserProvider extends BaseProvider {
    
   }
 
+  void changeBlur(double x, double y) {
+
+    
+    if (userConfig.bgBlurX != x || userConfig.bgBlurY != y) {
+      userConfig.bgBlurY  =y;
+       userConfig.bgBlurX = x;
+        notifyListeners();
+    }
+   
+  
+  }
+
   void toggleShowBg() {
      userConfig.showBg = !userConfig.showBg;
       notifyListeners();

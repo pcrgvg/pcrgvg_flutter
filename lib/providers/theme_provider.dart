@@ -65,6 +65,12 @@ class ThemeProvider extends BaseProvider {
               background: backgroundColor,
               surface: backgroundColor,
             ),
+      sliderTheme: SliderThemeData(
+        activeTickMarkColor: accentColor,
+        activeTrackColor: accentColor,
+        thumbColor: accentColor,
+        // inactiveTrackColor: primaryColor
+      )
     );
   }
 }

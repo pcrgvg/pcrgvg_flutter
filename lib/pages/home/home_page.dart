@@ -19,13 +19,11 @@ import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
 import 'package:pcrgvg_flutter/widgets/blank.dart';
 import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
-import 'package:pcrgvg_flutter/widgets/list_box.dart';
 import 'package:provider/provider.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sliver_tools/sliver_tools.dart';
-import 'package:tuple/tuple.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
 @FFRoute(
@@ -52,13 +50,12 @@ class _HomePage extends State<HomePage> {
         create: (_) => HomeProvider(),
         child: Selector<HomeProvider, List<GvgTask>>(
           selector: (_, HomeProvider homeModel) => homeModel.gvgTaskList,
-          shouldRebuild: (List<GvgTask> pre,
-                  List<GvgTask> next) =>
+          shouldRebuild: (List<GvgTask> pre, List<GvgTask> next) =>
               pre.ne(next),
           builder: (_, List<GvgTask> gvgTaskList, __) {
             return Scaffold(
                 body: Stack(
-              children: [
+              children: <Widget>[
                 _ListContent(theme: theme, gvgTaskList: gvgTaskList),
                 _RightControl(gvgTaskList: gvgTaskList)
               ],
@@ -75,26 +72,30 @@ class _RightControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final HomeProvider model = context.read<HomeProvider>();
-    final bool showRightControll = context.select<HomeProvider, bool>((value) => value.showRightControll);
+    final bool showRightControll =
+        context.select<HomeProvider, bool>((HomeProvider value) => value.showRightControll);
     return Positioned(
         right: 16,
         bottom: 16,
         top: 16,
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List<GestureDetector>.generate(
-                gvgTaskList.length,
-                (int index) => GestureDetector(
-                    onTap: () {
-                      model.scrollTo(index);
-                    },
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: BossIcon(
-                          prefabId: gvgTaskList[index].prefabId,
-                          width: 30,
-                        ))))));
+        child: AnimatedOpacity(
+            opacity: showRightControll ? 1 : 0,
+            duration: const Duration(milliseconds: 500),
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List<GestureDetector>.generate(
+                    gvgTaskList.length,
+                    (int index) => GestureDetector(
+                        onTap: () {
+                          model.scrollTo(index);
+                        },
+                        child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: BossIcon(
+                              prefabId: gvgTaskList[index].prefabId,
+                              width: 30,
+                            )))))));
   }
 }
 
@@ -158,8 +159,7 @@ class _ListContent extends StatelessWidget {
                       ),
                       if (gvgTask.tasks.isNotEmpty)
                         SliverPadding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                             sliver: SliverWaterfallFlow(
                                 gridDelegate:
                                     const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(

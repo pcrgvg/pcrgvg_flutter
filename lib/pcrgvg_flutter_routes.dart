@@ -9,6 +9,7 @@ import 'package:pcrgvg_flutter/providers/home_provider.dart';
 
 const List<String> routeNames = <String>[
   'aboutPage',
+  'bgSettiongPage',
   'collectionPage',
   'homeFilterPage',
   'homePage',
@@ -36,6 +37,17 @@ class Routes {
   ///
   /// AboutPage : [Key? key]
   static const _AboutPage aboutPage = _AboutPage();
+
+  /// 'bgSettiongPage'
+  ///
+  /// [name] : 'bgSettiongPage'
+  ///
+  /// [routeName] : 'bgSettiongPage'
+  ///
+  /// [constructors] :
+  ///
+  /// BgSettiongPage : [Key? key]
+  static const _BgSettiongPage bgSettiongPage = _BgSettiongPage();
 
   /// 'collectionPage'
   ///
@@ -170,6 +182,19 @@ class _AboutPage {
   const _AboutPage();
 
   String get name => 'aboutPage';
+
+  Map<String, dynamic> d({Key? key}) => <String, dynamic>{
+        'key': key,
+      };
+
+  @override
+  String toString() => name;
+}
+
+class _BgSettiongPage {
+  const _BgSettiongPage();
+
+  String get name => 'bgSettiongPage';
 
   Map<String, dynamic> d({Key? key}) => <String, dynamic>{
         'key': key,

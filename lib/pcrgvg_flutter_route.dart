@@ -9,6 +9,7 @@ import 'package:pcrgvg_flutter/providers/home_provider.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/widgets.dart';
 import 'pages/about_page.dart';
+import 'pages/bg_settiong_page.dart';
 import 'pages/collection_page.dart';
 import 'pages/home/home_filter_page.dart';
 import 'pages/home/home_page.dart';
@@ -38,6 +39,15 @@ FFRouteSettings getRouteSettings({
           key: asT<Key?>(safeArguments['key']),
         ),
         routeName: 'aboutPage',
+      );
+    case 'bgSettiongPage':
+      return FFRouteSettings(
+        name: name,
+        arguments: arguments,
+        widget: BgSettiongPage(
+          key: asT<Key?>(safeArguments['key']),
+        ),
+        routeName: 'bgSettiongPage',
       );
     case 'collectionPage':
       return FFRouteSettings(

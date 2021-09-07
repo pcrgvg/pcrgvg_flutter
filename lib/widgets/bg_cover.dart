@@ -34,7 +34,7 @@ class BgCover extends StatelessWidget {
       child: showBg ? Container(
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: ExtendedNetworkImageProvider(bgUrl ?? url), fit: BoxFit.cover)),
+                image: ExtendedNetworkImageProvider(bgUrl ?? url, cache: true), fit: BoxFit.cover, )),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaY: sigmaY ?? bgBlurY, sigmaX: sigmaX ?? bgBlurX),
           child: Container(

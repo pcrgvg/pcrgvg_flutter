@@ -4,11 +4,11 @@ import 'package:pcrgvg_flutter/extension/extensions.dart';
 
 class Collection {
   static List<List<TaskFilterResult>> getCollection(String server) {
-    List<dynamic> arr = MyHive.collectBox.get(server) ?? [];
+    final List<dynamic> arr = MyHive.collectBox.get(server) ?? <dynamic>[];
     final List<List<TaskFilterResult>> result = [];
     for (final item in arr) {
       if (item is List) {
-        result.add(item.map((a) => a as TaskFilterResult).toList());
+        result.add(item.map((dynamic a) => a as TaskFilterResult).toList());
       }
     }
     return result;

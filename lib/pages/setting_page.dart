@@ -1,11 +1,12 @@
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
+import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/providers/user_provider.dart';
 import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
-import 'package:waterfall_flow/waterfall_flow.dart';
 import 'package:provider/provider.dart';
 
 @FFRoute(
@@ -52,6 +53,21 @@ class _Content extends StatelessWidget {
               _RandomBg(
                 theme: theme,
               ),
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).pushNamed(Routes.bgSettiongPage.name);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text('选择背景'),
+                      Icon(FluentIcons.chevron_right_16_regular)
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
         ));
