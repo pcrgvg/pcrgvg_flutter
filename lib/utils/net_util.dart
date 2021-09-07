@@ -57,7 +57,7 @@ class PcrTransFormer extends DefaultTransformer {
       }
       return Resp(success: false);
     }
-    if (uri.contains(GitUrl.gitApiHost) || uri.contains(GitUrl.gitHost)) {
+    if (uri.contains(GitUrl.gitApiHost) || uri.contains(GitUrl.cdnGitHost)) {
       return Resp(success: true, data:transformResponse);
     }
 

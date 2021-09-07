@@ -15,8 +15,8 @@ import 'base_provider.dart';
 class HomeProvider extends BaseListProvider {
   HomeProvider() {
     init();
-    checkAppVersion();
-     PcrDb.checkUpdate();
+    AppUpgrade.checkAppVersion();
+    //  PcrDb.checkUpdate();
   }
   List<GvgTask> _gvgTaskListCache = [];
   List<GvgTask> _gvgTaskList = [];
