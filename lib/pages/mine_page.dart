@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/db/pcr_db.dart';
+import 'package:pcrgvg_flutter/global/app_update.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
@@ -56,6 +57,16 @@ class _MinePage extends State<MinePage> {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     child: const Text('更新数据库'),
+                  ),
+                ),
+                    GestureDetector(
+                  onTap: () {
+                    '检查数据中'.toast();
+                     AppUpgrade.checkAppVersion();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    child: const Text('更新APP'),
                   ),
                 ),
                 GestureDetector(

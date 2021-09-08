@@ -15,8 +15,9 @@ import 'base_provider.dart';
 class HomeProvider extends BaseListProvider {
   HomeProvider() {
     init();
-    AppUpgrade.checkAppVersion();
-    //  PcrDb.checkUpdate();
+
+    PcrDb.checkUpdate();
+    checkAppVersion();
   }
   List<GvgTask> _gvgTaskListCache = [];
   List<GvgTask> _gvgTaskList = [];
@@ -44,8 +45,7 @@ class HomeProvider extends BaseListProvider {
     _gvgTaskFilter =
         (MyHive.userConfBox.get(HiveDbKey.GvgTaskFilter) as GvgTaskFilterHive)
             .copy();
-     createKeyList();
-    
+    createKeyList();
   }
 
   @override
@@ -189,18 +189,28 @@ class HomeProvider extends BaseListProvider {
     // scrollController.jumpTo(0);
     if (index == 0) {
       // 直接跳转到第一个,可能会错位
-     scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.linear);
+      scrollController.animateTo(0,
+          duration: const Duration(milliseconds: 300), curve: Curves.linear);
     } else {
       Scrollable.ensureVisible(keyList[index].currentContext!);
     }
-    
+
     // scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.linear);
   }
 
   void createKeyList() {
     for (int item in List<int>.filled(5, 1)) {
-        _keyList.add(GlobalKey());
+      _keyList.add(GlobalKey());
     }
   }
 
+  void checkAppVersion() {
+    final int nowDate = DateTime.now().millisecondsSinceEpoch;
+    final int lastUpdateTime =
+        MyHive.userConfBox.get(HiveDbKey.AppCheckDate, defaultValue: 0) as int;
+    const int DayMs = 24 * 60 * 60 * 1000;
+    if (nowDate - lastUpdateTime > DayMs) {
+      AppUpgrade.checkAppVersion();
+    }
+  }
 }

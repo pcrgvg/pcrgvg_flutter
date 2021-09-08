@@ -89,6 +89,7 @@ abstract class HiveDbKey {
   static const String Tw = 'Tw';
   static const String GvgTaskFilter = 'GvgTaskFilter';
   static const String UserConfig = 'userConfig';
+  static const String AppCheckDate = 'AppCheckDate';
 }
 
 abstract class HiveBoxKey {

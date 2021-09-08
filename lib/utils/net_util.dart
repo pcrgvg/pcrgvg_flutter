@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pcrgvg_flutter/apis/git_api.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/db/pcr_db.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
@@ -57,11 +58,23 @@ class PcrTransFormer extends DefaultTransformer {
       }
       return Resp(success: false);
     }
-    if (uri.contains(GitUrl.gitApiHost) || uri.contains(GitUrl.cdnGitHost)) {
+    if (skipTransform(uri)) {
       return Resp(success: true, data:transformResponse);
     }
 
     return transformResponse;
+  }
+
+
+  List<String> whiteList = [GitUrl.gitApiHost, GitUrl.cdnGitHost, GitUrl.giteeHost];
+
+  bool skipTransform(String uri) {
+    for (final String item in whiteList) {
+      if(uri.contains(item)) {
+        return true;
+      }
+    }
+    return false; 
   }
 }
 

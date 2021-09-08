@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 class GitApi {
   static Future releaseInfo() async {
     final Resp resp = await Http.fetch(RequestOptions(
-        path: GitUrl.releaseInfo, method: RequestMethods.Get));
+        path: GitUrl.giteeRelease, method: RequestMethods.Get));
     return resp.data;
   }
 }

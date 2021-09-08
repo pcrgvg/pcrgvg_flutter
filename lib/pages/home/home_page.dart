@@ -94,7 +94,7 @@ class _RightControl extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 4),
                             child: BossIcon(
                               prefabId: gvgTaskList[index].prefabId,
-                              width: 30,
+                              width: 35,
                             )))))));
   }
 }
