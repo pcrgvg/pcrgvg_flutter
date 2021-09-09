@@ -12,6 +12,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// 每天检查一次
 class AppUpgrade {
+  const AppUpgrade._();
+  static  late final PackageInfo packageInfo;
   static void upgradeModal(String url) {
     showToastWidget(Builder(builder: (BuildContext context) {
       final Color bgc = Theme.of(context).accentColor;
@@ -80,10 +82,13 @@ class AppUpgrade {
         duration: const Duration(hours: 24));
   }
 
+  static Future<void> appInfo() async {
+       packageInfo = await PackageInfo.fromPlatform();
+  }
+
   static Future<void> checkAppVersion() async {
     final int nowDate = DateTime.now().millisecondsSinceEpoch; 
     MyHive.userConfBox.put(HiveDbKey.AppCheckDate, nowDate);
-    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final String version = packageInfo.version;
     final String buildNumber = packageInfo.buildNumber;
     final String appVersion = version.split('.').join();
@@ -91,6 +96,9 @@ class AppUpgrade {
     // final versionCode = info['elements'][0]['versionCode'] as int;
     // final versionName = info['elements'][0]['versionName'] as String;
     final String tagName = info['tag_name'] as String;
+    if (!tagName.startsWith('v')){
+      return;
+    }
     final List<String> versionArr = tagName.split('+');
     final String releaseVersionCode = versionArr.asMap()[1] ?? '';
     final String releaseVersion =
@@ -111,7 +119,7 @@ class AppUpgrade {
   }
 
   static String? apkDownloadUrl(List<dynamic> assest) {
-    for (var item in assest) {
+    for (final item in assest) {
       if (item['name'] == 'app-release.apk') {
         return item['browser_download_url'] +  '/' + item['name'] as String;
       }

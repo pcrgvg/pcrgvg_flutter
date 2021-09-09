@@ -55,7 +55,7 @@ extension StringExtension on String? {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(Images.loading),
+              Image.asset(Images.loading, width: 200),
               if (!isNullOrEmpty)
                 Text(this!,
                     style: TextStyle(

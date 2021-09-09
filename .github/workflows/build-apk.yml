@@ -1,0 +1,48 @@
+name: build apk
+on:
+  workflow_dispatch:
+    inputs:
+      TAG:
+        description: 'Set a Tag'
+        required: true
+        default: ''
+  push:
+    tags:
+      - v*
+jobs:
+   build:
+     name: 
+     runs-on: ubuntu-latest
+     steps:
+        - name: checkout
+          uses: actions/checkout@v2
+        - name: java sdk
+          uses: actions/setup-java@v1
+          with:
+            java-version: '11.x'
+        - name: flutter
+          uses: subosito/flutter-action@v1
+          with:
+            channel: stable
+        - name: build apk
+          run: |
+           flutter pub get
+           flutter build apk
+           ls build/app/outputs/flutter-apk
+           mv -f build/app/outputs/flutter-apk/*-release.apk releases
+        - name: build sign apk
+          uses: r0adkll/sign-android-release@v1 
+          with:
+            releaseDirectory: releases
+            fileRegex: .*-release.apk
+            signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+            alias: ${{ secrets.ALIAS }}
+            keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+            keyPassword: ${{ secrets.KEY_PASSWORD }}
+        - name: Release to github
+          uses: ncipollo/release-action@v1
+          with:
+            allowUpdates: true
+            token: ${{ secrets.GITHUB_TOKEN }}
+            tag: ${{ github.event.inputs.TAG }}
+            artifacts: "releases/*-release.apk"

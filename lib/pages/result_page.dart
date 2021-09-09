@@ -293,7 +293,7 @@ class _BossFilter extends StatelessWidget {
   final ThemeData theme;
 
   Color getColor(bool selected) {
-    return selected ? theme.primaryColor : theme.accentColor;
+    return selected ? theme.accentColor : Colors.grey;
   }
 
   @override

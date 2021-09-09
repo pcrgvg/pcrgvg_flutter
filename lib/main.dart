@@ -22,7 +22,6 @@ Future<void> main() async {
   NetUtil.init();
   await PcrDb.init();
   await MyHive.init();
-
   runApp(MyApp());
 }
 
