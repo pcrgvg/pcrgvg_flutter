@@ -5,7 +5,7 @@
 
 This project is a starting point for a Flutter application.
 ### 路由生成
-ff_route -o./  --supper-arguments
+ff_route -o./  --super-arguments
 
 ### 生成hive adapter
 flutter packages pub run build_runner build

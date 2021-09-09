@@ -32,7 +32,7 @@ dependencies:
   extended_image: ^4.1.0
   extended_sliver: ^2.0.0
   ff_annotation_route_core: ^2.0.2
-  ff_annotation_route_library: ^2.0.1
+  ff_annotation_route_library: ^2.0.3
   flutter:
     sdk: flutter
   flutter_localizations: 
