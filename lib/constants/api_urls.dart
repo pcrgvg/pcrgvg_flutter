@@ -23,7 +23,7 @@ class GitUrl {
   static const String gitApiHost = 'https://api.github.com/repos/pcrgvg/pcrgvg_flutter';
   static const String gitRepo = '$cdnGitHost@master';
   static const String release = '$gitApiHost/releases/latest';
-  static const String releaseInfo = '$gitRepo/releases/output-metadata.json';
+  static const String releaseInfo = '$gitRepo/releases/metadata.json';
   static const String giteeHost = 'https://gitee.com';
   static const String giteeRelease = '$giteeHost/api/v5/repos/tokisaki__kurumi/pcrgvg_flutter/releases/latest';
 }
