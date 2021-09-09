@@ -44,7 +44,7 @@ jobs:
         - name: Rename 
           run: |
              ls releases
-             mv -f release/output-metadata.json release/metadata.json 
+             mv -f releases/output-metadata.json releases/metadata.json 
              for name in $(ls releases/*-signed.apk);do mv -f $name ${name%-signed.apk}.apk ;done
              ls releases
         - name: Release to github
