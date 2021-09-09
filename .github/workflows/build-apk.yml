@@ -41,6 +41,12 @@ jobs:
             alias: ${{ secrets.ALIAS }}
             keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
             keyPassword: ${{ secrets.KEY_PASSWORD }}
+        - name: Rename 
+          run: |
+             ls releases
+             mv -f release/output-metadata.json release/metadata.json 
+             for name in $(ls releases/*-signed.apk);do mv -f $name ${name%-signed.apk}.apk ;done
+             ls releases
         - name: Release to github
           uses: ncipollo/release-action@v1
           with:
