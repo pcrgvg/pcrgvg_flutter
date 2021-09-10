@@ -14,7 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 class AppUpgrade {
   const AppUpgrade._();
   static  late final PackageInfo packageInfo;
-  static void upgradeModal(String url) {
+  static void upgradeModal() {
     showToastWidget(Builder(builder: (BuildContext context) {
       final Color bgc = Theme.of(context).accentColor;
       final TextStyle textStyle = TextStyle(
@@ -62,6 +62,7 @@ class AppUpgrade {
                   onPressed: () async {
                     // final String url = GitUrl.cdnGitHost + '@$releaseTag/releases/app-release.apk';
                      dismissAllToast();
+                     const String url = 'https://pcr-app.oss-cn-shanghai.aliyuncs.com/app-release.apk';
                     if (await canLaunch(url)) {
                       launch(url);
                     }
@@ -98,7 +99,7 @@ class AppUpgrade {
 
 
     if (lastVersion != appVersion || buildNumber != lastBuildNumber) {
-      //  upgradeModal(url!);
+       upgradeModal();
      
     } else {
       '暂无更新'.toast();
