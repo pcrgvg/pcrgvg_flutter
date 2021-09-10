@@ -92,13 +92,22 @@ class AppUpgrade {
     MyHive.userConfBox.put(HiveDbKey.AppCheckDate, nowDate);
     final String version = packageInfo.version;
     final int buildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
-    final String appVersion = version;
+    final List<String> appVersion = version.split('.');
     final info = await GitApi.releaseInfo();
     final int lastBuildNumber = info['elements'][0]['versionCode'] as int;
-    final String lastVersion = info['elements'][0]['versionName'] as String;
-
-
-    if (lastVersion != appVersion || buildNumber != lastBuildNumber) {
+    final List<String> lastVersion = (info['elements'][0]['versionName'] as String).split('.');
+    bool needUpdate = false;
+    if (buildNumber < lastBuildNumber) {
+      needUpdate = true;
+    }
+    for (var i = 0; i < appVersion.length; i++) {
+        if (appVersion[i].compareTo(lastVersion[i]) < 0) {
+          needUpdate = true;
+          break;
+        }
+        
+    }
+    if (needUpdate) {
        upgradeModal();
      
     } else {
