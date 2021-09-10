@@ -18,7 +18,7 @@ jobs:
           with:
             key-id: ${{ secrets.OSS_KEY_ID }}
             key-secret: ${{ secrets.OSS_KEY_SECRET }}
-            region: oss-cn-shanghai
-            bucket: pcr-app
+            region: oss-cn-beijing
+            bucket: pcr-icon
             asset-path: releases
             target-path: './'
