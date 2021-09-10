@@ -24,9 +24,9 @@ jobs:
         - name: Upload to oss
           uses: tvrcgo/upload-to-oss@master
           with:
-          key-id: ${{ secrets.OSS_KEY_ID }}
-          key-secret: ${{ secrets.OSS_KEY_SECRET }}
-          region: oss-cn-shanghai
-          bucket: pcr-app
-          asset-path: ./releases/app-release.apk
-          target-path: /apk/
+            key-id: ${{ secrets.OSS_KEY_ID }}
+            key-secret: ${{ secrets.OSS_KEY_SECRET }}
+            region: oss-cn-shanghai
+            bucket: pcr-app
+            asset-path: ./releases/app-release.apk
+            target-path: /apk/
