@@ -29,4 +29,4 @@ jobs:
             region: oss-cn-shanghai
             bucket: pcr-app
             asset-path: ./releases/app-release.apk
-            target-path: /apk/
+            target-path: app-release.apk
