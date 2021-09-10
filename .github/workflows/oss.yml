@@ -13,12 +13,12 @@ jobs:
      steps:
         - name: checkout
           uses: actions/checkout@v2
-        - name: deploy-aliyun-oss
-          uses: taixw2/deploy-aliyun-oss@v1
+        - name: Upload to OSS
+          uses: tvrcgo/upload-to-oss@v0.1.1
           with:
-            access-key-id: ${{ secrets.OSS_KEY_ID }}
-            access-key-secret: ${{ secrets.OSS_KEY_SECRET }}
-            secure: true
+            key-id: ${{ secrets.OSS_KEY_ID }}
+            key-secret: ${{ secrets.OSS_KEY_SECRET }}
             region: oss-cn-shanghai
             bucket: pcr-app
-            entry: releases/*-release.apk
+            asset-path: releases
+            target-path: ''

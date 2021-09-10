@@ -33,7 +33,7 @@ jobs:
            mv -f build/app/outputs/flutter-apk/*-release.apk releases
            mv -f build/app/outputs/apk/release/output-metadata.json releases
         - name: build sign apk
-          uses: r0adkll/sign-android-release@v1 
+          uses: iota9star/sign-android-release@v1.0.5
           with:
             releaseDirectory: releases
             fileRegex: .*-release.apk
@@ -41,6 +41,8 @@ jobs:
             alias: ${{ secrets.ALIAS }}
             keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
             keyPassword: ${{ secrets.KEY_PASSWORD }}
+          env:
+            BUILD_TOOLS_VERSION: "30.0.2"
         - name: Rename 
           run: |
              ls releases
@@ -61,14 +63,14 @@ jobs:
             push_options: '--force'
             commit_message: ":bookmark: Release binary files."
             file_pattern: releases/*-release.apk releases/metadata.json
-        - name: deploy-aliyun-oss
-          uses: taixw2/deploy-aliyun-oss@v1
+        - name: Upload to OSS
+          uses: tvrcgo/upload-to-oss@v0.1.1
           with:
-            access-key-id: ${{ secrets.OSS_KEY_ID }}
-            access-key-secret: ${{ secrets.OSS_KEY_SECRET }}
-            secure: true
+            key-id: ${{ secrets.OSS_KEY_ID }}
+            key-secret: ${{ secrets.OSS_KEY_SECRET }}
             region: oss-cn-shanghai
             bucket: pcr-app
-            entry: releases/*-release.apk
+            asset-path: releases
+            target-path: ''
 
 
