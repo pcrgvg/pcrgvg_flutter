@@ -49,13 +49,6 @@ jobs:
              mv -f releases/output-metadata.json releases/metadata.json 
              for name in $(ls releases/*-signed.apk);do mv -f $name ${name%-signed.apk}.apk ;done
              ls releases
-        - name: Release to github
-          uses: ncipollo/release-action@v1
-          with:
-            allowUpdates: true
-            token: ${{ secrets.GITHUB_TOKEN }}
-            tag: ${{ github.event.inputs.TAG }}
-            artifacts: "releases/*-release.apk"
         - name: Commit binary files
           uses: stefanzweifel/git-auto-commit-action@v4
           with:
@@ -63,6 +56,13 @@ jobs:
             push_options: '--force'
             commit_message: ":bookmark: Release binary files."
             file_pattern: releases/*-release.apk releases/metadata.json
+        - name: Release to github
+          uses: ncipollo/release-action@v1
+          with:
+            allowUpdates: true
+            token: ${{ secrets.GITHUB_TOKEN }}
+            tag: ${{ github.event.inputs.TAG }}
+            artifacts: "releases/*-release.apk"
         - name: Upload to oss
           uses: tvrcgo/upload-to-oss@master
           with:
