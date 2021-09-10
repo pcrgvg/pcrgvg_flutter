@@ -92,7 +92,7 @@ class AppUpgrade {
     MyHive.userConfBox.put(HiveDbKey.AppCheckDate, nowDate);
     final String version = packageInfo.version;
     final int buildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
-    final String appVersion = version.split('.').join();
+    final String appVersion = version;
     final info = await GitApi.releaseInfo();
     final int lastBuildNumber = info['elements'][0]['versionCode'] as int;
     final String lastVersion = info['elements'][0]['versionName'] as String;
