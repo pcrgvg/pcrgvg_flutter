@@ -14,11 +14,10 @@ jobs:
         - name: checkout
           uses: actions/checkout@v2
         - name: Upload files to OSS
-          uses: jievince/upload-to-oss@v0.2.2
+          uses: manyuanrong/setup-ossutil@v2.0
           with:
-            key-id: ${{ secrets.OSS_KEY_ID }}
-            key-secret: ${{ secrets.OSS_KEY_SECRET }}
-            region: oss-cn-beijing
-            bucket: pcr-icon
-            asset-path: releases
-            target-path: './'
+            endpoint: "oss-cn-shanghai.aliyuncs.com"
+            access-key-id: ${{ secrets.OSS_KEY_ID }}
+            access-key-secret: ${{ secrets.OSS_KEY_SECRET }}
+            bucket: pcr-app
+          run: ossutil cp -rf releases/app-release.apk oss://pcr-app/
