@@ -1,0 +1,24 @@
+name: build apk
+on:
+  workflow_dispatch:
+    inputs:
+      TAG:
+        description: 'Set a Tag'
+        required: true
+        default: ''
+jobs:
+  build:
+     name: 
+     runs-on: ubuntu-latest
+     steps:
+        - name: checkout
+          uses: actions/checkout@v2
+        - name: deploy-aliyun-oss
+          uses: taixw2/deploy-aliyun-oss@1
+          with:
+            access-key-id: ${{ secrets.OSS_KEY_ID }}
+            access-key-secret: ${{ secrets.OSS_KEY_SECRET }}
+            secure: true
+            region: oss-cn-shanghai
+            bucket: pcr-app
+            entry: releases/*-release.apk

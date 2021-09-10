@@ -90,34 +90,21 @@ class AppUpgrade {
     final int nowDate = DateTime.now().millisecondsSinceEpoch; 
     MyHive.userConfBox.put(HiveDbKey.AppCheckDate, nowDate);
     final String version = packageInfo.version;
-    final String buildNumber = packageInfo.buildNumber;
+    final int buildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
     final String appVersion = version.split('.').join();
     final info = await GitApi.releaseInfo();
-    // final versionCode = info['elements'][0]['versionCode'] as int;
-    // final versionName = info['elements'][0]['versionName'] as String;
-    final String tagName = info['tag_name'] as String;
-    if (!tagName.startsWith('v')){
-      return;
-    }
-    final List<String> versionArr = tagName.split('+');
-    final String releaseVersionCode = versionArr.asMap()[1] ?? '';
-    final String releaseVersion =
-        versionArr.asMap()[0]?.split('.').join() ?? '0';
-    if (releaseVersion != appVersion || buildNumber != releaseVersionCode) {
-      final assets = info['assets'] as List;
-      final String? url = apkDownloadUrl(assets);
-      url.debug();
-      if (!url.isNullOrEmpty) {
-         upgradeModal(url!);
-      } else {
-        '未找个更新的apk,联系作者'.toast();
-      }
+    final int lastBuildNumber = info['elements'][0]['versionCode'] as int;
+    final String lastVersion = info['elements'][0]['versionName'] as String;
+
+
+    if (lastVersion != appVersion || buildNumber != lastBuildNumber) {
+      //  upgradeModal(url!);
      
     } else {
       '暂无更新'.toast();
     }
   }
-
+  // 从gitee release info 中获取apk下载地址
   static String? apkDownloadUrl(List<dynamic> assest) {
     for (final item in assest) {
       if (item['name'] == 'app-release.apk') {
