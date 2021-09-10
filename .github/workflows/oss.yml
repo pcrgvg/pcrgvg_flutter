@@ -21,4 +21,4 @@ jobs:
             region: oss-cn-shanghai
             bucket: pcr-app
             asset-path: releases
-            target-path: ''
+            target-path: './'
