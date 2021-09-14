@@ -78,9 +78,8 @@ class _RightControl extends StatelessWidget {
         right: 16,
         bottom: 16,
         top: 16,
-        child: AnimatedOpacity(
-            opacity: showRightControll ? 1 : 0,
-            duration: const Duration(milliseconds: 500),
+        child: Offstage(
+            offstage: !showRightControll,
             child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,

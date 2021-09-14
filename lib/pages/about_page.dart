@@ -2,6 +2,7 @@ import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
+import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/global/app_update.dart';
@@ -58,41 +59,50 @@ class _Content extends StatelessWidget {
         _buildItem('基本功能同公会战作业网网页'),
         _buildItem('资源为cygames所属'),
         _buildItem('部分页面不想要背景可在设置关闭'),
-        _buildItem('当前app版本${AppUpgrade.packageInfo.version}+${AppUpgrade.packageInfo.buildNumber}'),
-        _buidGitButton()
+        _buildItem(
+            '当前app版本${AppUpgrade.packageInfo.version}+${AppUpgrade.packageInfo.buildNumber}'),
+        _buidGitButton(),
+        InkWell(
+          onTap: () async {
+            if (await canLaunch(APP_URL)) {
+              launch(APP_URL);
+            }
+          },
+          child: _buildItem('下载最新APP'),
+        )
       ],
     ));
   }
 
   InkWell _buidGitButton() {
     return InkWell(
-        onTap: () {
-          launch('https://github.com/pcrgvg/pcrgvg_flutter');
-        },
-        child: Container(
-              decoration: BoxDecoration(
-          color: theme.backgroundColor,
-          borderRadius: const BorderRadius.all(Radius.circular(16))),
-      padding: const EdgeInsets.all(16),
-          child: Row(
-            mainAxisAlignment:  MainAxisAlignment.spaceBetween,
-            children: const [
-              Text('有任何bug或者建议可上github提建议'),
-                Icon(FluentIcons.chevron_right_16_regular)
-            ],
-          ),
-        ),
-      );
-  }
-
-  Container _buildItem(String text) {
-    return Container(
+      onTap: () {
+        launch('https://github.com/pcrgvg/pcrgvg_flutter');
+      },
+      child: Container(
         decoration: BoxDecoration(
             color: theme.backgroundColor,
             borderRadius: const BorderRadius.all(Radius.circular(16))),
         padding: const EdgeInsets.all(16),
-        child:  Text(text),
-      );
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text('有任何bug或者建议可上github提建议'),
+            Icon(FluentIcons.chevron_right_16_regular)
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container _buildItem(String text) {
+    return Container(
+      decoration: BoxDecoration(
+          color: theme.backgroundColor,
+          borderRadius: const BorderRadius.all(Radius.circular(16))),
+      padding: const EdgeInsets.all(16),
+      child: Text(text),
+    );
   }
 }
 

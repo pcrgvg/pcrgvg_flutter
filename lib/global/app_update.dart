@@ -6,14 +6,12 @@ import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/db/hive_db.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
-import 'package:pcrgvg_flutter/utils/net_util.dart';
-import 'package:pcrgvg_flutter/utils/store_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 每天检查一次
 class AppUpgrade {
   const AppUpgrade._();
-  static  late final PackageInfo packageInfo;
+  static late final PackageInfo packageInfo;
   static void upgradeModal() {
     showToastWidget(Builder(builder: (BuildContext context) {
       final Color bgc = Theme.of(context).accentColor;
@@ -61,10 +59,9 @@ class AppUpgrade {
                 TextButton(
                   onPressed: () async {
                     // final String url = GitUrl.cdnGitHost + '@$releaseTag/releases/app-release.apk';
-                     dismissAllToast();
-                     const String url = 'https://pcr-app.oss-cn-shanghai.aliyuncs.com/app-release.apk';
-                    if (await canLaunch(url)) {
-                      launch(url);
+                    dismissAllToast();
+                    if (await canLaunch(APP_URL)) {
+                      launch(APP_URL);
                     }
                   },
                   child: Text(
@@ -84,41 +81,47 @@ class AppUpgrade {
   }
 
   static Future<void> appInfo() async {
-       packageInfo = await PackageInfo.fromPlatform();
+    packageInfo = await PackageInfo.fromPlatform();
   }
 
   static Future<void> checkAppVersion() async {
-    final int nowDate = DateTime.now().millisecondsSinceEpoch; 
+    final int nowDate = DateTime.now().millisecondsSinceEpoch;
     MyHive.userConfBox.put(HiveDbKey.AppCheckDate, nowDate);
     final String version = packageInfo.version;
     final int buildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
     final List<String> appVersion = version.split('.');
-    final info = await GitApi.releaseInfo();
-    final int lastBuildNumber = info['elements'][0]['versionCode'] as int;
-    final List<String> lastVersion = (info['elements'][0]['versionName'] as String).split('.');
-    bool needUpdate = false;
-    if (buildNumber < lastBuildNumber) {
-      needUpdate = true;
-    }
-    for (var i = 0; i < appVersion.length; i++) {
+    final shaResp = await GitApi.masterSha();
+    if (shaResp.success) {
+      final info = await GitApi.releaseInfo(shaResp.data['sha'] as String);
+      final int lastBuildNumber = info['elements'][0]['versionCode'] as int;
+      final List<String> lastVersion =
+          (info['elements'][0]['versionName'] as String).split('.');
+      bool needUpdate = false;
+      if (buildNumber < lastBuildNumber) {
+        needUpdate = true;
+      }
+      for (var i = 0; i < appVersion.length; i++) {
         if (appVersion[i].compareTo(lastVersion[i]) < 0) {
           needUpdate = true;
           break;
         }
-        
-    }
-    if (needUpdate) {
-       upgradeModal();
-     
+      }
+      if (needUpdate) {
+        upgradeModal();
+      } else {
+        '暂无更新'.toast();
+      }
     } else {
-      '暂无更新'.toast();
+      '检测更新失败,可到关于页面点击下载最新APP'.toast();
+      return;
     }
   }
+
   // 从gitee release info 中获取apk下载地址
   static String? apkDownloadUrl(List<dynamic> assest) {
     for (final item in assest) {
       if (item['name'] == 'app-release.apk') {
-        return item['browser_download_url'] +  '/' + item['name'] as String;
+        return item['browser_download_url'] + '/' + item['name'] as String;
       }
     }
   }

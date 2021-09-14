@@ -151,6 +151,7 @@ class Http {
     if (res.statusCode == HttpStatus.OK && res.data?.success == true) {
       return res.data!;
     }
+    '网络连接失败'.toast();
     return Resp(success: false);
   }
 }

@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
                       distance: 42.0,
                     ),
                 child: OKToast(
-                    position: ToastPosition.bottom,
+                    position: ToastPosition.top,
                     child: MaterialApp(
                       debugShowCheckedModeBanner: false,
                       title: '公主链接公会战',

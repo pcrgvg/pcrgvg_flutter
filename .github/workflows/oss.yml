@@ -12,15 +12,7 @@ jobs:
      runs-on: ubuntu-latest
      steps:
         - name: checkout
-          uses: actions/checkout@v2
-        # - name: Upload files to OSS
-        #   uses: manyuanrong/setup-ossutil@v2.0
-        #   with:
-        #     endpoint: "oss-cn-shanghai.aliyuncs.com"
-        #     access-key-id: ${{ secrets.OSS_KEY_ID }}
-        #     access-key-secret: ${{ secrets.OSS_KEY_SECRET }}
-        #     bucket: pcr-app
-        # - run: ossutil cp -rf releases/app-release.apk oss://pcr-app/
+          uses: actions/checkout@v2s
         - name: Upload to oss
           uses: tvrcgo/upload-to-oss@master
           with:
