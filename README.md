@@ -1,14 +1,5 @@
 # pcrgvg_flutter
-
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-### 路由生成
-ff_route -o./  --super-arguments
-
-### 生成hive adapter
-flutter packages pub run build_runner build
+app主要针对公主链接公会战作业,粉丝自制,资源为cygames所属
 
 
 ## Licenses
