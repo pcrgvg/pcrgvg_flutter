@@ -1,2 +1,2 @@
-### 生成hive adapter
+# 生成hive adapter
 flutter packages pub run build_runner build
