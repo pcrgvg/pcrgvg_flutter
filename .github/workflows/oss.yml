@@ -12,7 +12,7 @@ jobs:
      runs-on: ubuntu-latest
      steps:
         - name: checkout
-          uses: actions/checkout@v2s
+          uses: actions/checkout@v2
         - name: Upload to oss
           uses: tvrcgo/upload-to-oss@v0.1
           with:
