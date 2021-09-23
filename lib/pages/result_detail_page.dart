@@ -368,6 +368,7 @@ class _Head extends StatelessWidget {
               borderRadius: const BorderRadius.all(Radius.circular(16))),
           padding: const EdgeInsets.all(16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -398,6 +399,8 @@ class _Head extends StatelessWidget {
                     )
                 ],
               ),
+              if (taskResult.task.exRemarks.isNotEmpty)
+                Text(taskResult.task.exRemarks),
             ],
           ),
         ),

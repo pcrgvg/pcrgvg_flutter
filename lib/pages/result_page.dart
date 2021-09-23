@@ -107,7 +107,7 @@ class _Content extends StatelessWidget {
         }, childCount: list.length));
   }
 
-    Wrap _buildDamage(Task task) {
+  Wrap _buildDamage(Task task) {
     return Wrap(
       children: [
         for (int type in task.canAuto) ...[
@@ -135,6 +135,7 @@ class _Content extends StatelessWidget {
   Container _buildTaskItem(TaskFilterResult taskResult, List<int> usedList) {
     return Container(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -168,6 +169,8 @@ class _Content extends StatelessWidget {
                 )
             ],
           ),
+          if (taskResult.task.exRemarks.isNotEmpty)
+            Text(taskResult.task.exRemarks),
           const SizedBox(
             height: 5,
           ),

@@ -58,18 +58,18 @@ class _CollectButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final CollectProvider model = context.read<CollectProvider>();
     return LikeButton(
-      isLiked: true,
-      onTap: (bool isLiked) async {
-        model.changeCollect(list);
-        return !isLiked;
-      },
-      likeBuilder: (bool isLiked) {
-        return Image.asset(
-                Images.kkr,
-                width: 10,
-                height: 10,
-              );
-      });
+        isLiked: true,
+        onTap: (bool isLiked) async {
+          model.changeCollect(list);
+          return !isLiked;
+        },
+        likeBuilder: (bool isLiked) {
+          return Image.asset(
+            Images.kkr,
+            width: 10,
+            height: 10,
+          );
+        });
   }
 }
 
@@ -86,53 +86,60 @@ class _Content extends StatelessWidget {
     final List<List<TaskFilterResult>> list =
         context.select<CollectProvider, List<List<TaskFilterResult>>>(
             (CollectProvider model) => model.collectionList);
-    return list.isEmpty ? const SliverToBoxAdapter(
-      child:  Blank(),
-    ) : SliverWaterfallFlow(
-        gridDelegate: const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 1,
-          mainAxisSpacing: 16,
-        ),
-        delegate: SliverChildBuilderDelegate((
-          BuildContext c,
-          int index,
-        ) {
-          final List<TaskFilterResult> taskList = list[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).pushNamed(Routes.resultDetailPage.name,
-                    arguments: Routes.resultDetailPage.d(taskResult: taskList));
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                    color: theme.backgroundColor,
-                    borderRadius: const BorderRadius.all(Radius.circular(16))),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+    return list.isEmpty
+        ? const SliverToBoxAdapter(
+            child: Blank(),
+          )
+        : SliverWaterfallFlow(
+            gridDelegate:
+                const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1,
+              mainAxisSpacing: 16,
+            ),
+            delegate: SliverChildBuilderDelegate((
+              BuildContext c,
+              int index,
+            ) {
+              final List<TaskFilterResult> taskList = list[index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(
+                        Routes.resultDetailPage.name,
+                        arguments:
+                            Routes.resultDetailPage.d(taskResult: taskList));
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: theme.backgroundColor,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(16))),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
                       children: [
-                        _CollectButton(
-                          list: taskList,
-                        )
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            _CollectButton(
+                              list: taskList,
+                            )
+                          ],
+                        ),
+                        for (TaskFilterResult taskResult in taskList)
+                          _buildTaskItem(taskResult)
                       ],
                     ),
-                    for (TaskFilterResult taskResult in taskList)
-                      _buildTaskItem(taskResult)
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          );
-        }, childCount: list.length));
+              );
+            }, childCount: list.length));
   }
 
   Container _buildTaskItem(TaskFilterResult taskResult) {
     return Container(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -171,6 +178,8 @@ class _Content extends StatelessWidget {
                 ),
             ],
           ),
+          if (taskResult.task.exRemarks.isNotEmpty)
+            Text(taskResult.task.exRemarks),
           const SizedBox(
             height: 5,
           ),
@@ -274,14 +283,17 @@ class _BottomServer extends StatelessWidget {
 
   InkWell _buildButton(String server, BuildContext context) {
     return InkWell(
-          onTap: () {
-            model.changeServer(server);
-            Navigator.of(context).pop();
-          },
-          child: Container(
-            height: 40,
-            child: Text(ServerType.getName(server),textAlign: TextAlign.center,),
-          ),
-        );
+      onTap: () {
+        model.changeServer(server);
+        Navigator.of(context).pop();
+      },
+      child: Container(
+        height: 40,
+        child: Text(
+          ServerType.getName(server),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }

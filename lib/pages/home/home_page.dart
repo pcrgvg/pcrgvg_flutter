@@ -356,6 +356,7 @@ class __TaskItemState extends State<_TaskItem> {
                 const Icon(FluentIcons.chevron_right_16_regular),
               ],
             ),
+            if (widget.task.exRemarks.isNotEmpty) Text(widget.task.exRemarks),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -370,7 +371,7 @@ class __TaskItemState extends State<_TaskItem> {
                 )
               ],
             ),
-            if (widget.task.exRemarks.isNotEmpty) Text(widget.task.exRemarks)
+            
           ],
         ),
       ),
