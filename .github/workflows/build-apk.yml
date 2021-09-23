@@ -64,7 +64,7 @@ jobs:
             tag: ${{ github.event.inputs.TAG }}
             artifacts: "releases/*-release.apk"
         - name: Upload to oss
-          uses: tvrcgo/upload-to-oss@master
+          uses: tvrcgo/upload-to-oss@v0.1
           with:
             key-id: ${{ secrets.OSS_KEY_ID }}
             key-secret: ${{ secrets.OSS_KEY_SECRET }}
