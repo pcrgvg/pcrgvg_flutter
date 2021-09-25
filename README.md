@@ -1,6 +1,6 @@
-# 公主链接公会战
-app主要针对公主链接公会战作业,粉丝自制,资源为cygames所属
-![最新release](https://img.shields.io/github/v/release/pcrgvg/pcrgvg_flutter)  ![代码行数](https://img.shields.io/tokei/lines/github/pcrgvg/pcrgvg_flutter) ![GitHub](https://img.shields.io/github/license/pcrgvg/pcrgvg_flutter)
+# 公主连结公会战
+app主要针对公主连结公会战作业,粉丝自制,资源为cygames所属
+![最新release](https://img.shields.io/github/v/release/pcrgvg/pcrgvg_flutter)  ![代码行数](https://img.shields.io/tokei/lines/github/pcrgvg/pcrgvg_flutter) ![GitHub](https://img.shields.io/github/license/pcrgvg/pcrgvg_flutter) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/ffebc40aecce467a8c2bf8be6281ca47)](https://www.codacy.com/gh/pcrgvg/pcrgvg_flutter/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=pcrgvg/pcrgvg_flutter&amp;utm_campaign=Badge_Grade)
 
 ## Licenses
 

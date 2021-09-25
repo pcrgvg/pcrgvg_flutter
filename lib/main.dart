@@ -75,7 +75,7 @@ class MyApp extends StatelessWidget {
                     position: ToastPosition.top,
                     child: MaterialApp(
                       debugShowCheckedModeBanner: false,
-                      title: '公主链接公会战',
+                      title: '公主连结公会战',
                       theme: themeProvider.theme(),
                       darkTheme: themeProvider.theme(isDark: true),
                       initialRoute: Routes.spalshPage.name,
