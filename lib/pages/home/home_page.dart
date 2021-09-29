@@ -379,22 +379,27 @@ class __TaskItemState extends State<_TaskItem> {
   }
 
   Wrap _buildDamage() {
+    final task = widget.task;
     return Wrap(
       children: [
-        for (int type in widget.task.canAuto) ...[
+        for (int type in task.canAuto) ...[
           AutoTypeView(
             type: type,
           ),
           if (type == AutoType.manual)
-            Text('(${widget.task.damage}w)',
+            Text('(${task.damage}w)',
                 style:
                     TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
-          if (type == AutoType.auto || type == AutoType.harfAuto)
-            Text('(${widget.task.autoDamage ?? widget.task.damage}w)',
+           if (type == AutoType.auto)
+            Text('(${task.autoDamage ?? task.damage}w)',
+                style:
+                    TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
+          if (type == AutoType.harfAuto)
+            Text('(${task.halfAutoDamage ?? (task.autoDamage ?? task.damage)}w)',
                 style:
                     TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
         ],
-        if (widget.task.type == 1)
+        if (task.type == 1)
           const Text(
             '(尾刀)',
             style: TextStyle(color: Colors.deepPurple, height: 1.1),

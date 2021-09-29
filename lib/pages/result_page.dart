@@ -118,8 +118,12 @@ class _Content extends StatelessWidget {
             Text('(${task.damage}w)',
                 style:
                     TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
-          if (type == AutoType.auto || type == AutoType.harfAuto)
+          if (type == AutoType.auto)
             Text('(${task.autoDamage ?? task.damage}w)',
+                style:
+                    TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
+          if (type == AutoType.harfAuto)
+            Text('(${task.halfAutoDamage ?? (task.autoDamage ?? task.damage)}w)',
                 style:
                     TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
         ],

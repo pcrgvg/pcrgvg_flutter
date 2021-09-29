@@ -91,6 +91,7 @@ class Task {
     required this.stage,
     required this.damage,
     required this.autoDamage,
+    required this.halfAutoDamage,
     required this.charas,
     required this.remarks,
     required this.exRemarks,
@@ -138,6 +139,7 @@ class Task {
       stage: asT<int>(jsonRes['stage'])!,
       damage: asT<int>(jsonRes['damage'])!,
       autoDamage: asT<int?>(jsonRes['autoDamage']),
+      halfAutoDamage: asT<int?>(jsonRes['halfAutoDamage']),
       charas: charas!,
       remarks: asT<String>(jsonRes['remarks'])!,
       exRemarks: asT<String>(jsonRes['exRemarks'])!,
@@ -168,6 +170,9 @@ class Task {
   @HiveField(9)
   final String exRemarks;
 
+  @HiveField(10)
+  final int? halfAutoDamage;
+
   Chara? fixedBorrowChara;
 
   @override
@@ -181,6 +186,7 @@ class Task {
         'stage': stage,
         'damage': damage,
         'autoDamage': autoDamage,
+        'halfAutoDamage': halfAutoDamage,
         'fixedBorrowChara': fixedBorrowChara,
         'charas': charas,
         'remarks': remarks,
@@ -198,6 +204,7 @@ class Task {
         stage: stage,
         damage: damage,
         autoDamage: autoDamage,
+        halfAutoDamage: halfAutoDamage,
         remarks: remarks,
         exRemarks: exRemarks,
         fixedBorrowChara: fixedBorrowChara,
@@ -218,6 +225,7 @@ class Task {
           exRemarks == other.exRemarks &&
           remarks == other.remarks &&
           autoDamage == other.autoDamage &&
+          halfAutoDamage == other.halfAutoDamage &&
           fixedBorrowChara == other.fixedBorrowChara &&
           type == other.type &&
           charas.eq(other.charas) &&
@@ -230,10 +238,12 @@ class Task {
       stage.hashCode ^
       damage.hashCode ^
       autoDamage.hashCode ^
+      halfAutoDamage.hashCode ^
       fixedBorrowChara.hashCode ^
       type.hashCode ^
       remarks.hashCode ^
       exRemarks.hashCode ^
+      charas.hashCode ^
       charas.hashCode ^
       links.hashCode;
 }

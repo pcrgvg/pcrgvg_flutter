@@ -62,6 +62,7 @@ class TaskAdapter extends TypeAdapter<Task> {
       stage: fields[2] as int,
       damage: fields[3] as int,
       autoDamage: fields[4] as int?,
+      halfAutoDamage: fields[10] as int?,
       charas: (fields[5] as List).cast<Chara>(),
       remarks: fields[6] as String,
       exRemarks: fields[9] as String,
@@ -73,7 +74,7 @@ class TaskAdapter extends TypeAdapter<Task> {
   @override
   void write(BinaryWriter writer, Task obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -93,7 +94,9 @@ class TaskAdapter extends TypeAdapter<Task> {
       ..writeByte(8)
       ..write(obj.type)
       ..writeByte(9)
-      ..write(obj.exRemarks);
+      ..write(obj.exRemarks)
+      ..writeByte(10)
+      ..write(obj.halfAutoDamage);
   }
 
   @override
@@ -312,7 +315,7 @@ class UserConfigAdapter extends TypeAdapter<UserConfig> {
     };
     return UserConfig(
       showBg: fields[0] == null ? true : fields[0] as bool,
-      bgCharaPrefabId: fields[1] == null ? 110031 : fields[1] as int,
+      bgCharaPrefabId: fields[1] == null ? 110001 : fields[1] as int,
       bgBlurX: fields[2] == null ? 2 : fields[2] as double,
       bgBlurY: fields[3] == null ? 2 : fields[3] as double,
       randomBg: fields[4] == null ? true : fields[4] as bool,
