@@ -26,6 +26,7 @@ class GitUrl {
   static const String giteeHost = 'https://gitee.com';
   static const String giteeRelease = '$giteeHost/api/v5/repos/tokisaki__kurumi/pcrgvg_flutter/releases/latest';
   static const String commitsMaster = '$gitApiHost/commits/master';
+  static const String app = '$cdnGitHost@master/releases/app-release.apk';
 }
 
-const String APP_URL = 'https://pcr-app.oss-cn-shanghai.aliyuncs.com/app-release.apk';
+const String OSS_APP_URL = 'https://pcr-app.oss-cn-shanghai.aliyuncs.com/app-release.apk';

@@ -60,8 +60,8 @@ class AppUpgrade {
                   onPressed: () async {
                     // final String url = GitUrl.cdnGitHost + '@$releaseTag/releases/app-release.apk';
                     dismissAllToast();
-                    if (await canLaunch(APP_URL)) {
-                      launch(APP_URL);
+                    if (await canLaunch(GitUrl.app)) {
+                      launch(GitUrl.app);
                     }
                   },
                   child: Text(

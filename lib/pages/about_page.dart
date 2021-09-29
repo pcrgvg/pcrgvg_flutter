@@ -64,8 +64,8 @@ class _Content extends StatelessWidget {
         _buidGitButton(),
         InkWell(
           onTap: () async {
-            if (await canLaunch(APP_URL)) {
-              launch(APP_URL);
+            if (await canLaunch(OSS_APP_URL)) {
+              launch(OSS_APP_URL);
             }
           },
           child: _buildItem('下载最新APP'),
