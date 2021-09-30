@@ -50,9 +50,12 @@ class _MinePage extends State<MinePage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     '检查数据中'.toast();
-                     PcrDb.checkUpdate();
+                   
+                     if( !await PcrDb.checkUpdate()) {
+                       '数据库已经是最新'.toast();
+                     }
                   },
                   child: Container(
                     padding: const EdgeInsets.all(8),

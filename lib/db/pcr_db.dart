@@ -28,7 +28,7 @@ class PcrDb {
     }
   }
 
-  static Future<void> checkUpdate() async {
+  static Future<bool> checkUpdate() async {
     try {
       final List<PcrDbVersion?> jpVersion = await checkUpdatedbJp();
       final List<PcrDbVersion?> cnVersion = await checkUpdatedbCn();
@@ -42,11 +42,14 @@ class PcrDb {
           "cn": cn ? cnVersion.last : null
         };
         updateModal(serverDbversion);
+        return true;
       } else {
-        '数据库已经是最新'.toast();
+        return false;
+        // '数据库已经是最新'.toast();
       }
     } catch (e) {
       '数据库更新失败'.toast();
+      return true;
     }
   }
 

@@ -148,18 +148,7 @@ class _Content extends StatelessWidget {
                 width: 35,
                 height: 35,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: Text(
-                  '${taskResult.task.damage}w',
-                  style: TextStyle(
-                      color: HexColor.fromHex('#ff2277'), fontSize: 18),
-                ),
-              ),
-              for (int item in taskResult.task.canAuto)
-                AutoTypeView(
-                  type: item,
-                )
+              Expanded(child: _buildDamage(taskResult.task))
             ],
           ),
           const SizedBox(
@@ -187,6 +176,36 @@ class _Content extends StatelessWidget {
       ),
     );
   }
+
+    Wrap _buildDamage(Task task) {
+    return Wrap(
+      children: [
+        for (int type in task.canAuto) ...[
+          AutoTypeView(
+            type: type,
+          ),
+          if (type == AutoType.manual)
+            Text('(${task.damage}w)',
+                style:
+                    TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
+          if (type == AutoType.auto)
+            Text('(${task.autoDamage ?? task.damage}w)',
+                style:
+                    TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
+          if (type == AutoType.harfAuto)
+            Text('(${task.halfAutoDamage ?? (task.autoDamage ?? task.damage)}w)',
+                style:
+                    TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
+        ],
+        if (task.type == 1)
+          const Text(
+            '(尾刀)',
+            style: TextStyle(color: Colors.deepPurple, height: 1.1),
+          ),
+      ],
+    );
+  }
+
 }
 
 class _Header extends StatelessWidget {
