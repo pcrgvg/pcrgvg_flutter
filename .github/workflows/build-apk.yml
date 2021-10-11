@@ -56,6 +56,10 @@ jobs:
             push_options: '--force'
             commit_message: ":bookmark: Release binary files."
             file_pattern: releases/*-release.apk releases/metadata.json
+        - name: update repo
+          run: |
+            git pull
+            ls releases
         - name: Release to github
           uses: ncipollo/release-action@v1
           with:
