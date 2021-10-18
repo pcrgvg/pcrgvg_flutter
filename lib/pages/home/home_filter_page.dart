@@ -75,8 +75,8 @@ class _UsedOrRemovedSelection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
       final HomeFilterProvider homeFiltermodel = context.read<HomeFilterProvider>();
-    final String usedOrRemoved = context.select<HomeFilterProvider, String>(
-        (HomeFilterProvider model) => model.gvgTaskFilter.usedOrRemoved);
+    final List<String> taskTypes = context.select<HomeFilterProvider, List<String>>(
+        (HomeFilterProvider model) => model.gvgTaskFilter.taskTypes);
     return SliverToBoxAdapter(
       child: Row(
         children: [
@@ -90,10 +90,10 @@ class _UsedOrRemovedSelection extends StatelessWidget {
           Expanded(
               child: Wrap(
             children: [
-              _buildButton(usedOrRemoved, TaskType.all, homeFiltermodel),
-              _buildButton(usedOrRemoved, TaskType.used, homeFiltermodel),
-              _buildButton(usedOrRemoved, TaskType.removed, homeFiltermodel),
-              _buildButton(usedOrRemoved, TaskType.tail,homeFiltermodel),
+              _buildButton(taskTypes, TaskType.all, homeFiltermodel),
+              _buildButton(taskTypes, TaskType.used, homeFiltermodel),
+              _buildButton(taskTypes, TaskType.removed, homeFiltermodel),
+              _buildButton(taskTypes, TaskType.tail,homeFiltermodel),
             ],
           ))
         ],
@@ -103,22 +103,22 @@ class _UsedOrRemovedSelection extends StatelessWidget {
 
 
 
-  Padding _buildButton(String usedOrRemoved, String type, HomeFilterProvider homeFiltermodel) {
+  Padding _buildButton(List<String> usedOrRemoved, String type, HomeFilterProvider homeFiltermodel) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: MaterialButton(
         minWidth: 0,
         elevation: 0,
         onPressed: () {
-          homeFiltermodel.setUsedOrRemoved(type);
+          homeFiltermodel.setTaskTypes(type);
         },
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
-        color: getColor(usedOrRemoved == type).withOpacity(0.2),
+        color: getColor(usedOrRemoved.contains(type)).withOpacity(0.2),
         child: Text(
          TaskType.getName(type),
-          style: TextStyle(color: getColor(usedOrRemoved == type)),
+          style: TextStyle(color: getColor(usedOrRemoved.contains(type))),
         ),
       ),
     );

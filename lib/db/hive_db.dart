@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/utils/store_util.dart';
+import 'package:pcrgvg_flutter/extension/extensions.dart';
 
 class MyHive {
   const MyHive._();
@@ -64,7 +65,7 @@ class MyHive {
         GvgTaskFilterHive(
             server: ServerType.jp,
             bossNumber: <int>[1, 2, 3, 4, 5],
-            usedOrRemoved: TaskType.all,
+            taskTypes: [TaskType.all],
             stage: 1,
             methods: <int>[AutoType.manual, AutoType.harfAuto, AutoType.auto],
             clanBattleId: 1,
@@ -77,8 +78,7 @@ class MyHive {
     userConfBox.delete(HiveDbKey.UserConfig);
     final dynamic userConfig = userConfBox.get(HiveDbKey.UserConfig);
     if (userConfig == null) {
-      userConfBox.put(
-          HiveDbKey.UserConfig, UserConfig());
+      userConfBox.put(HiveDbKey.UserConfig, UserConfig());
     }
   }
 }

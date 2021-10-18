@@ -107,8 +107,14 @@ class HomeFilterProvider extends BaseListProvider {
 
 
   // 
-  void setUsedOrRemoved(String type) {
-    _gvgTaskFilter.usedOrRemoved = type;
+  void setTaskTypes(String type) {
+    final list = [..._gvgTaskFilter.taskTypes]; 
+    if (list.contains(type)) {
+      list.remove(type);
+    } else {
+      list.add(type);
+    }
+    _gvgTaskFilter.taskTypes = list;
     notifyListeners();
   }
 

@@ -9,7 +9,7 @@ class GvgTaskFilterHive extends HiveObject {
       required this.clanBattleId,
       required this.startTime,
       required this.stage,
-      this.usedOrRemoved = 'all'});
+      this.taskTypes = const ['all']});
   @HiveField(0)
   String server;
   @HiveField(1)
@@ -24,8 +24,8 @@ class GvgTaskFilterHive extends HiveObject {
   String startTime;
 
   /// all used removed tail
-  @HiveField(6)
-  String usedOrRemoved = 'all';
+  @HiveField(7, defaultValue: ['all'])
+  List<String> taskTypes;
   /// HIVE内存存取，同一个引用
   GvgTaskFilterHive copy() => GvgTaskFilterHive(
       bossNumber: bossNumber,
@@ -33,6 +33,6 @@ class GvgTaskFilterHive extends HiveObject {
       methods: [...methods],
       server: server,
       stage: stage,
-      usedOrRemoved: usedOrRemoved,
+      taskTypes: taskTypes,
       startTime: startTime);
 }

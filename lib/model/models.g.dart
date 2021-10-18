@@ -219,7 +219,8 @@ class GvgTaskFilterHiveAdapter extends TypeAdapter<GvgTaskFilterHive> {
       clanBattleId: fields[3] as int,
       startTime: fields[5] as String,
       stage: fields[4] as int,
-      usedOrRemoved: fields[6] as String,
+      taskTypes:
+          fields[7] == null ? ['all'] : (fields[7] as List).cast<String>(),
     );
   }
 
@@ -239,8 +240,8 @@ class GvgTaskFilterHiveAdapter extends TypeAdapter<GvgTaskFilterHive> {
       ..write(obj.stage)
       ..writeByte(5)
       ..write(obj.startTime)
-      ..writeByte(6)
-      ..write(obj.usedOrRemoved);
+      ..writeByte(7)
+      ..write(obj.taskTypes);
   }
 
   @override

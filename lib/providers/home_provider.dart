@@ -100,39 +100,38 @@ class HomeProvider extends BaseListProvider {
     for (int i = 0; i < cacheList.length; i++) {
       final GvgTask gvgTask = cacheList[i];
       if (_gvgTaskFilter.bossNumber.contains(i + 1)) {
-        gvgTask.tasks.retainWhere((Task task) {
-          bool b = false;
-          switch (_gvgTaskFilter.usedOrRemoved) {
-            case TaskType.used:
-              b = MyHive.usedBox.values
-                  .any((int element) => element == task.id);
-              break;
-            case TaskType.removed:
-              b = MyHive.removedBox.values
-                  .any((int element) => element == task.id);
-              break;
-            case TaskType.tail:
-              b = task.type == 1;
-              break;
-            case TaskType.all:
-            default:
-              b = true;
-          }
-          if (b) {
-            for (final int canAuto in task.canAuto) {
-              final bool isHaved = _gvgTaskFilter.methods.contains(canAuto);
-              if (isHaved) {
-                return true;
+         gvgTask.tasks.retainWhere((task) {
+              for (final int canAuto in task.canAuto) {
+                final bool isHaved = _gvgTaskFilter.methods.contains(canAuto);
+                if (isHaved) {
+                  return true;
+                }
               }
-            }
-          }
+              return false;
+            });
 
-          return false;
-        });
+        filterTaskType(gvgTask.tasks);
         tempList.add(gvgTask);
       }
     }
     _gvgTaskList = tempList;
+  }
+
+
+  void filterTaskType(List<Task> result) {
+    if (!_gvgTaskFilter.taskTypes.contains(TaskType.tail)) {
+      result.retainWhere((task) => task.type != 1);
+    }
+    if (!_gvgTaskFilter.taskTypes.contains(TaskType.removed)) {
+      result.retainWhere((task) => !MyHive.removedBox.values.contains(task.id));
+    }
+
+    if(!_gvgTaskFilter.taskTypes.contains(TaskType.used)) {
+      result.retainWhere((task) => !MyHive.usedBox.values.contains(task.id));
+    }
+     if(!_gvgTaskFilter.taskTypes.contains(TaskType.all)) {
+      result.retainWhere((task) => task.type == 1 || MyHive.usedBox.values.contains(task.id) || MyHive.removedBox.values.contains(task.id) );
+    }
   }
 
   @override
@@ -188,7 +187,7 @@ class HomeProvider extends BaseListProvider {
     // keyList[index].currentContext?.findRenderObject()
     // scrollController.jumpTo(0);
     if (index == 0) {
-      // 直接跳转到第一个,可能会错位
+      // 会错位。。待解决
       scrollController.animateTo(0,
           duration: const Duration(milliseconds: 300), curve: Curves.linear);
     } else {
