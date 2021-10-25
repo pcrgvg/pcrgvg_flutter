@@ -137,7 +137,7 @@ class Task {
       id: asT<int>(jsonRes['id'])!,
       canAuto: canAuto!,
       stage: asT<int>(jsonRes['stage'])!,
-      damage: asT<int>(jsonRes['damage'])!,
+      damage: asT<int?>(jsonRes['damage']),
       autoDamage: asT<int?>(jsonRes['autoDamage']),
       halfAutoDamage: asT<int?>(jsonRes['halfAutoDamage']),
       charas: charas!,
