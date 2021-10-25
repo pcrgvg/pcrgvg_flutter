@@ -60,6 +60,8 @@ jobs:
           run: |
             git pull
             ls releases
+        - name: checkout
+          uses: actions/checkout@v2
         - name: Release to github
           uses: ncipollo/release-action@v1
           with:
