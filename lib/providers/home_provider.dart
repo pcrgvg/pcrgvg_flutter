@@ -82,7 +82,7 @@ class HomeProvider extends BaseListProvider {
   void dealGvgTask(List<GvgTask> arr) {
     // ignore: avoid_function_literals_in_foreach_calls
     arr.forEach((GvgTask g) {
-      g.tasks.sort((Task a, Task b) => b.damage - a.damage);
+      g.tasks.sort((Task a, Task b) => typeDamage(b) - typeDamage(a));
       // ignore: avoid_function_literals_in_foreach_calls
       g.tasks.forEach((Task t) {
         t.charas
@@ -170,9 +170,12 @@ class HomeProvider extends BaseListProvider {
   // 如果包含手动，则使用damage， 如果不包含且有自动刀的伤害显示自动刀的伤害
   int typeDamage(Task task) {
     if (_gvgTaskFilter.methods.contains(AutoType.manual)) {
-      return task.damage;
+      return task.damage ?? task.halfAutoDamage ??  task.autoDamage ?? 0;
     }
-    return task.autoDamage ?? task.damage;
+     if (_gvgTaskFilter.methods.contains(AutoType.harfAuto)) {
+     return task.halfAutoDamage ??  task.autoDamage ??  task.damage ?? 0;
+    }
+     return task.autoDamage ?? task.halfAutoDamage ?? task.damage ?? 0;
   }
 
   void setStageString() {

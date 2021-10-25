@@ -60,7 +60,7 @@ class TaskAdapter extends TypeAdapter<Task> {
       id: fields[0] as int,
       canAuto: (fields[1] as List).cast<int>(),
       stage: fields[2] as int,
-      damage: fields[3] as int,
+      damage: fields[3] as int?,
       autoDamage: fields[4] as int?,
       halfAutoDamage: fields[10] as int?,
       charas: (fields[5] as List).cast<Chara>(),

@@ -154,7 +154,7 @@ class Task {
   @HiveField(2)
   final int stage;
   @HiveField(3)
-  int damage;
+  int? damage;
   @HiveField(4)
   final int? autoDamage;
   @HiveField(5)

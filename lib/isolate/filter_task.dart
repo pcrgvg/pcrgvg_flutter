@@ -124,12 +124,12 @@ List<List<TaskFilterResult>> sortByScore(List<List<TaskFilterResult>> arr) {
         0,
         (double previousValue, TaskFilterResult el) =>
             previousValue +
-            el.task.damage * scoreFactor[el.task.stage]![el.index]!);
+            el.task.damage! * scoreFactor[el.task.stage]![el.index]!);
     final double bScore = b.fold(
         0,
         (double previousValue, TaskFilterResult el) =>
             previousValue +
-            el.task.damage * scoreFactor[el.task.stage]![el.index]!);
+            el.task.damage! * scoreFactor[el.task.stage]![el.index]!);
     return bScore.compareTo(aScore);
   });
   return result;
