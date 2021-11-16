@@ -45,7 +45,7 @@ void filterResult(
   // 重复的角色
   final List<int> repeartCharaIdList = [];
   // 当前组合使用的角色
-  List<Chara> charaList = [];
+  final List<Chara> charaList = [];
   // 获取重复角色
   for (final TaskFilterResult task in taskList) {
     for (final Chara chara in task.task.charas) {
@@ -193,7 +193,7 @@ List<TaskFilterResult> repeatCondition(
       final int charaCount = map[fixedBorrowChara.prefabId] ?? 0;
       // 如果强制借用角色包含在重复角色中且在该使用角色合集里,重复-1;
       if (charaCount > 0) {
-        for (Chara chara in filterResult.task.charas) {
+        for (final Chara chara in filterResult.task.charas) {
           if (repeatCharas.contains(chara.prefabId) &&
               chara.prefabId == fixedBorrowChara.prefabId) {
             map[fixedBorrowChara.prefabId] = charaCount - 1;
@@ -211,7 +211,7 @@ List<TaskFilterResult> repeatCondition(
     }
     Chara? repeateChara;
     int count = 0;
-    for (Chara chara in filterResult.task.charas) {
+    for (final Chara chara in filterResult.task.charas) {
       final int charaCount = map[chara.prefabId] ?? 0;
       if (charaCount > 0) {
         repeateChara = chara;
