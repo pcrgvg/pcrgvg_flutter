@@ -72,8 +72,8 @@ class _RightControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final HomeProvider model = context.read<HomeProvider>();
-    final bool showRightControll =
-        context.select<HomeProvider, bool>((HomeProvider value) => value.showRightControll);
+    final bool showRightControll = context.select<HomeProvider, bool>(
+        (HomeProvider value) => value.showRightControll);
     return Positioned(
         right: 16,
         bottom: 16,
@@ -271,14 +271,17 @@ class _Header extends StatelessWidget {
                   elevation: 0,
                   onPressed: () async {
                     final ToastFuture loading = '分刀处理中'.loading();
-                    final List<ResultBoss> bossList =
-                        await homeModel.filterIsolate();
-                    if (bossList.isNotEmpty) {
-                      Navigator.of(context).pushNamed(Routes.resultPage.name,
-                          arguments: Routes.resultPage.d(bossList: bossList));
+                    try {
+                      final List<ResultBoss> bossList =
+                          await homeModel.filterIsolate();
+                      if (bossList.isNotEmpty) {
+                        loading.dismiss();
+                        Navigator.of(context).pushNamed(Routes.resultPage.name,
+                            arguments: Routes.resultPage.d(bossList: bossList));
+                      }
+                    } catch (e) {
+                      loading.dismiss();
                     }
-
-                    loading.dismiss();
                   },
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -371,7 +374,6 @@ class __TaskItemState extends State<_TaskItem> {
                 )
               ],
             ),
-            
           ],
         ),
       ),
@@ -390,12 +392,13 @@ class __TaskItemState extends State<_TaskItem> {
             Text('(${task.damage}w)',
                 style:
                     TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
-           if (type == AutoType.auto)
+          if (type == AutoType.auto)
             Text('(${task.autoDamage ?? task.damage}w)',
                 style:
                     TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
           if (type == AutoType.harfAuto)
-            Text('(${task.halfAutoDamage ?? (task.autoDamage ?? task.damage)}w)',
+            Text(
+                '(${task.halfAutoDamage ?? (task.autoDamage ?? task.damage)}w)',
                 style:
                     TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
         ],
