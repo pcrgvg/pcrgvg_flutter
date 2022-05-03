@@ -161,7 +161,7 @@ class HomeProvider extends BaseListProvider {
         FilterIsolateConfig(
             removeList: removedList,
             usedList: usedList,
-            taskList: _gvgTaskList,
+            taskList: taskList,
             unHaveCharaList: unHaveCharaList));
     MyStore.filterResList = res;
     return bossList;
@@ -172,10 +172,10 @@ class HomeProvider extends BaseListProvider {
     if (_gvgTaskFilter.methods.contains(AutoType.manual)) {
       return task.damage ?? task.halfAutoDamage ??  task.autoDamage ?? 0;
     }
-     if (_gvgTaskFilter.methods.contains(AutoType.harfAuto)) {
+    if (_gvgTaskFilter.methods.contains(AutoType.harfAuto)) {
      return task.halfAutoDamage ??  task.autoDamage ??  task.damage ?? 0;
     }
-     return task.autoDamage ?? task.halfAutoDamage ?? task.damage ?? 0;
+    return task.autoDamage ?? task.halfAutoDamage ?? task.damage ?? 0;
   }
 
   void setStageString() {

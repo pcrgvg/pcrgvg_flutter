@@ -31,6 +31,9 @@ key
 .pub-cache/
 .pub/
 /build/
+.gradle/
+.flutter_custom_devices.json
+.flutter_tool_state
 
 # Web related
 lib/generated_plugin_registrant.dart

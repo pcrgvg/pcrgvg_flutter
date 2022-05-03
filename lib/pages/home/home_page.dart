@@ -281,6 +281,7 @@ class _Header extends StatelessWidget {
                       }
                     } catch (e) {
                       loading.dismiss();
+                      '分刀出现问题'.toast();
                     }
                   },
                   shape: const RoundedRectangleBorder(

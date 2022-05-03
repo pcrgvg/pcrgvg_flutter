@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -60,8 +62,15 @@ class AppUpgrade {
                   onPressed: () async {
                     // final String url = GitUrl.cdnGitHost + '@$releaseTag/releases/app-release.apk';
                     dismissAllToast();
-                    if (await canLaunch(OSS_APP_URL)) {
-                      launch(OSS_APP_URL);
+                    if (Platform.isAndroid) {
+                      if (await canLaunch(OSS_APP_URL)) {
+                        launch(OSS_APP_URL);
+                      }
+                    }
+                    if (Platform.isIOS) {
+                      if (await canLaunch(IOS_APP_URL)) {
+                        launch(IOS_APP_URL);
+                      }
                     }
                   },
                   child: Text(

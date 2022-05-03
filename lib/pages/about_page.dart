@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 @FFArgumentImport()
@@ -64,8 +66,15 @@ class _Content extends StatelessWidget {
         _buidGitButton(),
         InkWell(
           onTap: () async {
-            if (await canLaunch(OSS_APP_URL)) {
-              launch(OSS_APP_URL);
+            if (Platform.isAndroid) {
+              if (await canLaunch(OSS_APP_URL)) {
+                launch(OSS_APP_URL);
+              }
+            }
+            if (Platform.isIOS) {
+              if (await canLaunch(IOS_APP_URL)) {
+                launch(IOS_APP_URL);
+              }
             }
           },
           child: _buildItem('下载最新APP'),
