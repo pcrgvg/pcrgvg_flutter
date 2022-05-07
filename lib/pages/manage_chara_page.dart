@@ -293,7 +293,7 @@ class _TypeSelection extends StatelessWidget {
   final int showType;
   final ManageCharaProvider model;
   Color getColor(bool selected) {
-    return selected ? theme.accentColor : Colors.grey;
+    return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   @override
@@ -366,7 +366,7 @@ class _ServerSelection extends StatelessWidget {
   final ManageCharaProvider model;
 
   Color getColor(bool selected) {
-    return selected ? theme.accentColor : Colors.grey;
+    return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   @override

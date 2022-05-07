@@ -9,7 +9,7 @@ import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/global/app_update.dart';
 import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
 @FFRoute(
@@ -67,13 +67,13 @@ class _Content extends StatelessWidget {
         InkWell(
           onTap: () async {
             if (Platform.isAndroid) {
-              if (await canLaunch(OSS_APP_URL)) {
-                launch(OSS_APP_URL);
+              if (await canLaunchUrlString(OSS_APP_URL)) {
+                launchUrlString(OSS_APP_URL);
               }
             }
             if (Platform.isIOS) {
-              if (await canLaunch(IOS_APP_URL)) {
-                launch(IOS_APP_URL);
+              if (await canLaunchUrlString(IOS_APP_URL)) {
+                launchUrlString(IOS_APP_URL);
               }
             }
           },
@@ -86,7 +86,7 @@ class _Content extends StatelessWidget {
   InkWell _buidGitButton() {
     return InkWell(
       onTap: () {
-        launch('https://github.com/pcrgvg/pcrgvg_flutter');
+        launchUrlString('https://github.com/pcrgvg/pcrgvg_flutter');
       },
       child: Container(
         decoration: BoxDecoration(

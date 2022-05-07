@@ -300,7 +300,7 @@ class _BossFilter extends StatelessWidget {
   final ThemeData theme;
 
   Color getColor(bool selected) {
-    return selected ? theme.accentColor : Colors.grey;
+    return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   @override
@@ -340,7 +340,7 @@ class _BossFilter extends StatelessWidget {
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(8)),
                     ),
-                    color: theme.accentColor,
+                    color: theme.colorScheme.secondary,
                     child:
                         const Text('确定', style: TextStyle(color: Colors.white)),
                   )

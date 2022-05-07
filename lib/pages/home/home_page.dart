@@ -128,7 +128,7 @@ class _ListContent extends StatelessWidget {
                 }
               }
               if (notification is OverscrollIndicatorNotification) {
-                notification.disallowGlow();
+                notification.disallowIndicator();
               }
               return true;
             },
@@ -287,10 +287,10 @@ class _Header extends StatelessWidget {
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
-                  color: theme.accentColor.withOpacity(0.2),
+                  color: theme.colorScheme.secondary.withOpacity(0.2),
                   child: Text(
                     '分刀',
-                    style: TextStyle(color: theme.accentColor),
+                    style: TextStyle(color: theme.colorScheme.secondary),
                   ),
                 ),
               ],
@@ -472,7 +472,7 @@ class __TaskItemState extends State<_TaskItem> {
                   box.add(widget.task.id);
                 }
               },
-              color: removed ? Colors.green : widget.theme.accentColor,
+              color: removed ? Colors.green : widget.theme.colorScheme.secondary,
               icon: removed
                   ? const Icon(
                       FluentIcons.add_square_multiple_16_regular,

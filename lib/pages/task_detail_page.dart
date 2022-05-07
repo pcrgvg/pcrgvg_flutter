@@ -18,7 +18,7 @@ import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
 import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
 import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 import 'package:provider/provider.dart';
 
@@ -147,14 +147,14 @@ class _Remarks extends StatelessWidget {
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
-                color: theme.accentColor.withOpacity(0.2),
+                color: theme.colorScheme.secondary.withOpacity(0.2),
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: task.remarks));
                   '已复制'.toast();
                 },
                 child: Text(
                   '复制',
-                  style: TextStyle(color: theme.accentColor),
+                  style: TextStyle(color: theme.colorScheme.secondary),
                 ),
               ),
             ],
@@ -204,7 +204,7 @@ class _Link extends StatelessWidget {
                         arguments:
                             Routes.linkDetailPage.d(link: link, bgUrl: bgUrl));
                   } else {
-                    launch(link.link);
+                    launchUrlString(link.link);
                   }
                 },
                 child: Text(

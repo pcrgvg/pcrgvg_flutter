@@ -31,3 +31,5 @@ class GitUrl {
 
 const String OSS_APP_URL = 'https://pcr-app.oss-cn-shanghai.aliyuncs.com/app-release.apk';
 const String IOS_APP_URL = 'https://testflight.apple.com/join/RHCIN2qI';
+final Uri ossAppUri = Uri.parse(OSS_APP_URL);
+final Uri iosAppUri = Uri.parse(IOS_APP_URL);

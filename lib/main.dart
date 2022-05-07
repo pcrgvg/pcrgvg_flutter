@@ -41,6 +41,9 @@ class MyApp extends StatelessWidget {
         case ConnectivityResult.ethernet:
           "您正在使用以太网".toast();
           break;
+        case ConnectivityResult.bluetooth:
+          "您正在使用蓝牙共享网络".toast();
+          break;
       }
     });
   }
@@ -65,8 +68,8 @@ class MyApp extends StatelessWidget {
             data: theme,
             child: RefreshConfiguration(
                 headerBuilder: () => WaterDropMaterialHeader(
-                      backgroundColor: theme.accentColor,
-                      color: theme.accentColor.computeLuminance() < 0.5
+                      backgroundColor: theme.colorScheme.secondary,
+                      color: theme.colorScheme.secondary.computeLuminance() < 0.5
                           ? Colors.white
                           : Colors.black,
                       distance: 42.0,

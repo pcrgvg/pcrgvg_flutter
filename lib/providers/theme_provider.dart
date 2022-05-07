@@ -33,13 +33,6 @@ class ThemeProvider extends BaseProvider {
     return ThemeData(
       primaryColor: primaryColor,
       brightness: brightness, // 影响TextStyle, when dark, is white
-      accentColor: accentColor,
-      accentColorBrightness: accentColor.computeLuminance() > 0.5
-          ? Brightness.light
-          : Brightness.dark,
-      primaryColorBrightness: primaryColor.computeLuminance() > 0.5
-          ? Brightness.light
-          : Brightness.dark,
       scaffoldBackgroundColor: scaffoldBackgroundColor,
       backgroundColor: backgroundColor,
       cupertinoOverrideTheme: CupertinoThemeData(
@@ -51,17 +44,17 @@ class ThemeProvider extends BaseProvider {
       colorScheme: isDark
           ? ColorScheme.dark(
               primary: primaryColor,
-              primaryVariant: primaryColor.darken(0.24),
+              primaryContainer: primaryColor.darken(0.24),
               secondary: accentColor,
-              secondaryVariant: accentColor.darken(0.36),
+              secondaryContainer : accentColor.darken(0.36),
               background: backgroundColor,
               surface: backgroundColor,
             )
           : ColorScheme.light(
               primary: primaryColor,
-              primaryVariant: primaryColor.darken(0.2),
+              primaryContainer: primaryColor.darken(0.2),
               secondary: accentColor,
-              secondaryVariant: accentColor.darken(0.36),
+              secondaryContainer: accentColor.darken(0.36),
               background: backgroundColor,
               surface: backgroundColor,
             ),
