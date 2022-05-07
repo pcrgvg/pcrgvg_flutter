@@ -69,7 +69,7 @@ class _UsedOrRemovedSelection extends StatelessWidget {
       : super(key: key);
   final ThemeData theme;
   Color getColor(bool selected) {
-    return selected ? theme.accentColor : Colors.grey;
+    return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   @override
@@ -131,7 +131,7 @@ class _MethodSelection extends StatelessWidget {
       : super(key: key);
   final ThemeData theme;
   Color getColor(bool selected) {
-   return selected ? theme.accentColor : Colors.grey;
+   return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   @override
@@ -193,7 +193,7 @@ class _StageSelection extends StatelessWidget {
 
   final ThemeData theme;
   Color getColor(bool selected) {
-   return selected ? theme.accentColor : Colors.grey;
+   return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   @override
@@ -252,7 +252,7 @@ class _BossSelection extends StatelessWidget {
       : super(key: key);
 
   Color getColor(bool selected) {
-   return selected ? theme.accentColor : Colors.grey;
+   return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   final ThemeData theme;
@@ -323,7 +323,7 @@ class _ClanSelection extends StatelessWidget {
   final ThemeData theme;
 
   Color getColor(bool selected) {
-   return selected ? theme.accentColor : Colors.grey;
+   return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   @override
@@ -394,7 +394,7 @@ class _ServerSelection extends StatelessWidget {
 
 
   Color getColor(bool selected) {
-    return selected ? theme.accentColor : Colors.grey;
+    return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   @override

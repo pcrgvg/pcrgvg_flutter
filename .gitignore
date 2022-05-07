@@ -34,6 +34,7 @@ key
 .gradle/
 .flutter_custom_devices.json
 .flutter_tool_state
+.vscode
 
 # Web related
 lib/generated_plugin_registrant.dart

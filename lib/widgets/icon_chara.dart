@@ -46,7 +46,7 @@ class IconChara extends StatelessWidget {
               getIconUrl(chara),
               width: width,
               border: Border.all(
-                  color: shimmer ? theme.accentColor : Colors.transparent,width: 2),
+                  color: shimmer ? theme.colorScheme.secondary : Colors.transparent,width: 2),
               cache: true,
               height: height,
               loadStateChanged: (ExtendedImageState state) {

@@ -8,7 +8,7 @@ extension StringExtension on String? {
     }
     //  showToast(this!);
     showToastWidget(Builder(builder: (BuildContext context) {
-      final Color bgc = Theme.of(context).accentColor;
+      final Color bgc = Theme.of(context).colorScheme.secondary;
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -48,7 +48,7 @@ extension StringExtension on String? {
 
   ToastFuture loading() {
     return showToastWidget(Builder(builder: (BuildContext context) {
-      final Color bgc = Theme.of(context).accentColor;
+      final Color bgc = Theme.of(context).colorScheme.secondary;
       return Container(
         decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
         child: Center(

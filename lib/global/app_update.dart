@@ -8,7 +8,7 @@ import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
 import 'package:pcrgvg_flutter/db/hive_db.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 /// 每天检查一次
 class AppUpgrade {
@@ -16,7 +16,7 @@ class AppUpgrade {
   static late final PackageInfo packageInfo;
   static void upgradeModal() {
     showToastWidget(Builder(builder: (BuildContext context) {
-      final Color bgc = Theme.of(context).accentColor;
+      final Color bgc = Theme.of(context).colorScheme.secondary;
       final TextStyle textStyle = TextStyle(
         color: bgc.computeLuminance() < 0.5 ? Colors.white : Colors.black,
       );
@@ -63,13 +63,13 @@ class AppUpgrade {
                     // final String url = GitUrl.cdnGitHost + '@$releaseTag/releases/app-release.apk';
                     dismissAllToast();
                     if (Platform.isAndroid) {
-                      if (await canLaunch(OSS_APP_URL)) {
-                        launch(OSS_APP_URL);
+                      if (await canLaunchUrlString(OSS_APP_URL)) {
+                        launchUrlString(OSS_APP_URL);
                       }
                     }
                     if (Platform.isIOS) {
-                      if (await canLaunch(IOS_APP_URL)) {
-                        launch(IOS_APP_URL);
+                      if (await canLaunchUrlString(IOS_APP_URL)) {
+                        launchUrlString(IOS_APP_URL);
                       }
                     }
                   },

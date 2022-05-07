@@ -55,7 +55,7 @@ class PcrDb {
 
   static void updateModal(Map<String, PcrDbVersion?> serverDbversion) {
      showToastWidget(Builder(builder: (BuildContext context) {
-      final Color bgc = Theme.of(context).accentColor;
+      final Color bgc = Theme.of(context).colorScheme.secondary;
       final TextStyle textStyle = TextStyle(
         color: bgc.computeLuminance() < 0.5 ? Colors.white : Colors.black,
       );

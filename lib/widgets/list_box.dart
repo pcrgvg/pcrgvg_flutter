@@ -28,7 +28,7 @@ class ListBox<T extends BaseListProvider> extends StatelessWidget {
           }
           // 保持ios与安卓的一致性, ios不再滚动
           if (notification is OverscrollIndicatorNotification) {
-            notification.disallowGlow();
+            notification.disallowIndicator();
           }
           return true;
         },

@@ -10,7 +10,7 @@ import 'package:pcrgvg_flutter/extension/extensions.dart';
 @FFArgumentImport()
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
 @FFRoute(
@@ -46,7 +46,7 @@ class LinkDetailPage extends StatelessWidget {
                   GestureDetector(
                     onTap: () {
                       if (link.link.isNotEmpty) {
-                        launch(link.link);
+                        launchUrlString(link.link);
                       }
                     },
                     child: Container(
@@ -94,7 +94,7 @@ class LinkDetailPage extends StatelessWidget {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8)),
                               ),
-                              color: theme.accentColor.withOpacity(0.2),
+                              color: theme.colorScheme.secondary.withOpacity(0.2),
                               onPressed: () {
                                 Clipboard.setData(
                                     ClipboardData(text: link.remarks));
@@ -102,7 +102,7 @@ class LinkDetailPage extends StatelessWidget {
                               },
                               child: Text(
                                 '复制',
-                                style: TextStyle(color: theme.accentColor),
+                                style: TextStyle(color: theme.colorScheme.secondary),
                               ),
                             ),
                           ],

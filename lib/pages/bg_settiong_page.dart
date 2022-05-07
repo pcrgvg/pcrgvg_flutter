@@ -180,7 +180,7 @@ class __SetBgState extends State<_SetBg> {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(8)),
                             ),
-                            color: theme.accentColor.withOpacity(0.2),
+                            color: theme.colorScheme.secondary.withOpacity(0.2),
                             onPressed: () {
                               Navigator.pop(context);
                               model.changeBgChara(widget.prefabId);
@@ -188,7 +188,7 @@ class __SetBgState extends State<_SetBg> {
                             },
                             child: Text(
                               "确定",
-                              style: TextStyle(color: theme.accentColor),
+                              style: TextStyle(color: theme.colorScheme.secondary),
                             )),
                       ],
                     ),

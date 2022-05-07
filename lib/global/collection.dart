@@ -1,6 +1,5 @@
 import 'package:pcrgvg_flutter/db/hive_db.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
-import 'package:pcrgvg_flutter/extension/extensions.dart';
 
 class Collection {
   static List<List<TaskFilterResult>> getCollection(String server) {

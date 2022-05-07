@@ -1,4 +1,3 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:extended_sliver/extended_sliver.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 @FFArgumentImport()
@@ -8,7 +7,6 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pcrgvg_flutter/constants/Images.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
-import 'package:pcrgvg_flutter/global/collection.dart';
 import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
 import 'package:pcrgvg_flutter/providers/collect_provider.dart';
@@ -260,12 +258,12 @@ class _Header extends StatelessWidget {
               elevation: 0,
               child: Text(
                 '清空',
-                style: TextStyle(color: theme.accentColor),
+                style: TextStyle(color: theme.colorScheme.secondary),
               ),
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
-              color: theme.accentColor.withOpacity(0.2),
+              color: theme.colorScheme.secondary.withOpacity(0.2),
               onPressed: () async {
                 model.clearCollection();
               },
@@ -282,10 +280,11 @@ class _BottomServer extends StatelessWidget {
   final CollectProvider model;
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Container(
-      decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
+      decoration:  BoxDecoration(
+          color: theme.backgroundColor,
+          borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(16), topRight: Radius.circular(16))),
       padding: const EdgeInsets.all(16),
       child: Column(
