@@ -31,6 +31,8 @@ dependencies:
   dio: ^4.0.6
   extended_image: ^6.0.3
   extended_sliver: ^2.1.2
+  firebase_core: ^1.16.0
+  firebase_crashlytics: ^2.7.2
   ff_annotation_route_core: ^2.0.4
   ff_annotation_route_library: ^3.0.0
   flutter:

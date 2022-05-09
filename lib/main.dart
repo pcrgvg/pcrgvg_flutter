@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:isolate';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/material.dart';
@@ -15,14 +18,21 @@ import 'package:pcrgvg_flutter/utils/net_util.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await MyStore.init();
-  NetUtil.init();
-  await PcrDb.init();
-  await MyHive.init();
-  runApp(MyApp());
+  await runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await _initFireBase();
+    await MyStore.init();
+    NetUtil.init();
+    await PcrDb.init();
+    await MyHive.init();
+    runApp(MyApp());
+  }, (error, stackTrace) {
+    FirebaseCrashlytics.instance.recordError(error, stackTrace);
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -69,9 +79,10 @@ class MyApp extends StatelessWidget {
             child: RefreshConfiguration(
                 headerBuilder: () => WaterDropMaterialHeader(
                       backgroundColor: theme.colorScheme.secondary,
-                      color: theme.colorScheme.secondary.computeLuminance() < 0.5
-                          ? Colors.white
-                          : Colors.black,
+                      color:
+                          theme.colorScheme.secondary.computeLuminance() < 0.5
+                              ? Colors.white
+                              : Colors.black,
                       distance: 42.0,
                     ),
                 child: OKToast(
@@ -106,4 +117,9 @@ class MyApp extends StatelessWidget {
       }),
     );
   }
+}
+
+Future<void> _initFireBase() async {
+  await Firebase.initializeApp();
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 }
