@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pcrgvg_flutter/db/hive_db.dart';
@@ -58,6 +59,9 @@ class MyApp extends StatelessWidget {
     });
   }
 
+  FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -93,6 +97,17 @@ class MyApp extends StatelessWidget {
                       theme: themeProvider.theme(),
                       darkTheme: themeProvider.theme(isDark: true),
                       initialRoute: Routes.spalshPage.name,
+                      navigatorObservers: [
+                        observer,
+                        FFNavigatorObserver(routeChange: (newRoute, oldRoute) {
+                          //you can track page here
+                          final RouteSettings? oldSettings = oldRoute?.settings;
+                          final RouteSettings? newSettings = newRoute?.settings;
+                          "route change: "
+                                  "${oldSettings?.name} => ${newSettings?.name}"
+                              .debug();
+                        })
+                      ],
                       onGenerateRoute: (RouteSettings settings) {
                         return onGenerateRoute(
                           settings: settings,
