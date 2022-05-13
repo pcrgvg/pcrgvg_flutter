@@ -1,8 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/utils/net_util.dart';
-import 'package:dio/dio.dart';
+
 
 class GitApi {
+  const GitApi();
   static Future releaseInfo(String sha) async {
     final Resp resp = await Http.fetch(RequestOptions(
         path: GitUrl.releaseInfo.replaceAll('{sha}', sha), method: RequestMethods.Get));

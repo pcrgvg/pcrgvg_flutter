@@ -1,10 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
+import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/utils/net_util.dart';
-import 'package:dio/dio.dart';
-import 'package:pcrgvg_flutter/extension/extensions.dart';
+
 
 class PcrGvgApi {
+  const PcrGvgApi();
   static Future<List<GvgTask>> getGvgTaskList(
       {required int stage,
       required String server,
