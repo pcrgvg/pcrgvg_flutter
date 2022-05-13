@@ -23,7 +23,7 @@ jobs:
         - name: flutter
           uses: subosito/flutter-action@v1
           with:
-            flutter-version: '2.2.1'
+            flutter-version: '2.10.5'
             channel: stable
         - name: build apk
           run: |
