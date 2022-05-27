@@ -99,9 +99,8 @@ class AppUpgrade {
     final String version = packageInfo.version;
     final int buildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
     final List<String> appVersion = version.split('.');
-    final shaResp = await GitApi.masterSha();
-    if (shaResp.success) {
-      final info = await GitApi.releaseInfo(shaResp.data['sha'] as String);
+    try {
+      final info = await GitApi.releaseInfo();
       final int lastBuildNumber = info['elements'][0]['versionCode'] as int;
       final List<String> lastVersion =
           (info['elements'][0]['versionName'] as String).split('.');
@@ -120,9 +119,9 @@ class AppUpgrade {
       } else {
         '暂无更新'.toast();
       }
-    } else {
+    } catch (e) {
       '检测更新失败,可到关于页面点击下载最新APP'.toast();
-      return;
+      rethrow;
     }
   }
 

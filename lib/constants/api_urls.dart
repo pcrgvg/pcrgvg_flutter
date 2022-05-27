@@ -24,6 +24,7 @@ class GitUrl {
   static const String release = '$gitApiHost/releases/latest';
   static const String releaseInfo = '$cdnGitHost@{sha}/releases/metadata.json';
   static const String giteeHost = 'https://gitee.com';
+  static const String aliOssHost = 'https://pcr-app.oss-cn-shanghai.aliyuncs.com';
   static const String giteeRelease = '$giteeHost/api/v5/repos/tokisaki__kurumi/pcrgvg_flutter/releases/latest';
   static const String commitsMaster = '$gitApiHost/commits/master';
   static const String app = '$cdnGitHost@master/releases/app-release.apk';
@@ -31,5 +32,6 @@ class GitUrl {
 
 const String OSS_APP_URL = 'https://pcr-app.oss-cn-shanghai.aliyuncs.com/app-release.apk';
 const String IOS_APP_URL = 'https://testflight.apple.com/join/RHCIN2qI';
+const String OSS_APP_VERSION = 'https://pcr-app.oss-cn-shanghai.aliyuncs.com/metadata.json';
 final Uri ossAppUri = Uri.parse(OSS_APP_URL);
 final Uri iosAppUri = Uri.parse(IOS_APP_URL);

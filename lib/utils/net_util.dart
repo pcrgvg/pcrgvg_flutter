@@ -66,7 +66,7 @@ class PcrTransFormer extends DefaultTransformer {
   }
 
 
-  List<String> whiteList = [GitUrl.gitApiHost, GitUrl.cdnGitHost, GitUrl.giteeHost];
+  List<String> whiteList = [GitUrl.gitApiHost, GitUrl.cdnGitHost, GitUrl.giteeHost, GitUrl.aliOssHost];
 
   bool skipTransform(String uri) {
     for (final String item in whiteList) {

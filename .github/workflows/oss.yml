@@ -22,4 +22,5 @@ jobs:
             bucket: pcr-app
             assets: |
                 ./releases/app-release.apk:app-release.apk
+                ./releases/metadata.json:metadata.json
             

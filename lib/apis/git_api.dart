@@ -5,9 +5,9 @@ import 'package:pcrgvg_flutter/utils/net_util.dart';
 
 class GitApi {
   const GitApi();
-  static Future releaseInfo(String sha) async {
+  static Future releaseInfo() async {
     final Resp resp = await Http.fetch(RequestOptions(
-        path: GitUrl.releaseInfo.replaceAll('{sha}', sha), method: RequestMethods.Get));
+        path: OSS_APP_VERSION, method: RequestMethods.Get));
     return resp.data;
   }
 
