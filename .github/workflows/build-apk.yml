@@ -69,15 +69,5 @@ jobs:
             token: ${{ secrets.GITHUB_TOKEN }}
             tag: ${{ github.event.inputs.TAG }}
             artifacts: "releases/*-release.apk"
-        - name: Upload to oss
-          uses: tvrcgo/upload-to-oss@master
-          with:
-            key-id: ${{ secrets.OSS_KEY_ID }}
-            key-secret: ${{ secrets.OSS_KEY_SECRET }}
-            region: oss-cn-shanghai
-            bucket: pcr-app
-            assets: |
-                ./releases/app-release.apk:/app-release.apk
-                ./releases/metadata.json:metadata.json
 
 
