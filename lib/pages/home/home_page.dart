@@ -473,7 +473,8 @@ class __TaskItemState extends State<_TaskItem> {
                   box.add(widget.task.id);
                 }
               },
-              color: removed ? Colors.green : widget.theme.colorScheme.secondary,
+              color:
+                  removed ? Colors.green : widget.theme.colorScheme.secondary,
               icon: removed
                   ? const Icon(
                       FluentIcons.add_square_multiple_16_regular,

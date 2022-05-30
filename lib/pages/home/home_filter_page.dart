@@ -1,5 +1,6 @@
 import 'package:extended_sliver/extended_sliver.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
+import 'package:flutter/cupertino.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
@@ -64,9 +65,10 @@ class HomeFilterPage extends StatelessWidget {
 }
 
 class _UsedOrRemovedSelection extends StatelessWidget {
-  const _UsedOrRemovedSelection(
-      {Key? key, required this.theme,})
-      : super(key: key);
+  const _UsedOrRemovedSelection({
+    Key? key,
+    required this.theme,
+  }) : super(key: key);
   final ThemeData theme;
   Color getColor(bool selected) {
     return selected ? theme.colorScheme.secondary : Colors.grey;
@@ -74,9 +76,11 @@ class _UsedOrRemovedSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      final HomeFilterProvider homeFiltermodel = context.read<HomeFilterProvider>();
-    final List<String> taskTypes = context.select<HomeFilterProvider, List<String>>(
-        (HomeFilterProvider model) => model.gvgTaskFilter.taskTypes);
+    final HomeFilterProvider homeFiltermodel =
+        context.read<HomeFilterProvider>();
+    final List<String> taskTypes =
+        context.select<HomeFilterProvider, List<String>>(
+            (HomeFilterProvider model) => model.gvgTaskFilter.taskTypes);
     return SliverToBoxAdapter(
       child: Row(
         children: [
@@ -93,7 +97,7 @@ class _UsedOrRemovedSelection extends StatelessWidget {
               _buildButton(taskTypes, TaskType.all, homeFiltermodel),
               _buildButton(taskTypes, TaskType.used, homeFiltermodel),
               _buildButton(taskTypes, TaskType.removed, homeFiltermodel),
-              _buildButton(taskTypes, TaskType.tail,homeFiltermodel),
+              _buildButton(taskTypes, TaskType.tail, homeFiltermodel),
             ],
           ))
         ],
@@ -101,9 +105,8 @@ class _UsedOrRemovedSelection extends StatelessWidget {
     );
   }
 
-
-
-  Padding _buildButton(List<String> usedOrRemoved, String type, HomeFilterProvider homeFiltermodel) {
+  Padding _buildButton(List<String> usedOrRemoved, String type,
+      HomeFilterProvider homeFiltermodel) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: MaterialButton(
@@ -117,7 +120,7 @@ class _UsedOrRemovedSelection extends StatelessWidget {
         ),
         color: getColor(usedOrRemoved.contains(type)).withOpacity(0.2),
         child: Text(
-         TaskType.getName(type),
+          TaskType.getName(type),
           style: TextStyle(color: getColor(usedOrRemoved.contains(type))),
         ),
       ),
@@ -126,17 +129,16 @@ class _UsedOrRemovedSelection extends StatelessWidget {
 }
 
 class _MethodSelection extends StatelessWidget {
-  const _MethodSelection(
-      {Key? key,  required this.theme})
-      : super(key: key);
+  const _MethodSelection({Key? key, required this.theme}) : super(key: key);
   final ThemeData theme;
   Color getColor(bool selected) {
-   return selected ? theme.colorScheme.secondary : Colors.grey;
+    return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   @override
   Widget build(BuildContext context) {
-      final HomeFilterProvider homeFiltermodel = context.read<HomeFilterProvider>();
+    final HomeFilterProvider homeFiltermodel =
+        context.read<HomeFilterProvider>();
     return SliverToBoxAdapter(
         child: Selector<HomeFilterProvider, List<int>>(
       selector: (_, HomeFilterProvider model) => model.gvgTaskFilter.methods,
@@ -164,7 +166,8 @@ class _MethodSelection extends StatelessWidget {
     ));
   }
 
-  Padding _buildButton(List<int> methods, int autoType, HomeFilterProvider homeFiltermodel) {
+  Padding _buildButton(
+      List<int> methods, int autoType, HomeFilterProvider homeFiltermodel) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: MaterialButton(
@@ -187,18 +190,17 @@ class _MethodSelection extends StatelessWidget {
 }
 
 class _StageSelection extends StatelessWidget {
-  const _StageSelection(
-      {Key? key, required this.theme})
-      : super(key: key);
+  const _StageSelection({Key? key, required this.theme}) : super(key: key);
 
   final ThemeData theme;
   Color getColor(bool selected) {
-   return selected ? theme.colorScheme.secondary : Colors.grey;
+    return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   @override
   Widget build(BuildContext context) {
-      final HomeFilterProvider homeFiltermodel = context.read<HomeFilterProvider>();
+    final HomeFilterProvider homeFiltermodel =
+        context.read<HomeFilterProvider>();
     return SliverToBoxAdapter(
         child: Selector<HomeFilterProvider, Tuple2<List<LvPair>, int>>(
       selector: (_, HomeFilterProvider model) => Tuple2<List<LvPair>, int>(
@@ -247,19 +249,18 @@ class _StageSelection extends StatelessWidget {
 }
 
 class _BossSelection extends StatelessWidget {
-  const _BossSelection(
-      {Key? key,  required this.theme})
-      : super(key: key);
+  const _BossSelection({Key? key, required this.theme}) : super(key: key);
 
   Color getColor(bool selected) {
-   return selected ? theme.colorScheme.secondary : Colors.grey;
+    return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   final ThemeData theme;
 
   @override
   Widget build(BuildContext context) {
-      final HomeFilterProvider homeFiltermodel = context.read<HomeFilterProvider>();
+    final HomeFilterProvider homeFiltermodel =
+        context.read<HomeFilterProvider>();
     return SliverToBoxAdapter(
       child: Selector<HomeFilterProvider, List<int>>(
         selector: (_, HomeFilterProvider model) =>
@@ -323,12 +324,13 @@ class _ClanSelection extends StatelessWidget {
   final ThemeData theme;
 
   Color getColor(bool selected) {
-   return selected ? theme.colorScheme.secondary : Colors.grey;
+    return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   @override
   Widget build(BuildContext context) {
-      final HomeFilterProvider homeFiltermodel = context.read<HomeFilterProvider>();
+    final HomeFilterProvider homeFiltermodel =
+        context.read<HomeFilterProvider>();
     return SliverToBoxAdapter(
       child: Selector<HomeFilterProvider, Tuple2<List<ClanPeriod>, int>>(
         selector: (_, HomeFilterProvider model) =>
@@ -348,39 +350,150 @@ class _ClanSelection extends StatelessWidget {
                       textBaseline: TextBaseline.alphabetic),
                 ),
               ),
-              Expanded(
-                  child: Wrap(
-                direction: Axis.horizontal,
-                children: [
-                  for (ClanPeriod item in tuple.item1)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: MaterialButton(
-                        minWidth: 0,
-                        elevation: 0,
-                        onPressed: () {
-                          homeFiltermodel.setClanPeriod(item);
-                        },
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                        ),
-                        color: getColor(item.clanBattleId == tuple.item2)
-                            .withOpacity(0.2),
-                        child: Text(
-                          item.startTime.dateFormate(),
-                          style: TextStyle(
-                              color:
-                                  getColor(item.clanBattleId == tuple.item2)),
-                        ),
-                      ),
+
+              MaterialButton(
+                onPressed: () {
+                  _showModal(context, tuple, homeFiltermodel);
+                },
+                elevation: 0,
+                minWidth: 0,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                ),
+                color: theme.colorScheme.secondary.withOpacity(0.2),
+                child: Row(
+                  children: [
+                    Text(
+                      homeFiltermodel.gvgTaskFilter.startTime.dateFormate(),
+                      style: TextStyle(color: theme.colorScheme.secondary),
                     ),
-                ],
-              ))
+                    Icon(
+                      Icons.keyboard_arrow_right_rounded,
+                      color: theme.colorScheme.secondary,
+                    )
+                  ],
+                ),
+              ),
+              // Expanded(
+              //     child: Wrap(
+              //   direction: Axis.horizontal,
+              //   children: [
+              //     for (ClanPeriod item in tuple.item1)
+              //       Padding(
+              //         padding: const EdgeInsets.symmetric(horizontal: 4),
+              //         child: MaterialButton(
+              //           minWidth: 0,
+              //           elevation: 0,
+              //           onPressed: () {
+              //             homeFiltermodel.setClanPeriod(item);
+              //           },
+              //           shape: const RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.all(Radius.circular(8)),
+              //           ),
+              //           color: getColor(item.clanBattleId == tuple.item2)
+              //               .withOpacity(0.2),
+              //           child: Text(
+              //             item.startTime.dateFormate(),
+              //             style: TextStyle(
+              //                 color:
+              //                     getColor(item.clanBattleId == tuple.item2)),
+              //           ),
+              //         ),
+              //       ),
+              //   ],
+              // ))
             ],
           );
         },
       ),
     );
+  }
+
+  Future<dynamic> _showModal(BuildContext context,
+      Tuple2<List<ClanPeriod>, int> tuple, HomeFilterProvider homeFiltermodel) {
+    return showCupertinoModalPopup(
+        barrierColor: Colors.transparent,
+        context: context,
+        builder: (BuildContext context) {
+          int index = tuple.item1
+              .indexWhere((clan) => clan.clanBattleId == tuple.item2);
+          final scrollController =
+              FixedExtentScrollController(initialItem: index);
+          return Container(
+            color: theme.backgroundColor,
+            height: 254,
+            // padding: const EdgeInsets.only(top: 6.0),
+            // The Bottom margin is provided to align the popup above the system navigation bar.
+            margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Material(
+                child: SafeArea(
+              top: false,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        MaterialButton(
+                          minWidth: 0,
+                          elevation: 0,
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          color: Colors.transparent,
+                          child: Text(
+                            '取消',
+                            style:
+                                TextStyle(color: theme.colorScheme.secondary),
+                          ),
+                        ),
+                        MaterialButton(
+                          minWidth: 0,
+                          elevation: 0,
+                          onPressed: () {
+                            homeFiltermodel.setClanPeriod(tuple.item1[index]);
+                            Navigator.of(context).pop();
+                          },
+                          color: Colors.transparent,
+                          child: Text(
+                            '确定',
+                            style:
+                                TextStyle(color: theme.colorScheme.secondary),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                      child: CupertinoPicker(
+                          magnification: 1.22,
+                          scrollController: scrollController,
+                          squeeze: 1.2,
+                          useMagnifier: true,
+                          itemExtent: 32.0,
+                          onSelectedItemChanged: (int i) {
+                            index = i;
+                          },
+                          children: [
+                        for (ClanPeriod item in tuple.item1)
+                          Center(
+                            child: Text(
+                              item.startTime.dateFormate(),
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: getColor(
+                                      item.clanBattleId == tuple.item2)),
+                            ),
+                          ),
+                      ]))
+                ],
+              ),
+            )),
+          );
+        });
   }
 }
 
@@ -392,14 +505,14 @@ class _ServerSelection extends StatelessWidget {
 
   final ThemeData theme;
 
-
   Color getColor(bool selected) {
     return selected ? theme.colorScheme.secondary : Colors.grey;
   }
 
   @override
   Widget build(BuildContext context) {
-      final HomeFilterProvider homeFiltermodel = context.read<HomeFilterProvider>();
+    final HomeFilterProvider homeFiltermodel =
+        context.read<HomeFilterProvider>();
     return SliverToBoxAdapter(
       child: Selector<HomeFilterProvider, String>(
         selector: (_, HomeFilterProvider model) => model.gvgTaskFilter.server,
@@ -426,7 +539,8 @@ class _ServerSelection extends StatelessWidget {
     );
   }
 
-  Padding _buildButton(String server, String serverType, HomeFilterProvider homeFiltermodel) {
+  Padding _buildButton(
+      String server, String serverType, HomeFilterProvider homeFiltermodel) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: MaterialButton(
