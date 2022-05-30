@@ -3,6 +3,7 @@ import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:flutter/cupertino.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/providers/home_filter_provider.dart';
@@ -411,87 +412,85 @@ class _ClanSelection extends StatelessWidget {
 
   Future<dynamic> _showModal(BuildContext context,
       Tuple2<List<ClanPeriod>, int> tuple, HomeFilterProvider homeFiltermodel) {
-    return showCupertinoModalPopup(
-        barrierColor: Colors.transparent,
+    return showMaterialModalBottomSheet(
         context: context,
+        backgroundColor: Colors.transparent,
         builder: (BuildContext context) {
           int index = tuple.item1
               .indexWhere((clan) => clan.clanBattleId == tuple.item2);
           final scrollController =
               FixedExtentScrollController(initialItem: index);
           return Container(
-            color: theme.backgroundColor,
+            decoration: BoxDecoration(
+                color: theme.backgroundColor,
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16))),
             height: 254,
             // padding: const EdgeInsets.only(top: 6.0),
             // The Bottom margin is provided to align the popup above the system navigation bar.
             margin: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
-            child: Material(
-                child: SafeArea(
-              top: false,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        MaterialButton(
-                          minWidth: 0,
-                          elevation: 0,
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          color: Colors.transparent,
-                          child: Text(
-                            '取消',
-                            style:
-                                TextStyle(color: theme.colorScheme.secondary),
-                          ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      MaterialButton(
+                        minWidth: 0,
+                        elevation: 0,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        color: Colors.transparent,
+                        child: Text(
+                          '取消',
+                          style: TextStyle(color: theme.colorScheme.secondary),
                         ),
-                        MaterialButton(
-                          minWidth: 0,
-                          elevation: 0,
-                          onPressed: () {
-                            homeFiltermodel.setClanPeriod(tuple.item1[index]);
-                            Navigator.of(context).pop();
-                          },
-                          color: Colors.transparent,
-                          child: Text(
-                            '确定',
-                            style:
-                                TextStyle(color: theme.colorScheme.secondary),
-                          ),
+                      ),
+                      MaterialButton(
+                        minWidth: 0,
+                        elevation: 0,
+                        onPressed: () {
+                          homeFiltermodel.setClanPeriod(tuple.item1[index]);
+                          Navigator.of(context).pop();
+                        },
+                        color: Colors.transparent,
+                        child: Text(
+                          '确定',
+                          style: TextStyle(color: theme.colorScheme.secondary),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                      child: CupertinoPicker(
-                          magnification: 1.22,
-                          scrollController: scrollController,
-                          squeeze: 1.2,
-                          useMagnifier: true,
-                          itemExtent: 32.0,
-                          onSelectedItemChanged: (int i) {
-                            index = i;
-                          },
-                          children: [
-                        for (ClanPeriod item in tuple.item1)
-                          Center(
-                            child: Text(
-                              item.startTime.dateFormate(),
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: getColor(
-                                      item.clanBattleId == tuple.item2)),
-                            ),
+                ),
+                Expanded(
+                    child: CupertinoPicker(
+                        magnification: 1.22,
+                        scrollController: scrollController,
+                        squeeze: 1.2,
+                        useMagnifier: true,
+                        itemExtent: 32.0,
+                        onSelectedItemChanged: (int i) {
+                          index = i;
+                        },
+                        children: [
+                      for (ClanPeriod item in tuple.item1)
+                        Center(
+                          child: Text(
+                            item.startTime.dateFormate(),
+                            style: TextStyle(
+                                fontSize: 14,
+                                color:
+                                    getColor(item.clanBattleId == tuple.item2)),
                           ),
-                      ]))
-                ],
-              ),
-            )),
+                        ),
+                    ]))
+              ],
+            ),
           );
         });
   }
