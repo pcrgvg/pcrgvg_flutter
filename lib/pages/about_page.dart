@@ -74,7 +74,7 @@ class _Content extends StatelessWidget {
               IOS_APP_URL.launchApp();
             }
           },
-          child: _buildItem('下载最新APP'),
+          child: _buildItem('下载最新APP（更新失败可到网页扫码下载最新版本）'),
         )
       ],
     ));

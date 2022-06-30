@@ -43,7 +43,7 @@ class AppUpgrade {
               height: 10,
             ),
             Text(
-              'app有新版本,是否更新?',
+              'app有新版本,是否更新?（更新失败可到作业网页扫码下载最新版本）',
               style: textStyle,
             ),
             Row(
