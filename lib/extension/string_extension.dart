@@ -86,4 +86,15 @@ extension StringExtension on String? {
     }
     return DateFormat(newPattern).format(time).toString();
   }
+
+
+  Future<void> launchApp() async {
+    if (isNullOrEmpty) {
+      "链接为空".toast();
+      return;
+    }
+    if (await canLaunchUrlString(this!)) {
+      await launchUrlString(this!, mode: LaunchMode.externalApplication);
+    }
+  }
 }

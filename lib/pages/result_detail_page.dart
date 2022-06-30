@@ -331,7 +331,7 @@ class _Link extends StatelessWidget {
                         arguments:
                             Routes.linkDetailPage.d(link: link, bgUrl: bgUrl));
                   } else {
-                    launchUrlString(link.link);
+                    link.link.launchApp();
                   }
                 },
                 child: Text(

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/constants/screens.dart';
+import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:pcrgvg_flutter/global/app_update.dart';
 import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -67,14 +68,10 @@ class _Content extends StatelessWidget {
         InkWell(
           onTap: () async {
             if (Platform.isAndroid) {
-              if (await canLaunchUrlString(OSS_APP_URL)) {
-                launchUrlString(OSS_APP_URL);
-              }
+              OSS_APP_URL.launchApp();
             }
             if (Platform.isIOS) {
-              if (await canLaunchUrlString(IOS_APP_URL)) {
-                launchUrlString(IOS_APP_URL);
-              }
+              IOS_APP_URL.launchApp();
             }
           },
           child: _buildItem('下载最新APP'),
@@ -86,7 +83,7 @@ class _Content extends StatelessWidget {
   InkWell _buidGitButton() {
     return InkWell(
       onTap: () {
-        launchUrlString('https://github.com/pcrgvg/pcrgvg_flutter');
+        'https://github.com/pcrgvg/pcrgvg_flutter'.launchApp();
       },
       child: Container(
         decoration: BoxDecoration(

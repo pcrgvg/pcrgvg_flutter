@@ -18,6 +18,7 @@ import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
 import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
 import 'package:pcrgvg_flutter/widgets/boss_icon.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 import 'package:provider/provider.dart';
@@ -198,13 +199,13 @@ class _Link extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: GestureDetector(
-                onTap: () {
+                onTap: () async {
                   if (link.remarks.isNotEmpty) {
                     Navigator.of(context).pushNamed(Routes.linkDetailPage.name,
                         arguments:
                             Routes.linkDetailPage.d(link: link, bgUrl: bgUrl));
                   } else {
-                    launchUrlString(link.link);
+                    link.link.launchApp();
                   }
                 },
                 child: Text(
@@ -302,7 +303,8 @@ class _Head extends StatelessWidget {
                 style:
                     TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
           if (type == AutoType.harfAuto)
-            Text('(${task.halfAutoDamage ?? (task.autoDamage ?? task.damage)}w)',
+            Text(
+                '(${task.halfAutoDamage ?? (task.autoDamage ?? task.damage)}w)',
                 style:
                     TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
         ],

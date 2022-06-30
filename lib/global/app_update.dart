@@ -63,14 +63,10 @@ class AppUpgrade {
                     // final String url = GitUrl.cdnGitHost + '@$releaseTag/releases/app-release.apk';
                     dismissAllToast();
                     if (Platform.isAndroid) {
-                      if (await canLaunchUrlString(OSS_APP_URL)) {
-                        launchUrlString(OSS_APP_URL);
-                      }
+                      OSS_APP_URL.launchApp();
                     }
                     if (Platform.isIOS) {
-                      if (await canLaunchUrlString(IOS_APP_URL)) {
-                        launchUrlString(IOS_APP_URL);
-                      }
+                      IOS_APP_URL.launchApp();
                     }
                   },
                   child: Text(

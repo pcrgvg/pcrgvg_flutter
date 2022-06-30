@@ -10,6 +10,7 @@ import 'package:pcrgvg_flutter/extension/extensions.dart';
 @FFArgumentImport()
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
@@ -18,7 +19,7 @@ import 'package:waterfall_flow/waterfall_flow.dart';
   routeName: "linkDetailPage",
 )
 class LinkDetailPage extends StatelessWidget {
-  const LinkDetailPage({Key? key, required this.link,  this.bgUrl})
+  const LinkDetailPage({Key? key, required this.link, this.bgUrl})
       : super(key: key);
   final Link link;
   final String? bgUrl;
@@ -44,9 +45,9 @@ class LinkDetailPage extends StatelessWidget {
                 physics: const BouncingScrollPhysics(),
                 children: [
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       if (link.link.isNotEmpty) {
-                        launchUrlString(link.link);
+                        link.link.launchApp();
                       }
                     },
                     child: Container(
@@ -94,7 +95,8 @@ class LinkDetailPage extends StatelessWidget {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8)),
                               ),
-                              color: theme.colorScheme.secondary.withOpacity(0.2),
+                              color:
+                                  theme.colorScheme.secondary.withOpacity(0.2),
                               onPressed: () {
                                 Clipboard.setData(
                                     ClipboardData(text: link.remarks));
@@ -102,7 +104,8 @@ class LinkDetailPage extends StatelessWidget {
                               },
                               child: Text(
                                 '复制',
-                                style: TextStyle(color: theme.colorScheme.secondary),
+                                style: TextStyle(
+                                    color: theme.colorScheme.secondary),
                               ),
                             ),
                           ],
