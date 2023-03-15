@@ -26,12 +26,15 @@ class AutoType {
   static const int manual = 10;
   static const int auto = 20;
   static const int harfAuto = 40;
+  static const int easyManual = 50;
   static String getName(int type) {
      switch (type) {
       case AutoType.auto:
         return '自动';
       case AutoType.harfAuto:
         return '半自动';
+      case AutoType.easyManual:
+        return '简易手动';
       case AutoType.manual:
       default:
         return '手动';

@@ -63,18 +63,20 @@ class TaskAdapter extends TypeAdapter<Task> {
       damage: fields[3] as int?,
       autoDamage: fields[4] as int?,
       halfAutoDamage: fields[10] as int?,
+      easyManualDamage: fields[11] as int?,
       charas: (fields[5] as List).cast<Chara>(),
       remarks: fields[6] as String,
       exRemarks: fields[9] as String,
       links: (fields[7] as List).cast<Link>(),
       type: fields[8] as int,
+      linkShowMethod: fields[12] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Task obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -96,7 +98,11 @@ class TaskAdapter extends TypeAdapter<Task> {
       ..writeByte(9)
       ..write(obj.exRemarks)
       ..writeByte(10)
-      ..write(obj.halfAutoDamage);
+      ..write(obj.halfAutoDamage)
+      ..writeByte(11)
+      ..write(obj.easyManualDamage)
+      ..writeByte(12)
+      ..write(obj.linkShowMethod);
   }
 
   @override
@@ -176,19 +182,22 @@ class LinkAdapter extends TypeAdapter<Link> {
       name: fields[0] as String,
       link: fields[1] as String,
       remarks: fields[2] as String,
+      type: fields[3] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Link obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
       ..write(obj.link)
       ..writeByte(2)
-      ..write(obj.remarks);
+      ..write(obj.remarks)
+      ..writeByte(3)
+      ..write(obj.type);
   }
 
   @override

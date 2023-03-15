@@ -159,6 +159,7 @@ class _MethodSelection extends StatelessWidget {
                 _buildButton(methods, AutoType.manual, homeFiltermodel),
                 _buildButton(methods, AutoType.auto, homeFiltermodel),
                 _buildButton(methods, AutoType.harfAuto, homeFiltermodel),
+                _buildButton(methods, AutoType.easyManual, homeFiltermodel),
               ],
             ))
           ],
@@ -375,34 +376,6 @@ class _ClanSelection extends StatelessWidget {
                   ],
                 ),
               ),
-              // Expanded(
-              //     child: Wrap(
-              //   direction: Axis.horizontal,
-              //   children: [
-              //     for (ClanPeriod item in tuple.item1)
-              //       Padding(
-              //         padding: const EdgeInsets.symmetric(horizontal: 4),
-              //         child: MaterialButton(
-              //           minWidth: 0,
-              //           elevation: 0,
-              //           onPressed: () {
-              //             homeFiltermodel.setClanPeriod(item);
-              //           },
-              //           shape: const RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.all(Radius.circular(8)),
-              //           ),
-              //           color: getColor(item.clanBattleId == tuple.item2)
-              //               .withOpacity(0.2),
-              //           child: Text(
-              //             item.startTime.dateFormate(),
-              //             style: TextStyle(
-              //                 color:
-              //                     getColor(item.clanBattleId == tuple.item2)),
-              //           ),
-              //         ),
-              //       ),
-              //   ],
-              // ))
             ],
           );
         },

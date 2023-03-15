@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:pcrgvg_flutter/apis/pcrgvg_api.dart';
@@ -100,23 +102,21 @@ class HomeProvider extends BaseListProvider {
     for (int i = 0; i < cacheList.length; i++) {
       final GvgTask gvgTask = cacheList[i];
       if (_gvgTaskFilter.bossNumber.contains(i + 1)) {
-         gvgTask.tasks.retainWhere((task) {
-              for (final int canAuto in task.canAuto) {
-                final bool isHaved = _gvgTaskFilter.methods.contains(canAuto);
-                if (isHaved) {
-                  return true;
-                }
-              }
-              return false;
-            });
-
+        gvgTask.tasks.retainWhere((task) {
+          for (final int canAuto in task.canAuto) {
+            final bool isHaved = _gvgTaskFilter.methods.contains(canAuto);
+            if (isHaved) {
+              return true;
+            }
+          }
+          return false;
+        });
         filterTaskType(gvgTask.tasks);
         tempList.add(gvgTask);
       }
     }
     _gvgTaskList = tempList;
   }
-
 
   void filterTaskType(List<Task> result) {
     if (!_gvgTaskFilter.taskTypes.contains(TaskType.tail)) {
@@ -126,11 +126,14 @@ class HomeProvider extends BaseListProvider {
       result.retainWhere((task) => !MyHive.removedBox.values.contains(task.id));
     }
 
-    if(!_gvgTaskFilter.taskTypes.contains(TaskType.used)) {
+    if (!_gvgTaskFilter.taskTypes.contains(TaskType.used)) {
       result.retainWhere((task) => !MyHive.usedBox.values.contains(task.id));
     }
-     if(!_gvgTaskFilter.taskTypes.contains(TaskType.all)) {
-      result.retainWhere((task) => task.type == 1 || MyHive.usedBox.values.contains(task.id) || MyHive.removedBox.values.contains(task.id) );
+    if (!_gvgTaskFilter.taskTypes.contains(TaskType.all)) {
+      result.retainWhere((task) =>
+          task.type == 1 ||
+          MyHive.usedBox.values.contains(task.id) ||
+          MyHive.removedBox.values.contains(task.id));
     }
   }
 
@@ -170,10 +173,10 @@ class HomeProvider extends BaseListProvider {
   // 如果包含手动，则使用damage， 如果不包含且有自动刀的伤害显示自动刀的伤害
   int typeDamage(Task task) {
     if (_gvgTaskFilter.methods.contains(AutoType.manual)) {
-      return task.damage ?? task.halfAutoDamage ??  task.autoDamage ?? 0;
+      return task.damage ?? task.halfAutoDamage ?? task.autoDamage ?? 0;
     }
     if (_gvgTaskFilter.methods.contains(AutoType.harfAuto)) {
-     return task.halfAutoDamage ??  task.autoDamage ??  task.damage ?? 0;
+      return task.halfAutoDamage ?? task.autoDamage ?? task.damage ?? 0;
     }
     return task.autoDamage ?? task.halfAutoDamage ?? task.damage ?? 0;
   }

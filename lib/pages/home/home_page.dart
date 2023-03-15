@@ -403,6 +403,11 @@ class __TaskItemState extends State<_TaskItem> {
                 '(${task.halfAutoDamage ?? (task.autoDamage ?? task.damage)}w)',
                 style:
                     TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
+          if (type == AutoType.easyManual)
+            Text(
+                '(${task.easyManualDamage}w)',
+                style:
+                    TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
         ],
         if (task.type == 1)
           const Text(

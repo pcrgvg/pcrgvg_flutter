@@ -92,12 +92,14 @@ class Task {
     required this.damage,
     required this.autoDamage,
     required this.halfAutoDamage,
+    required this.easyManualDamage,
     required this.charas,
     required this.remarks,
     required this.exRemarks,
     required this.links,
     required this.type,
     this.fixedBorrowChara,
+    this.linkShowMethod
   });
 
   factory Task.fromJson(Map<String, dynamic> jsonRes) {
@@ -140,6 +142,7 @@ class Task {
       damage: asT<int?>(jsonRes['damage']),
       autoDamage: asT<int?>(jsonRes['autoDamage']),
       halfAutoDamage: asT<int?>(jsonRes['halfAutoDamage']),
+      easyManualDamage: asT<int?>(jsonRes['easyManualDamage']),
       charas: charas!,
       remarks: asT<String>(jsonRes['remarks'])!,
       exRemarks: asT<String>(jsonRes['exRemarks'])!,
@@ -172,6 +175,10 @@ class Task {
 
   @HiveField(10)
   final int? halfAutoDamage;
+  @HiveField(11)
+  final int? easyManualDamage;
+  @HiveField(12)
+  int? linkShowMethod;
 
   Chara? fixedBorrowChara;
 
@@ -187,7 +194,9 @@ class Task {
         'damage': damage,
         'autoDamage': autoDamage,
         'halfAutoDamage': halfAutoDamage,
+        'easyManualDamage': easyManualDamage,
         'fixedBorrowChara': fixedBorrowChara,
+        'linkShowMethod': linkShowMethod,
         'charas': charas,
         'remarks': remarks,
         'exRemarks': exRemarks,
@@ -205,9 +214,11 @@ class Task {
         damage: damage,
         autoDamage: autoDamage,
         halfAutoDamage: halfAutoDamage,
+        easyManualDamage: easyManualDamage,
         remarks: remarks,
         exRemarks: exRemarks,
         fixedBorrowChara: fixedBorrowChara,
+        linkShowMethod: linkShowMethod,
         type: type,
         links: links.map((e) => e.copy()).toList(),
         charas: charas.map((r) => r.cpoy()).toList());
@@ -225,8 +236,10 @@ class Task {
           exRemarks == other.exRemarks &&
           remarks == other.remarks &&
           autoDamage == other.autoDamage &&
+          easyManualDamage == other.easyManualDamage &&
           halfAutoDamage == other.halfAutoDamage &&
           fixedBorrowChara == other.fixedBorrowChara &&
+          linkShowMethod == other.linkShowMethod &&
           type == other.type &&
           charas.eq(other.charas) &&
           links.eq(other.links);
@@ -238,8 +251,10 @@ class Task {
       stage.hashCode ^
       damage.hashCode ^
       autoDamage.hashCode ^
+      easyManualDamage.hashCode ^
       halfAutoDamage.hashCode ^
       fixedBorrowChara.hashCode ^
+      linkShowMethod.hashCode ^
       type.hashCode ^
       remarks.hashCode ^
       exRemarks.hashCode ^
@@ -335,19 +350,23 @@ class Link {
     required this.name,
     required this.link,
     required this.remarks,
+    this.type,
   });
 
   factory Link.fromJson(Map<String, dynamic> jsonRes) => Link(
         name: asT<String>(jsonRes['name'])!,
         link: asT<String>(jsonRes['link'])!,
         remarks: asT<String>(jsonRes['remarks'])!,
+        type: asT<int?>(jsonRes['type']),
       );
   @HiveField(0)
   final String name;
   @HiveField(1)
   final String link;
-    @HiveField(2)
+  @HiveField(2)
   final String remarks;
+  @HiveField(3)
+  final int? type;
 
   @override
   String toString() {
@@ -358,11 +377,12 @@ class Link {
         'name': name,
         'link': link,
         'remarks': remarks,
+        'type': type,
       };
 
   Link clone() =>
       Link.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
-  Link copy() => Link(name: name, link: link, remarks: remarks);
+  Link copy() => Link(name: name, link: link, remarks: remarks, type: type);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -370,8 +390,10 @@ class Link {
           runtimeType == other.runtimeType &&
           name == other.name &&
           remarks == other.remarks &&
+          type == other.type &&
           link == other.link;
 
   @override
-  int get hashCode => name.hashCode ^ link.hashCode ^ remarks.hashCode;
+  int get hashCode =>
+      name.hashCode ^ link.hashCode ^ remarks.hashCode ^ type.hashCode;
 }

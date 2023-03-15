@@ -13,6 +13,7 @@ import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 @FFArgumentImport()
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/pcrgvg_flutter_routes.dart';
+import 'package:pcrgvg_flutter/providers/home_filter_provider.dart';
 import 'package:pcrgvg_flutter/providers/user_provider.dart';
 import 'package:pcrgvg_flutter/widgets/auto_type_view.dart';
 import 'package:pcrgvg_flutter/widgets/bg_cover.dart';
@@ -41,16 +42,21 @@ class TaskDetailPage extends StatelessWidget {
     final bool random = context.select<UserProvider, bool>(
         (UserProvider model) => model.userConfig.randomBg);
     final ThemeData theme = Theme.of(context);
-    return Scaffold(
-      body: Stack(
-        children: [
-          BgCover(bgUrl: random ? bgUrl : null),
-          _Content(
-              theme: theme, task: task, bossPrefab: bossPrefab, bgUrl: bgUrl),
-          _Back(theme: theme)
-        ],
-      ),
-    );
+    return ChangeNotifierProvider<HomeFilterProvider>(
+        create: (_) => HomeFilterProvider(),
+        child: Scaffold(
+          body: Stack(
+            children: [
+              BgCover(bgUrl: random ? bgUrl : null),
+              _Content(
+                  theme: theme,
+                  task: task,
+                  bossPrefab: bossPrefab,
+                  bgUrl: bgUrl),
+              _Back(theme: theme)
+            ],
+          ),
+        ));
   }
 }
 
@@ -169,7 +175,7 @@ class _Remarks extends StatelessWidget {
   }
 }
 
-class _Link extends StatelessWidget {
+class _Link extends StatefulWidget {
   const _Link({
     Key? key,
     required this.theme,
@@ -182,41 +188,94 @@ class _Link extends StatelessWidget {
   final String bgUrl;
 
   @override
+  State<_Link> createState() => _LinkState();
+}
+
+class _LinkState extends State<_Link> {
+  bool showLink(List<int> methods, int? method) {
+    if (method != null) {
+      final bool show = methods.contains(method);
+      if (widget.task.linkShowMethod != null) {
+        return show && widget.task.linkShowMethod == method;
+      }
+      return show;
+    }
+    return true;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final List<int> methods = context.select<HomeFilterProvider, List<int>>(
+        (value) => value.gvgTaskFilter.methods);
     return Container(
-      decoration: BoxDecoration(
-          color: theme.backgroundColor,
-          borderRadius: const BorderRadius.all(Radius.circular(16))),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '视频',
-            style: textStyleH2,
-          ),
-          for (Link link in task.links)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: GestureDetector(
-                onTap: () async {
-                  if (link.remarks.isNotEmpty) {
-                    Navigator.of(context).pushNamed(Routes.linkDetailPage.name,
-                        arguments:
-                            Routes.linkDetailPage.d(link: link, bgUrl: bgUrl));
-                  } else {
-                    link.link.launchApp();
-                  }
-                },
-                child: Text(
-                  link.name,
-                  style: TextStyle(color: HexColor.fromHex('#1890ff')),
+        decoration: BoxDecoration(
+            color: widget.theme.backgroundColor,
+            borderRadius: const BorderRadius.all(Radius.circular(16))),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Text(
+                  '视频',
+                  style: textStyleH2,
                 ),
-              ),
-            )
-        ],
-      ),
-    );
+                for (int type in widget.task.canAuto)
+                  GestureDetector(
+                    onTap: () {
+                      if (widget.task.linkShowMethod != null) {
+                        widget.task.linkShowMethod = null;
+                      } else {
+                        widget.task.linkShowMethod = type;
+                      }
+                      setState(() {
+                        
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      margin: const EdgeInsets.only(left: 8),
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8.0)),
+                        border: widget.task.linkShowMethod == type
+                            ? Border.all(color: Colors.red)
+                            : Border.all(color: Colors.transparent),
+                      ),
+                      child: AutoTypeView(type: type),
+                    ),
+                  )
+              ],
+            ),
+            for (Link link in widget.task.links)
+              if (showLink(methods, link.type))
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: GestureDetector(
+                    onTap: () async {
+                      if (link.remarks.isNotEmpty) {
+                        Navigator.of(context).pushNamed(
+                            Routes.linkDetailPage.name,
+                            arguments: Routes.linkDetailPage
+                                .d(link: link, bgUrl: widget.bgUrl));
+                      } else {
+                        link.link.launchApp();
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        if (link.type != null) AutoTypeView(type: link.type!),
+                        Text(
+                          link.name,
+                          style: TextStyle(color: HexColor.fromHex('#1890ff')),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+          ],
+        ));
   }
 }
 
@@ -305,6 +364,10 @@ class _Head extends StatelessWidget {
           if (type == AutoType.harfAuto)
             Text(
                 '(${task.halfAutoDamage ?? (task.autoDamage ?? task.damage)}w)',
+                style:
+                    TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
+          if (type == AutoType.easyManual)
+            Text('(${task.easyManualDamage}w)',
                 style:
                     TextStyle(color: HexColor.fromHex('#ff2277'), height: 1.1)),
         ],
