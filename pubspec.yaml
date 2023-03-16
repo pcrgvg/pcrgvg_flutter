@@ -26,16 +26,16 @@ dependencies:
   brotli: 0.5.0
   # Use with the CupertinoIcons class for iOS style icons.
   # cupertino_icons: ^1.0.2
-  connectivity_plus: 2.3.0
-  crypto: 3.0.2
-  dio: 4.0.6
+  connectivity_plus: ^2.3.0
+  crypto: ^3.0.2
+  dio: ^5.0.2
   extended_image: ^6.0.3
-  extended_sliver: 2.1.2
-  firebase_analytics: 9.1.7
-  firebase_core: 1.16.0
-  firebase_crashlytics: 2.7.2
-  ff_annotation_route_core: 2.0.4
-  ff_annotation_route_library: 3.0.0
+  extended_sliver: ^2.1.2
+  firebase_analytics: ^10.1.5
+  firebase_core: ^2.7.1
+  firebase_crashlytics: ^3.0.16
+  ff_annotation_route_core: ^2.0.4
+  ff_annotation_route_library: ^3.0.0
   flutter:
     sdk: flutter
   flutter_localizations: 
@@ -46,20 +46,20 @@ dependencies:
   hive: 2.1.0
   hive_flutter: 1.1.0
   intl: 0.17.0
-  like_button: 2.0.4
-  modal_bottom_sheet: 2.0.1
-  oktoast: 3.1.5
-  package_info_plus: 1.4.2
-  path_provider: 2.0.9
-  permission_handler: 9.2.0
-  provider: 6.0.2
+  like_button: ^2.0.4
+  modal_bottom_sheet: ^2.0.1
+  oktoast: ^3.1.5
+  package_info_plus: ^1.4.2
+  path_provider: ^2.0.9
+  permission_handler: ^10.2.0
+  provider: ^6.0.2
   pull_to_refresh: 2.0.0 
   shimmer: 2.0.0
-  sliver_tools: 0.2.6
-  sqflite: 2.0.2+1
-  tuple: 2.0.0
-  url_launcher: 6.1.4
-  waterfall_flow: 3.0.2
+  sliver_tools: ^0.2.6
+  sqflite: ^2.0.2+1
+  tuple: ^2.0.1
+  url_launcher: ^6.1.8
+  waterfall_flow: ^3.0.2
   
  
   
