@@ -36,7 +36,7 @@ abstract class HttpStatus {
 }
 
 // TODO(kurumi): 根据uri 返回不同的res
-class PcrTransFormer extends DefaultTransformer {
+class PcrTransFormer extends BackgroundTransformer  {
   @override
   // ignore: always_specify_types
   Future transformResponse(
@@ -82,8 +82,8 @@ class NetUtil {
   final String baseUrl = '';
   static final Dio dio = Dio(BaseOptions(
     baseUrl: kReleaseMode ? '' : '',
-    connectTimeout: 60000,
-    receiveTimeout: 60000,
+    connectTimeout: Duration(microseconds: 60000),
+    receiveTimeout: Duration(microseconds: 60000),
   ));
   static late final String _d;
   static late final int _l;
@@ -114,7 +114,7 @@ class NetUtil {
       return handler.next(response); // continue
     }, onError: (DioError dioError, ErrorInterceptorHandler handler) {
       "dioError: ${dioError.message}".debug();
-      if (dioError.type == DioErrorType.connectTimeout ||
+      if (dioError.type == DioErrorType.connectionTimeout ||
           dioError.type == DioErrorType.receiveTimeout) {
         '网络连接超时'.toast();
       }
