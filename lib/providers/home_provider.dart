@@ -172,13 +172,20 @@ class HomeProvider extends BaseListProvider {
 
   // 如果包含手动，则使用damage， 如果不包含且有自动刀的伤害显示自动刀的伤害
   int typeDamage(Task task) {
-    if (_gvgTaskFilter.methods.contains(AutoType.manual)) {
-      return task.damage ?? task.halfAutoDamage ?? task.autoDamage ?? 0;
+    int? damage;
+    if (_gvgTaskFilter.methods.contains(AutoType.manual) &&
+        task.canAuto.contains(AutoType.manual)) {
+      damage = task.damage;
     }
-    if (_gvgTaskFilter.methods.contains(AutoType.harfAuto)) {
-      return task.halfAutoDamage ?? task.autoDamage ?? task.damage ?? 0;
+    if (_gvgTaskFilter.methods.contains(AutoType.harfAuto) &&
+        task.canAuto.contains(AutoType.harfAuto)) {
+      damage = damage ?? task.halfAutoDamage;
     }
-    return task.autoDamage ?? task.halfAutoDamage ?? task.damage ?? 0;
+    if (_gvgTaskFilter.methods.contains(AutoType.easyManual) &&
+        task.canAuto.contains(AutoType.easyManual)) {
+      damage = damage ?? task.easyManualDamage;
+    }
+    return damage ?? task.autoDamage ?? 0;
   }
 
   void setStageString() {
