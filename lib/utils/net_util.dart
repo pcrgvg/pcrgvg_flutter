@@ -31,12 +31,12 @@ class Resp {
 }
 
 abstract class HttpStatus {
-  static const int OK = 200; 
-  static const int Fail = 500; 
+  static const int OK = 200;
+  static const int Fail = 500;
 }
 
 // TODO(kurumi): 根据uri 返回不同的res
-class PcrTransFormer extends BackgroundTransformer  {
+class PcrTransFormer extends BackgroundTransformer {
   @override
   // ignore: always_specify_types
   Future transformResponse(
@@ -46,7 +46,8 @@ class PcrTransFormer extends BackgroundTransformer  {
     final dynamic transformResponse =
         await super.transformResponse(options, response);
     final String uri = '${options.uri}';
-    if (<String>[PcrDbUrl.lastVersionCn, PcrDbUrl.lastVersionJp].contains(uri)) {
+    if (<String>[PcrDbUrl.lastVersionCn, PcrDbUrl.lastVersionJp]
+        .contains(uri)) {
       return Resp(
           success: true,
           data:
@@ -54,27 +55,31 @@ class PcrTransFormer extends BackgroundTransformer  {
     }
     if (uri.contains(PcrGvgUrl.host)) {
       if (transformResponse['code'] == 200) {
-        return Resp(success: true,data: transformResponse['data']);
+        return Resp(success: true, data: transformResponse['data']);
       }
       return Resp(success: false);
     }
     if (skipTransform(uri)) {
-      return Resp(success: true, data:transformResponse);
+      return Resp(success: true, data: transformResponse);
     }
 
     return transformResponse;
   }
 
-
-  List<String> whiteList = [GitUrl.gitApiHost, GitUrl.cdnGitHost, GitUrl.giteeHost, GitUrl.aliOssHost];
+  List<String> whiteList = [
+    GitUrl.gitApiHost,
+    GitUrl.cdnGitHost,
+    GitUrl.giteeHost,
+    GitUrl.aliOssHost
+  ];
 
   bool skipTransform(String uri) {
     for (final String item in whiteList) {
-      if(uri.contains(item)) {
+      if (uri.contains(item)) {
         return true;
       }
     }
-    return false; 
+    return false;
   }
 }
 
@@ -82,8 +87,9 @@ class NetUtil {
   final String baseUrl = '';
   static final Dio dio = Dio(BaseOptions(
     baseUrl: kReleaseMode ? '' : '',
-    connectTimeout: Duration(microseconds: 60000),
-    receiveTimeout: Duration(microseconds: 60000),
+    connectTimeout: const Duration(seconds: 120),
+    receiveTimeout: const Duration(seconds: 120),
+    sendTimeout: const Duration(seconds: 120),
   ));
   static late final String _d;
   static late final int _l;
@@ -91,17 +97,13 @@ class NetUtil {
 
   static void init() {
     _d = DateTime.now().millisecondsSinceEpoch.toString();
-     _l = math.Random().nextInt(_d.length);
-     _t = sha1.convert(utf8.encode(_d.substring(_l) + '123456')).toString();
+    _l = math.Random().nextInt(_d.length);
+    _t = sha1.convert(utf8.encode(_d.substring(_l) + '123456')).toString();
     dio.transformer = PcrTransFormer();
     dio.interceptors.add(InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
       'net start'.debug();
-      options.headers.addAll({
-        "d": _d,
-        "l": _l.toString(),
-        "t": _t
-      });
+      options.headers.addAll({"d": _d, "l": _l.toString(), "t": _t});
       return handler.next(options);
       // 如果你想完成请求并返回一些自定义数据，你可以resolve一个Response对象 `handler.resolve(response)`。
       // 这样请求将会被终止，上层then会被调用，then中返回的数据将是你的自定义response.
@@ -145,9 +147,9 @@ class Http {
   ) async {
     Response<Resp> res;
     if (requestOptions.method.isEmpty) {
-       return Resp(success: false);
+      return Resp(success: false);
     }
-   res = await NetUtil.fetch<Resp>(requestOptions);
+    res = await NetUtil.fetch<Resp>(requestOptions);
     if (res.statusCode == HttpStatus.OK && res.data?.success == true) {
       return res.data!;
     }
