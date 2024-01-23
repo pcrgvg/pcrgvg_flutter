@@ -3,9 +3,11 @@ class PcrDbUrl {
   static const String host = 'https://redive.estertion.win';
 
   static const String lastVersionJp = '$host/last_version_jp.json';
-  static const String rediveDbJp = '$host/db/redive_jp.db.br';
+  // static const String rediveDbJp = '$host/db/redive_jp.db.br';
+  static const String rediveDbJp = 'https://wthee.xyz/db/redive_jp.db';
   static const String lastVersionCn = '$host/last_version_cn.json';
-  static const String rediveDbCn = '$host/db/redive_cn.db.br';
+  // static const String rediveDbCn = '$host/db/redive_cn.db.br';
+  static const String rediveDbCn = 'https://wthee.xyz/db/redive_cn.db';
   static const String unitImg = '$host/icon/unit/{0}.webp';
   static const String cardImg = '$host/card/full/{0}.webp';
 }

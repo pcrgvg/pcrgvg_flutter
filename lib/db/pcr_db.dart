@@ -151,7 +151,8 @@ class PcrDb {
     '$dbPath dowload start'.debug();
     await PcrDbApi.downloadDbJp('$dbPath.br');
     final File brFile = File('$dbPath.br');
-    final List<int> dbString = brotli.decode(brFile.readAsBytesSync());
+    // final List<int> dbString = brotli.decode(brFile.readAsBytesSync());
+    final List<int> dbString = brFile.readAsBytesSync();
     final File db = File(dbPath);
     if (!db.existsSync()) {
       db.createSync();
@@ -166,7 +167,8 @@ class PcrDb {
     final String dbPath = '$dbDirPath${Platform.pathSeparator}$cnDbName';
     await PcrDbApi.downloadDbCn('$dbPath.br');
     final File brFile = File('$dbPath.br');
-    final List<int> dbString = brotli.decode(brFile.readAsBytesSync());
+    // final List<int> dbString = brotli.decode(brFile.readAsBytesSync());
+    final List<int> dbString = brFile.readAsBytesSync();
     final File db = File(dbPath);
     if (!db.existsSync()) {
       db.createSync();
