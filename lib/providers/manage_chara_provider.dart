@@ -21,6 +21,25 @@ class ManageCharaProvider extends BaseListProvider {
     }
   }
 
+  bool _showName = false; // 是否显示名字
+  bool get showName => _showName;
+  set showName(bool value) {
+    if (value != _showName) {
+      _showName = value;
+      notifyListeners();
+    }
+  }
+
+  /// 1站位排序，2 名字排序 
+  int _sortType = 1; // 排序方式
+  int get sortType => _sortType;
+  set sortType(int value) {
+    if (value != _sortType) {
+      _sortType = value;
+      notifyListeners();
+    }
+  }
+
   late GvgTaskFilterHive _gvgTaskFilter;
   GvgTaskFilterHive get gvgTaskFilter => _gvgTaskFilter;
   List<Chara> charaList = [];
@@ -52,7 +71,8 @@ class ManageCharaProvider extends BaseListProvider {
     PcrDb.charaList(serverType).then((List<Chara> value) {
       charaList = value;
       notifyListeners();
-      Future<void>.delayed(const Duration(milliseconds: 800)).then((_) => controller.refreshCompleted());
+      Future<void>.delayed(const Duration(milliseconds: 800))
+          .then((_) => controller.refreshCompleted());
     });
   }
 

@@ -41,69 +41,85 @@ class ManageCharaPage extends StatelessWidget {
         child: Scaffold(
           body: ListBox<ManageCharaProvider>(
             child: CustomScrollView(
-                slivers: [
-                  _Header(theme: theme),
-                  Selector<ManageCharaProvider,
-                      Tuple3<int, List<Chara>, List<Chara>>>(
-                    selector: (_, ManageCharaProvider model) =>
-                        Tuple3<int, List<Chara>, List<Chara>>(
-                            model.showType, model.hiveCharaList, model.charaList),
-                    shouldRebuild: (Tuple3<int, List<Chara>, List<Chara>> prev,
-                            Tuple3<int, List<Chara>, List<Chara>> next) =>
-                        prev.item1 != next.item1 ||
-                        prev.item2.ne(next.item2) ||
-                        prev.item3.ne(next.item3),
-                    builder:
-                        (_, Tuple3<int, List<Chara>, List<Chara>> tuple, __) {
-                      final int showType = tuple.item1;
-                      final List<Chara> charaList = tuple.item3;
-                      final List<Chara> hiveCharaList = tuple.item2;
-                      final List<Chara> front = charaList
-                          .where((Chara chara) =>
-                              chara.searchAreaWidth < 300 &&
-                              getTypeChara(chara, hiveCharaList, showType))
-                          .toList();
-                      final List<Chara> middle = charaList
-                          .where((Chara chara) =>
-                              chara.searchAreaWidth > 300 &&
-                              chara.searchAreaWidth < 600 &&
-                              getTypeChara(chara, hiveCharaList, showType))
-                          .toList();
-                      final List<Chara> back = charaList
-                          .where((Chara chara) =>
-                              chara.searchAreaWidth > 600 &&
-                              getTypeChara(chara, hiveCharaList, showType))
-                          .toList();
-                      return MultiSliver(children: [
-                        _PinHeader(
-                          theme: theme,
-                          title: '前卫',
-                        ),
-                        _GroupChara(
+              slivers: [
+                _Header(theme: theme),
+                Selector<ManageCharaProvider,
+                    Tuple5<int, List<Chara>, List<Chara>, int, bool>>(
+                  selector: (_, ManageCharaProvider model) =>
+                      Tuple5<int, List<Chara>, List<Chara>, int, bool>(
+                          model.showType,
+                          model.hiveCharaList,
+                          model.charaList,
+                          model.sortType,
+                          model.showName),
+                  shouldRebuild:
+                      (Tuple5<int, List<Chara>, List<Chara>, int, bool> prev,
+                              Tuple5<int, List<Chara>, List<Chara>, int, bool>
+                                  next) =>
+                          prev.item1 != next.item1 ||
+                          prev.item2.ne(next.item2) ||
+                          prev.item3.ne(next.item3) ||
+                          prev.item5 != next.item5 ||
+                          prev.item4 != next.item4,
+                  builder: (_,
+                      Tuple5<int, List<Chara>, List<Chara>, int, bool> tuple,
+                      __) {
+                    final int showType = tuple.item1;
+                    final List<Chara> charaList = tuple.item3;
+                    final List<Chara> hiveCharaList = tuple.item2;
+                    final int sortType = tuple.item4;
+                    final bool showName = tuple.item5;
+                    final List<Chara> front = charaList
+                        .where((Chara chara) =>
+                            chara.searchAreaWidth < 300 &&
+                            getTypeChara(chara, hiveCharaList, showType))
+                        .toList();
+                    final List<Chara> middle = charaList
+                        .where((Chara chara) =>
+                            chara.searchAreaWidth > 300 &&
+                            chara.searchAreaWidth < 600 &&
+                            getTypeChara(chara, hiveCharaList, showType))
+                        .toList();
+                    final List<Chara> back = charaList
+                        .where((Chara chara) =>
+                            chara.searchAreaWidth > 600 &&
+                            getTypeChara(chara, hiveCharaList, showType))
+                        .toList();
+                    if (sortType == 2) {
+                      front.sort((a, b) => a.unitName.compareTo(b.unitName));
+                      middle.sort((a, b) => a.unitName.compareTo(b.unitName));
+                      back.sort((a, b) => a.unitName.compareTo(b.unitName));
+                    }
+                    return MultiSliver(children: [
+                      _PinHeader(
+                        theme: theme,
+                        title: '前卫',
+                      ),
+                      _GroupChara(
                           charas: front,
                           hiveCharas: hiveCharaList,
-                        ),
-                        _PinHeader(
-                          theme: theme,
-                          title: '中卫',
-                        ),
-                        _GroupChara(
+                          showName: showName),
+                      _PinHeader(
+                        theme: theme,
+                        title: '中卫',
+                      ),
+                      _GroupChara(
                           charas: middle,
                           hiveCharas: hiveCharaList,
-                        ),
-                        _PinHeader(
-                          theme: theme,
-                          title: '后卫',
-                        ),
-                        _GroupChara(
+                          showName: showName),
+                      _PinHeader(
+                        theme: theme,
+                        title: '后卫',
+                      ),
+                      _GroupChara(
                           charas: back,
                           hiveCharas: hiveCharaList,
-                        ),
-                      ]);
-                    },
-                  )
-                ],
-              ),
+                          showName: showName),
+                    ]);
+                  },
+                )
+              ],
+            ),
           ),
         ));
   }
@@ -114,38 +130,82 @@ class _GroupChara extends StatelessWidget {
     Key? key,
     required this.charas,
     required this.hiveCharas,
+    required this.showName,
   }) : super(key: key);
 
   final List<Chara> charas;
   final List<Chara> hiveCharas;
+  final bool showName;
 
   @override
   Widget build(BuildContext context) {
     final ManageCharaProvider model = context.read<ManageCharaProvider>();
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      sliver: SliverWaterfallFlow(
-          gridDelegate: const SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
-              crossAxisSpacing: 8, mainAxisSpacing: 8, maxCrossAxisExtent: 50),
-          delegate: SliverChildBuilderDelegate((BuildContext c, int index) {
-            final Chara chara = charas[index];
-            final bool contain =
-                hiveCharas.indexWhere((a) => a.prefabId == chara.prefabId) > -1;
-            return GestureDetector(
-              onTap: () {
-                model.addChara(chara);
-              },
-              child: Opacity(
-                opacity: contain ? 1 : 0.6,
-                child: IconChara(
-                  chara: chara,
-                  showRR: false,
-                  shimmer: contain,
-                ),
-              ),
-            );
-          }, childCount: charas.length)),
+      sliver: showName ? _nameDelegate(model) : _defaultDelegate(model),
     );
+  }
+
+  /// 显示名称，一行2个
+  SliverWaterfallFlow _nameDelegate(ManageCharaProvider model) {
+    return SliverWaterfallFlow(
+        gridDelegate: const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+            crossAxisSpacing: 8, mainAxisSpacing: 8, crossAxisCount: 2),
+        delegate: SliverChildBuilderDelegate((BuildContext c, int index) {
+          final Chara chara = charas[index];
+          final bool contain =
+              hiveCharas.indexWhere((a) => a.prefabId == chara.prefabId) > -1;
+          return GestureDetector(
+            onTap: () {
+              model.addChara(chara);
+            },
+            // child: Text(chara.unitName),
+            child: Row(
+              children: [
+                Opacity(
+                  opacity: contain ? 1 : 0.6,
+                  child: IconChara(
+                    chara: chara,
+                    showRR: false,
+                    shimmer: contain,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    chara.unitName,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                )
+              ],
+            ),
+          );
+        }, childCount: charas.length));
+  }
+
+  /// 默认视图，不显示名称
+  SliverWaterfallFlow _defaultDelegate(ManageCharaProvider model) {
+    return SliverWaterfallFlow(
+        gridDelegate: const SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
+            crossAxisSpacing: 8, mainAxisSpacing: 8, maxCrossAxisExtent: 50),
+        delegate: SliverChildBuilderDelegate((BuildContext c, int index) {
+          final Chara chara = charas[index];
+          final bool contain =
+              hiveCharas.indexWhere((a) => a.prefabId == chara.prefabId) > -1;
+          return GestureDetector(
+            onTap: () {
+              model.addChara(chara);
+            },
+            // child: Text(chara.unitName),
+            child: Opacity(
+              opacity: contain ? 1 : 0.6,
+              child: IconChara(
+                chara: chara,
+                showRR: false,
+                shimmer: contain,
+              ),
+            ),
+          );
+        }, childCount: charas.length));
   }
 }
 
@@ -180,10 +240,10 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasScrolled =
-        context.select<ManageCharaProvider, bool>((ManageCharaProvider model) => model.hasScrolled);
-    final String serverType = context
-        .select<ManageCharaProvider, String>((ManageCharaProvider model) => model.serverType);
+    final bool hasScrolled = context.select<ManageCharaProvider, bool>(
+        (ManageCharaProvider model) => model.hasScrolled);
+    final String serverType = context.select<ManageCharaProvider, String>(
+        (ManageCharaProvider model) => model.serverType);
     final ManageCharaProvider model = context.read<ManageCharaProvider>();
     return SliverPinnedToBoxAdapter(
       child: AnimateHeader(
@@ -248,16 +308,19 @@ class _BottomFilter extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     return ChangeNotifierProvider<ManageCharaProvider>.value(
         value: model,
-        child: Selector<ManageCharaProvider, Tuple2<int, String>>(
+        child: Selector<ManageCharaProvider, Tuple4<int, String, bool, int>>(
           selector: (_, ManageCharaProvider model) =>
-              Tuple2<int, String>(model.showType, model.serverType),
-          builder: (_, Tuple2<int, String> tuple, __) {
+              Tuple4<int, String, bool, int>(model.showType, model.serverType,
+                  model.showName, model.sortType),
+          builder: (_, Tuple4<int, String, bool, int> tuple, __) {
             final String serverType = tuple.item2;
             final int showType = tuple.item1;
+            final bool showName = tuple.item3;
+            final int sortType = tuple.item4;
             return Container(
-              height: 200,
+              height: 300,
               decoration: const BoxDecoration(
-                color: Colors.white,
+                  color: Colors.white,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(16),
                       topRight: Radius.circular(16))),
@@ -273,7 +336,17 @@ class _BottomFilter extends StatelessWidget {
                     theme: theme,
                     showType: showType,
                     model: model,
-                  )
+                  ),
+                  _NameSelection(
+                    theme: theme,
+                    showName: showName,
+                    model: model,
+                  ),
+                  _SortSelection(
+                    theme: theme,
+                    sortType: sortType,
+                    model: model,
+                  ),
                 ],
               ),
             );
@@ -420,6 +493,154 @@ class _ServerSelection extends StatelessWidget {
           style: TextStyle(color: getColor(server == serverType)),
         ),
       ),
+    );
+  }
+}
+
+class _NameSelection extends StatelessWidget {
+  const _NameSelection({
+    Key? key,
+    required this.theme,
+    required this.showName,
+    required this.model,
+  }) : super(key: key);
+
+  final ThemeData theme;
+  final bool showName;
+  final ManageCharaProvider model;
+
+  Color getColor(bool selected) {
+    return selected ? theme.colorScheme.secondary : Colors.grey;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Flex(
+      direction: Axis.horizontal,
+      children: [
+        const SizedBox(
+          width: 56,
+          child: Text(
+            '名称',
+            style: textStyleH2,
+          ),
+        ),
+        Expanded(
+            child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: MaterialButton(
+                minWidth: 0,
+                elevation: 0,
+                onPressed: () {
+                  model.showName = true;
+                },
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                ),
+                color: getColor(showName).withOpacity(0.2),
+                child: Text(
+                  '显示',
+                  style: TextStyle(color: getColor(showName)),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: MaterialButton(
+                minWidth: 0,
+                elevation: 0,
+                onPressed: () {
+                  model.showName = false;
+                },
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                ),
+                color: getColor(!showName).withOpacity(0.2),
+                child: Text(
+                  '不显示',
+                  style: TextStyle(color: getColor(!showName)),
+                ),
+              ),
+            )
+          ],
+        ))
+      ],
+    );
+  }
+}
+
+class _SortSelection extends StatelessWidget {
+  const _SortSelection({
+    Key? key,
+    required this.theme,
+    required this.sortType,
+    required this.model,
+  }) : super(key: key);
+
+  final ThemeData theme;
+  final int sortType;
+  final ManageCharaProvider model;
+
+  Color getColor(bool selected) {
+    return selected ? theme.colorScheme.secondary : Colors.grey;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Flex(
+      direction: Axis.horizontal,
+      children: [
+        const SizedBox(
+          width: 56,
+          child: Text(
+            '排序',
+            style: textStyleH2,
+          ),
+        ),
+        Expanded(
+            child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: MaterialButton(
+                minWidth: 0,
+                elevation: 0,
+                onPressed: () {
+                  model.sortType = 1;
+                },
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                ),
+                color: getColor(sortType == 1).withOpacity(0.2),
+                child: Text(
+                  '站位',
+                  style: TextStyle(color: getColor(sortType == 1)),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: MaterialButton(
+                minWidth: 0,
+                elevation: 0,
+                onPressed: () {
+                  model.sortType = 2;
+                },
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                ),
+                color: getColor(sortType == 2).withOpacity(0.2),
+                child: Text(
+                  '名称',
+                  style: TextStyle(color: getColor(sortType == 2)),
+                ),
+              ),
+            )
+          ],
+        ))
+      ],
     );
   }
 }
