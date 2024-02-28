@@ -5,7 +5,10 @@
 // **************************************************************************
 
 class Images {
-  static const String kkr = 'assets/images/kkr.jpg';
+  static const String dark = 'assets/images/dark.png';
+	static const String fire = 'assets/images/fire.png';
+	static const String kkr = 'assets/images/kkr.jpg';
+	static const String light = 'assets/images/light.png';
 	static const String loading = 'assets/images/loading.png';
 	static const String star = 'assets/images/star.png';
 	static const String starDisabled = 'assets/images/star_disabled.png';
@@ -17,5 +20,7 @@ class Images {
 	static const String tabNnkActive = 'assets/images/tab/nnk_active.png';
 	static const String u1Blank = 'assets/images/u1_blank.png';
 	static const String unitIcon = 'assets/images/unit_icon.webp';
+	static const String water = 'assets/images/water.png';
+	static const String wind = 'assets/images/wind.png';
 	
 }

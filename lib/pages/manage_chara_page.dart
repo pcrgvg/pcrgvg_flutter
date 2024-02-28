@@ -3,6 +3,7 @@ import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 @FFArgumentImport()
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:pcrgvg_flutter/constants/Images.dart';
 import 'package:pcrgvg_flutter/constants/constants.dart';
 import 'package:pcrgvg_flutter/global/pcr_enum.dart';
 import 'package:pcrgvg_flutter/providers/manage_chara_provider.dart';
@@ -10,6 +11,7 @@ import 'package:pcrgvg_flutter/widgets/animate_header.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/widgets/icon_chara.dart';
 import 'package:pcrgvg_flutter/widgets/list_box.dart';
+import 'package:pcrgvg_flutter/widgets/talent_icon.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
@@ -43,46 +45,58 @@ class ManageCharaPage extends StatelessWidget {
             child: CustomScrollView(
               slivers: [
                 _Header(theme: theme),
-                Selector<ManageCharaProvider,
-                    Tuple5<int, List<Chara>, List<Chara>, int, bool>>(
-                  selector: (_, ManageCharaProvider model) =>
-                      Tuple5<int, List<Chara>, List<Chara>, int, bool>(
-                          model.showType,
-                          model.hiveCharaList,
-                          model.charaList,
-                          model.sortType,
-                          model.showName),
-                  shouldRebuild:
-                      (Tuple5<int, List<Chara>, List<Chara>, int, bool> prev,
-                              Tuple5<int, List<Chara>, List<Chara>, int, bool>
-                                  next) =>
-                          prev.item1 != next.item1 ||
-                          prev.item2.ne(next.item2) ||
-                          prev.item3.ne(next.item3) ||
-                          prev.item5 != next.item5 ||
-                          prev.item4 != next.item4,
+                Selector<
+                    ManageCharaProvider,
+                    Tuple6<int, List<Chara>, List<Chara>, int, bool,
+                        List<int>>>(
+                  selector: (_, ManageCharaProvider model) => Tuple6<int,
+                          List<Chara>, List<Chara>, int, bool, List<int>>(
+                      model.showType,
+                      model.hiveCharaList,
+                      model.charaList,
+                      model.sortType,
+                      model.showName,
+                      model.talentList),
+                  shouldRebuild: (Tuple6<int, List<Chara>, List<Chara>, int,
+                                  bool, List<int>>
+                              prev,
+                          Tuple6<int, List<Chara>, List<Chara>, int, bool,
+                                  List<int>>
+                              next) =>
+                      prev.item1 != next.item1 ||
+                      prev.item2.ne(next.item2) ||
+                      prev.item3.ne(next.item3) ||
+                      prev.item5 != next.item5 ||
+                      prev.item6.ne(next.item6) ||
+                      prev.item4 != next.item4,
                   builder: (_,
-                      Tuple5<int, List<Chara>, List<Chara>, int, bool> tuple,
+                      Tuple6<int, List<Chara>, List<Chara>, int, bool,
+                              List<int>>
+                          tuple,
                       __) {
                     final int showType = tuple.item1;
                     final List<Chara> charaList = tuple.item3;
                     final List<Chara> hiveCharaList = tuple.item2;
+                    final List<int> talentList = tuple.item6;
                     final int sortType = tuple.item4;
                     final bool showName = tuple.item5;
                     final List<Chara> front = charaList
                         .where((Chara chara) =>
                             chara.searchAreaWidth < 300 &&
+                            talentList.contains(chara.talentId) &&
                             getTypeChara(chara, hiveCharaList, showType))
                         .toList();
                     final List<Chara> middle = charaList
                         .where((Chara chara) =>
                             chara.searchAreaWidth > 300 &&
                             chara.searchAreaWidth < 600 &&
+                            talentList.contains(chara.talentId) &&
                             getTypeChara(chara, hiveCharaList, showType))
                         .toList();
                     final List<Chara> back = charaList
                         .where((Chara chara) =>
                             chara.searchAreaWidth > 600 &&
+                            talentList.contains(chara.talentId) &&
                             getTypeChara(chara, hiveCharaList, showType))
                         .toList();
                     if (sortType == 2) {
@@ -308,17 +322,30 @@ class _BottomFilter extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     return ChangeNotifierProvider<ManageCharaProvider>.value(
         value: model,
-        child: Selector<ManageCharaProvider, Tuple4<int, String, bool, int>>(
+        child: Selector<ManageCharaProvider,
+            Tuple5<int, String, bool, int, List<int>>>(
           selector: (_, ManageCharaProvider model) =>
-              Tuple4<int, String, bool, int>(model.showType, model.serverType,
-                  model.showName, model.sortType),
-          builder: (_, Tuple4<int, String, bool, int> tuple, __) {
+              Tuple5<int, String, bool, int, List<int>>(
+                  model.showType,
+                  model.serverType,
+                  model.showName,
+                  model.sortType,
+                  model.talentList),
+          shouldRebuild: (Tuple5<int, String, bool, int, List<int>> prev,
+                  Tuple5<int, String, bool, int, List<int>> next) =>
+              prev.item1 != next.item1 ||
+              prev.item2 != (next.item2) ||
+              prev.item3 != (next.item3) ||
+              prev.item5.ne(next.item5) ||
+              prev.item4 != next.item4,
+          builder: (_, Tuple5<int, String, bool, int, List<int>> tuple, __) {
             final String serverType = tuple.item2;
             final int showType = tuple.item1;
             final bool showName = tuple.item3;
             final int sortType = tuple.item4;
+            final List<int> talent = tuple.item5;
             return Container(
-              height: 300,
+              height: 400,
               decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -345,6 +372,11 @@ class _BottomFilter extends StatelessWidget {
                   _SortSelection(
                     theme: theme,
                     sortType: sortType,
+                    model: model,
+                  ),
+                  _TalentSelection(
+                    theme: theme,
+                    talent: talent,
                     model: model,
                   ),
                 ],
@@ -461,14 +493,14 @@ class _ServerSelection extends StatelessWidget {
               server,
               ServerType.jp,
             ),
-            _buildButton(
-              server,
-              ServerType.cn,
-            ),
-            _buildButton(
-              server,
-              ServerType.tw,
-            ),
+            // _buildButton(
+            //   server,
+            //   ServerType.cn,
+            // ),
+            // _buildButton(
+            //   server,
+            //   ServerType.tw,
+            // ),
           ],
         ))
       ],
@@ -641,6 +673,88 @@ class _SortSelection extends StatelessWidget {
           ],
         ))
       ],
+    );
+  }
+}
+
+class _TalentSelection extends StatelessWidget {
+  const _TalentSelection({
+    Key? key,
+    required this.theme,
+    required this.talent,
+    required this.model,
+  }) : super(key: key);
+
+  final ThemeData theme;
+  final List<int> talent;
+  final ManageCharaProvider model;
+
+  Color getColor(bool selected) {
+    return selected ? theme.colorScheme.secondary : Colors.grey;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Flex(
+      direction: Axis.horizontal,
+      children: [
+        const SizedBox(
+          width: 56,
+          child: Text(
+            '属性',
+            style: textStyleH2,
+          ),
+        ),
+        Expanded(
+            child: Wrap(
+          children: [
+            _talentButton(Talent.fire),
+            _talentButton(Talent.water),
+            _talentButton(Talent.wind),
+            _talentButton(Talent.light),
+            _talentButton(Talent.dark),
+          ],
+        ))
+      ],
+    );
+  }
+
+  Padding _talentButton(int talent) {
+    const List<String> TalentList = [
+      '',
+      '火',
+      '水',
+      '风',
+      '光',
+      '暗',
+    ];
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: MaterialButton(
+        minWidth: 0,
+        elevation: 0,
+        onPressed: () {
+          model.setTalent(talent);
+        },
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
+        color: getColor(model.talentList.contains(talent)).withOpacity(0.2),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Text(
+            TalentList[talent],
+            style: TextStyle(color: getColor(model.talentList.contains(talent))),
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          TalentIcon(
+            talentId: talent,
+            width: 15,
+            height: 15,
+          )
+        ]),
+      ),
     );
   }
 }

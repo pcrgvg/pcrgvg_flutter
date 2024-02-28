@@ -273,6 +273,7 @@ class Chara extends HiveObject {
     this.rank,
     this.currentRarity,
     this.id,
+    this.talentId,
   });
 
   factory Chara.fromJson(Map<String, dynamic> jsonRes) => Chara(
@@ -283,6 +284,7 @@ class Chara extends HiveObject {
         rank: asT<int?>(jsonRes['rank']),
         currentRarity: asT<int?>(jsonRes['currentRarity']),
         id: asT<int?>(jsonRes['id']),
+        talentId: asT<int?>(jsonRes['talentId']),
       );
   @HiveField(0)
   int prefabId;
@@ -298,6 +300,8 @@ class Chara extends HiveObject {
   int? currentRarity;
   @HiveField(6)
   int? id;
+  @HiveField(7)
+  int? talentId;
 
   @override
   String toString() {
@@ -312,13 +316,14 @@ class Chara extends HiveObject {
         'rank': rank,
         'currentRarity': currentRarity,
         'id': id,
+        'talentId': talentId,
       };
 
   Chara clone() =>
       Chara.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
 
   Chara cpoy() => Chara(
-      prefabId: prefabId, unitName: unitName, searchAreaWidth: searchAreaWidth);
+      prefabId: prefabId, unitName: unitName, searchAreaWidth: searchAreaWidth, talentId: talentId);
 
   @override
   bool operator ==(Object other) =>
@@ -326,6 +331,7 @@ class Chara extends HiveObject {
       other is Chara &&
           runtimeType == other.runtimeType &&
           id == other.id &&
+          talentId == other.talentId &&
           prefabId == other.prefabId &&
           unitName == other.unitName &&
           rarity == other.rarity &&
@@ -341,6 +347,7 @@ class Chara extends HiveObject {
       rarity.hashCode ^
       rank.hashCode ^
       currentRarity.hashCode ^
+      talentId.hashCode ^
       searchAreaWidth.hashCode;
 }
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:hive/hive.dart';
 import 'package:pcrgvg_flutter/db/hive_db.dart';
 import 'package:pcrgvg_flutter/db/pcr_db.dart';
@@ -30,7 +32,7 @@ class ManageCharaProvider extends BaseListProvider {
     }
   }
 
-  /// 1站位排序，2 名字排序 
+  /// 1站位排序，2 名字排序
   int _sortType = 1; // 排序方式
   int get sortType => _sortType;
   set sortType(int value) {
@@ -39,6 +41,15 @@ class ManageCharaProvider extends BaseListProvider {
       notifyListeners();
     }
   }
+
+  /// 角色属性
+  List<int> talentList = [
+    Talent.fire,
+    Talent.water,
+    Talent.wind,
+    Talent.light,
+    Talent.dark
+  ];
 
   late GvgTaskFilterHive _gvgTaskFilter;
   GvgTaskFilterHive get gvgTaskFilter => _gvgTaskFilter;
@@ -89,6 +100,18 @@ class ManageCharaProvider extends BaseListProvider {
       box.add(chara);
     }
     hiveCharaList = list;
+    notifyListeners();
+  }
+
+  void setTalent(int value) {
+    final List<int> list = [...talentList];
+    if (list.contains(value)) {
+      // _talent.;
+      list.removeWhere((element) => element == value);
+    } else {
+      list.add(value);
+    }
+    talentList = list;
     notifyListeners();
   }
 

@@ -4,6 +4,7 @@ import 'package:pcrgvg_flutter/constants/Images.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/extension/extensions.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
+import 'package:pcrgvg_flutter/widgets/talent_icon.dart';
 import 'package:shimmer/shimmer.dart';
 
 class IconChara extends StatelessWidget {
@@ -46,7 +47,10 @@ class IconChara extends StatelessWidget {
               getIconUrl(chara),
               width: width,
               border: Border.all(
-                  color: shimmer ? theme.colorScheme.secondary : Colors.transparent,width: 2),
+                  color: shimmer
+                      ? theme.colorScheme.secondary
+                      : Colors.transparent,
+                  width: 2),
               cache: true,
               height: height,
               loadStateChanged: (ExtendedImageState state) {
@@ -65,12 +69,24 @@ class IconChara extends StatelessWidget {
                 } else {}
               },
             ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: TalentIcon(
+                width: 15,
+                height: 15,
+                talentId: chara.talentId,
+              ),
+            ),
             if (shimmer)
-            Shimmer.fromColors(child: Container(
-              width: width,
-              height: width,
-              color: Colors.white.withOpacity(0.4),
-            ), baseColor: Colors.transparent, highlightColor: Colors.white)
+              Shimmer.fromColors(
+                  child: Container(
+                    width: width,
+                    height: width,
+                    color: Colors.white.withOpacity(0.4),
+                  ),
+                  baseColor: Colors.transparent,
+                  highlightColor: Colors.white)
           ],
         ),
         if (showRR)

@@ -198,10 +198,13 @@ class PcrDb {
       a.prefab_id AS prefabId,
       a.unit_name AS unitName,
       a.search_area_width as searchAreaWidth,
-      MAX( b.rarity ) AS rarity 
+      MAX( b.rarity ) AS rarity,
+      unit_talent.talent_id AS talentId
     FROM
       unit_data a
       JOIN unit_rarity  b ON a.unit_id = b.unit_id 
+      INNER JOIN 	unit_talent
+      ON a.unit_id = unit_talent.unit_id
     WHERE
       a.COMMENT <> '' 
     GROUP BY
