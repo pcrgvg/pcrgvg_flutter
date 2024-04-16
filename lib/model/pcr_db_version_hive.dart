@@ -9,7 +9,7 @@ class PcrDbVersion extends HiveObject {
   });
 
   factory PcrDbVersion.fromJson(Map<String, dynamic> jsonRes) => PcrDbVersion(
-        truthVersion: asT<String>(jsonRes['TruthVersion'])!,
+        truthVersion: asT<String>(jsonRes['truthVersion'])!,
         hash: asT<String>(jsonRes['hash'])!,
         prefabVer: asT<String?>(jsonRes['PrefabVer']),
       );

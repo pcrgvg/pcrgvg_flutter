@@ -3,12 +3,13 @@ import 'package:pcrgvg_flutter/constants/api_urls.dart';
 import 'package:pcrgvg_flutter/model/models.dart';
 import 'package:pcrgvg_flutter/utils/net_util.dart';
 
-
 class PcrDbApi {
   const PcrDbApi();
   static Future<PcrDbVersion> dbVersionJp() async {
     final Resp res = await Http.fetch(RequestOptions(
-        path: PcrDbUrl.lastVersionJp, method: RequestMethods.Get));
+        path: PcrDbUrl.lastVersionJp,
+        method: RequestMethods.Post,
+        data: {"regionCode": "jp"}));
     return res.data as PcrDbVersion;
   }
 

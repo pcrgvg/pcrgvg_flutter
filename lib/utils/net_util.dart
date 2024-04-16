@@ -35,7 +35,7 @@ abstract class HttpStatus {
   static const int Fail = 500;
 }
 
-// TODO(kurumi): 根据uri 返回不同的res
+//  根据uri 返回不同的res
 class PcrTransFormer extends BackgroundTransformer {
   @override
   // ignore: always_specify_types
@@ -46,12 +46,16 @@ class PcrTransFormer extends BackgroundTransformer {
     final dynamic transformResponse =
         await super.transformResponse(options, response);
     final String uri = '${options.uri}';
+    // 数据库更新走这里
     if (<String>[PcrDbUrl.lastVersionCn, PcrDbUrl.lastVersionJp]
         .contains(uri)) {
-      return Resp(
-          success: true,
-          data:
-              PcrDbVersion.fromJson(transformResponse as Map<String, dynamic>));
+      if (transformResponse["status"] == 0) {
+        return Resp(
+            success: true,
+            data: PcrDbVersion.fromJson(
+                transformResponse["data"] as Map<String, dynamic>));
+      }
+      return Resp(success: false);
     }
     if (uri.contains(PcrGvgUrl.host)) {
       if (transformResponse['code'] == 200) {
@@ -136,7 +140,8 @@ class Http {
   static Future<CommRes> isolateHttp(RequestOptions requestOptions) async {
     // TODO(KURUMI): fixed ISOLATE HTTP function must be top-level function
     final Response res = await compute(NetUtil.fetch, requestOptions);
-    if (res.statusCode == HttpStatus.OK && res.data['code'] == HttpStatus.OK) {
+    if (res.statusCode == HttpStatus.OK &&
+        res.data['status'] == HttpStatus.OK) {
       return CommRes(success: true, data: res.data['data']);
     }
     return CommRes(success: false, msg: '');

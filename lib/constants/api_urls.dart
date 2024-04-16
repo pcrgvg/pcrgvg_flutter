@@ -2,14 +2,14 @@ class PcrDbUrl {
   const PcrDbUrl._();
   static const String host = 'https://redive.estertion.win';
 
-  static const String lastVersionJp = '$host/last_version_jp.json';
+  static const String lastVersionJp = 'https://wthee.xyz/pcr/api/v1/db/info/v2';
   // static const String rediveDbJp = '$host/db/redive_jp.db.br';
   static const String rediveDbJp = 'https://wthee.xyz/db/redive_jp.db';
   static const String lastVersionCn = '$host/last_version_cn.json';
   // static const String rediveDbCn = '$host/db/redive_cn.db.br';
   static const String rediveDbCn = 'https://wthee.xyz/db/redive_cn.db';
-  static const String unitImg = '$host/icon/unit/{0}.webp';
-  static const String cardImg = '$host/card/full/{0}.webp';
+  static const String unitImg = 'https://wthee.xyz/redive/jp/resource/icon/unit/{0}.webp';
+  static const String cardImg = 'https://wthee.xyz/redive/jp/resource/card/full/{0}.webp';
 }
 
 class PcrGvgUrl {

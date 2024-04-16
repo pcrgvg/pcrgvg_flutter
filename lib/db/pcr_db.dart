@@ -32,15 +32,15 @@ class PcrDb {
   static Future<bool> checkUpdate() async {
     try {
       final List<PcrDbVersion?> jpVersion = await checkUpdatedbJp();
-      final List<PcrDbVersion?> cnVersion = await checkUpdatedbCn();
+      // final List<PcrDbVersion?> cnVersion = await checkUpdatedbCn();
       final bool jp =
           jpVersion.first?.truthVersion != jpVersion.last?.truthVersion;
-      final bool cn =
-          cnVersion.first?.truthVersion != cnVersion.last?.truthVersion;
-      if (jp || cn) {
+      // final bool cn =
+      //     cnVersion.first?.truthVersion != cnVersion.last?.truthVersion;
+      if (jp) {
         final Map<String, PcrDbVersion?> serverDbversion = {
           'jp': jp ? jpVersion.last : null,
-          "cn": cn ? cnVersion.last : null
+          // "cn": cn ? cnVersion.last : null
         };
         updateModal(serverDbversion);
         return true;
