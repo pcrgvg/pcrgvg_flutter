@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pcrgvg_flutter/apis/git_api.dart';
 import 'package:pcrgvg_flutter/constants/api_urls.dart';
@@ -103,6 +105,12 @@ class NetUtil {
     _d = DateTime.now().millisecondsSinceEpoch.toString();
     _l = math.Random().nextInt(_d.length);
     _t = sha1.convert(utf8.encode(_d.substring(_l) + '123456')).toString();
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+        (HttpClient client) {
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      return client;
+    };
     dio.transformer = PcrTransFormer();
     dio.interceptors.add(InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
@@ -119,6 +127,7 @@ class NetUtil {
       'net end'.debug();
       return handler.next(response); // continue
     }, onError: (DioError dioError, ErrorInterceptorHandler handler) {
+      dioError.debug();
       "dioError: ${dioError.message}".debug();
       if (dioError.type == DioErrorType.connectionTimeout ||
           dioError.type == DioErrorType.receiveTimeout) {

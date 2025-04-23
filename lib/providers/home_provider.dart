@@ -52,10 +52,15 @@ class HomeProvider extends BaseListProvider {
 
   @override
   Future<void> refresh() async {
-    final List<GvgTask> arr = await PcrGvgApi.getGvgTaskList(
+    List<GvgTask> arr = [];
+    try {
+        arr = await PcrGvgApi.getGvgTaskList(
         stage: _gvgTaskFilter.stage,
         server: _gvgTaskFilter.server,
         clanBattleId: _gvgTaskFilter.clanBattleId);
+    } catch (e) {
+      e.debug();
+    }
     dealGvgTask(arr);
     controller.refreshCompleted();
     setStageString();
